@@ -1,0 +1,38 @@
+<component name="libraryTable">
+  <library name="lwjgl-assimp-javadoc">
+    <CLASSES>
+      <root url="jar://C:/Program Files/Java/lwjgl/lwjgl-assimp-natives-windows.jar!/" />
+      <root url="jar://C:/Program Files/Java/lwjgl/lwjgl-assimp.jar!/" />
+      <root url="jar://C:/Program Files/Java/lwjgl/lwjgl-glfw-natives-windows.jar!/" />
+      <root url="jar://C:/Program Files/Java/lwjgl/lwjgl-glfw.jar!/" />
+      <root url="jar://C:/Program Files/Java/lwjgl/lwjgl-nanovg-natives-windows.jar!/" />
+      <root url="jar://C:/Program Files/Java/lwjgl/lwjgl-nanovg.jar!/" />
+      <root url="jar://C:/Program Files/Java/lwjgl/lwjgl-natives-windows.jar!/" />
+      <root url="jar://C:/Program Files/Java/lwjgl/lwjgl-openal-natives-windows.jar!/" />
+      <root url="jar://C:/Program Files/Java/lwjgl/lwjgl-openal.jar!/" />
+      <root url="jar://C:/Program Files/Java/lwjgl/lwjgl-opengl-natives-windows.jar!/" />
+      <root url="jar://C:/Program Files/Java/lwjgl/lwjgl-opengl.jar!/" />
+      <root url="jar://C:/Program Files/Java/lwjgl/lwjgl-stb-natives-windows.jar!/" />
+      <root url="jar://C:/Program Files/Java/lwjgl/lwjgl-stb.jar!/" />
+      <root url="jar://C:/Program Files/Java/lwjgl/lwjgl.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://C:/Program Files/Java/lwjgl/lwjgl-assimp-javadoc.jar!/" />
+      <root url="jar://C:/Program Files/Java/lwjgl/lwjgl-glfw-javadoc.jar!/" />
+      <root url="jar://C:/Program Files/Java/lwjgl/lwjgl-javadoc.jar!/" />
+      <root url="jar://C:/Program Files/Java/lwjgl/lwjgl-nanovg-javadoc.jar!/" />
+      <root url="jar://C:/Program Files/Java/lwjgl/lwjgl-openal-javadoc.jar!/" />
+      <root url="jar://C:/Program Files/Java/lwjgl/lwjgl-opengl-javadoc.jar!/" />
+      <root url="jar://C:/Program Files/Java/lwjgl/lwjgl-stb-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://C:/Program Files/Java/lwjgl/lwjgl-assimp-sources.jar!/" />
+      <root url="jar://C:/Program Files/Java/lwjgl/lwjgl-glfw-sources.jar!/" />
+      <root url="jar://C:/Program Files/Java/lwjgl/lwjgl-nanovg-sources.jar!/" />
+      <root url="jar://C:/Program Files/Java/lwjgl/lwjgl-openal-sources.jar!/" />
+      <root url="jar://C:/Program Files/Java/lwjgl/lwjgl-opengl-sources.jar!/" />
+      <root url="jar://C:/Program Files/Java/lwjgl/lwjgl-sources.jar!/" />
+      <root url="jar://C:/Program Files/Java/lwjgl/lwjgl-stb-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
