@@ -1,5 +1,7 @@
 package Core.Resources;
 
+import Core.IO.Log;
+
 import java.util.ArrayList;
 
 public class ResourceManager {
@@ -13,7 +15,7 @@ public class ResourceManager {
 
     public static void ClearResources() {
         for (GraphicResource resource : _resources) {
-            resource.Unload();
+            resource.unload();
         }
         _resources.clear();
     }

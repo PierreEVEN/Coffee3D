@@ -2,6 +2,7 @@ package Core.Renderer;
 
 import Core.IO.Log;
 import Core.Renderer.Scene.FrameScene;
+import Core.Resources.ResourceManager;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
@@ -39,7 +40,7 @@ public class Renderer {
     }
 
     public void ShutDown() {
-
+        ResourceManager.ClearResources();
         shutdownOpenGl();
         _renderer = null;
     }
@@ -88,7 +89,7 @@ public class Renderer {
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
         // Create glfw windows
-        _windowContext = glfwCreateWindow(800, 600, "Coffee Engine", NULL, NULL);
+        _windowContext = glfwCreateWindow(800, 600, "Coffee3D", NULL, NULL);
         if ( _windowContext == NULL ) Log.Fail("Failed to create the GLFW window");
 
         try ( MemoryStack stack = stackPush() ) {

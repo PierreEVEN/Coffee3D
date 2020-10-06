@@ -6,28 +6,26 @@ import Core.Renderer.Scene.Scene;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL30.glGenerateMipmap;
+import static org.lwjgl.opengl.GL30.*;
 
-public class Texture2DResource extends GraphicResource {
+public class Texture2DResource extends TextureResource {
 
-    private IntBuffer _textureHandle;
     private int _width, _height;
-    private ByteBuffer _data;
+    private int[] _data;
 
-    public Texture2DResource(ByteBuffer data, int width, int height) {
+    public Texture2DResource(int[] data, int width, int height) {
         super();
         _data = data;
         _width = width;
         _height = height;
-        Load();
     }
 
     @Override
-    public void Load() {
-        glGenTextures(_textureHandle);
-        glBindTexture(GL_TEXTURE_2D, _textureHandle.get());
+    public void load() {
+        _textureHandle = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, _textureHandle);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _width, _height, 0, GL_RGBA, GL_UNSIGNED_BYTE, _data);
+        glGenerateMipmap(GL_TEXTURE_2D);
         // Texture wrapping mode
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -36,17 +34,16 @@ public class Texture2DResource extends GraphicResource {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _width, _height, 0, GL_RGB, GL_UNSIGNED_BYTE, _data);
-        glGenerateMipmap(GL_TEXTURE_2D);
+        glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, new float[] {1,0,0,0});
     }
 
     @Override
-    public void Unload() {
+    public void unload() {
         glDeleteTextures(_textureHandle);
     }
 
     public int getTextureHandle() {
-        return _textureHandle.get();
+        return _textureHandle;
     }
 
     public int getWidth() { return _width; }

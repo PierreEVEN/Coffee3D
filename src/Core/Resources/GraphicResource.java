@@ -8,7 +8,7 @@ public abstract class GraphicResource {
         ResourceManager.RegisterResource(this);
     }
 
-    public abstract void Load();
-    public abstract void Unload();
+    public abstract void load();
+    public abstract void unload();
     public abstract void use(Scene context);
 }
