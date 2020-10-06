@@ -27,10 +27,6 @@ public class TextureFactory {
     public static Texture2DResource T2dFromFile(String filePath) {
         try {
             BufferedImage bfr = ImageIO.read(new File(filePath));
-
-            /** A REDEF **/
-            int BYTES_PER_PIXEL = 4;
-
             int[] pixels = new int[bfr.getWidth() * bfr.getHeight()];
             bfr.getRGB(0, 0, bfr.getWidth(), bfr.getHeight(), pixels, 0, bfr.getWidth());
 
@@ -38,14 +34,15 @@ public class TextureFactory {
 
             for (int x = 0; x < bfr.getWidth(); ++x) {
                 for (int y = 0; y < bfr.getHeight(); ++y) {
+                    // Flip y axis
                     int pixelIndex = (bfr.getHeight() - y - 1) * bfr.getWidth() + x;
                     int newIndex = y * bfr.getWidth() + x;
 
-                    int A = (pixels[pixelIndex] >> 24) & 0xff; // or color >>> 24
+                    // Flip argb to rgba
+                    int A = (pixels[pixelIndex] >> 24) & 0xff;
                     int R = (pixels[pixelIndex] >> 16) & 0xff;
                     int G = (pixels[pixelIndex] >>  8) & 0xff;
                     int B = (pixels[pixelIndex]      ) & 0xff;
-
                     result[newIndex] =  (A & 0xff) << 24 | (B & 0xff) << 16 | (G & 0xff) << 8 | (R & 0xff);
                 }
             }

@@ -2,6 +2,11 @@ package Core.Resources;
 
 import Core.IO.Log;
 import Core.Renderer.Scene.Scene;
+import org.joml.Matrix4f;
+
+import java.nio.FloatBuffer;
+
+import static org.lwjgl.BufferUtils.createFloatBuffer;
 import static org.lwjgl.opengl.GL46.*;
 
 public class MaterialResource extends GraphicResource {
@@ -98,5 +103,17 @@ public class MaterialResource extends GraphicResource {
      */
     public void setIntParameter(String parameterName, int value) {
         glUniform1i(glGetUniformLocation(_materialHandle, parameterName), value);
+    }
+
+
+    /**
+     * set material int parameter from parameter name
+     * @param parameterName
+     * @param value
+     */
+    public void setMatrixParameter(String parameterName, Matrix4f value) {
+        FloatBuffer bfr = createFloatBuffer(16);
+        value.get(bfr);
+        glUniformMatrix4fv(glGetUniformLocation(_materialHandle, parameterName), false, bfr);
     }
 }

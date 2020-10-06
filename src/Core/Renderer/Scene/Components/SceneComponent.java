@@ -13,6 +13,10 @@ public abstract class SceneComponent {
         _rotation = rotation;
     }
 
+    public Vector3f getPosition() {
+        return _position;
+    }
+
     public abstract void draw(Scene context);
 
 }

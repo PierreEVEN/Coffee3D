@@ -8,6 +8,7 @@ import org.joml.Vector3f;
 public class Camera extends SceneComponent {
 
     private float _pitch, _yaw;
+    private static final Vector3f CAMERA_UP = new Vector3f(0, 0, 1);
 
     private static final float MAX_PITCH = 80;
     private static final float MIN_PITCH = -80;
@@ -26,8 +27,16 @@ public class Camera extends SceneComponent {
         super(position, rotation);
     }
 
+    public Vector3f getFront() {
+        return new Vector3f(
+                (float) Math.cos(Math.toRadians(_pitch)) * (float) Math.sin(Math.toRadians(_yaw)),
+                (float) Math.sin(Math.toRadians(_pitch)),
+                (float) Math.cos(Math.toRadians(_pitch)) * (float) Math.sin(Math.toRadians(_yaw))
+        );
+    }
+
     public Matrix4f getViewMatrix() {
-        return new Matrix4f();
+        return new Matrix4f().lookAt(getPosition(), getPosition().add(getFront()), CAMERA_UP);
     }
 
     @Override

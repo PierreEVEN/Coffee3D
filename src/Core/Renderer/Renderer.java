@@ -3,16 +3,21 @@ package Core.Renderer;
 import Core.IO.Log;
 import Core.Renderer.Scene.FrameScene;
 import Core.Resources.ResourceManager;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.nanovg.NVGColor;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
 
+import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwShowWindow;
+import static org.lwjgl.nanovg.NanoVG.*;
+import static org.lwjgl.nanovg.NanoVGGL3.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
@@ -28,6 +33,7 @@ public class Renderer {
     private long _windowContext;
     private boolean _bShutDown;
     private FrameScene _frameScene;
+    private long _vgContext;
 
     private Renderer() {
 
@@ -70,6 +76,17 @@ public class Renderer {
 
             _frameScene.RenderScene();
 
+/*
+            nvgBeginFrame(_vgContext, 800, 600, 1);
+            byte[] test = new byte[] {1,2,3,4, 5, 6, 7, 8, 9, 10, 11, 12 ,13 ,14 ,15 ,16};
+            ByteBuffer bfr = BufferUtils.createByteBuffer(16);
+            bfr.put(test);
+            bfr.flip();
+            nvgFillColor(_vgContext, new NVGColor(bfr));
+            nvgRoundedRect(_vgContext, 0, 10, 50, 70, 5);
+            nvgFill(_vgContext);
+            nvgEndFrame(_vgContext);
+*/
             glfwSwapBuffers(_windowContext); // swap the color buffers
         }
     }
@@ -120,6 +137,12 @@ public class Renderer {
         glClearColor(.5f, .5f, .8f, 0.0f);
 
         _frameScene = new FrameScene();
+
+        _vgContext = nvgCreate(true ? 0 : NVG_ANTIALIAS);
+        if (_vgContext == NULL) {
+           Log.Error("Could not init nanovg.");
+        }
+
     }
 
     private void setupCallbacks() {
