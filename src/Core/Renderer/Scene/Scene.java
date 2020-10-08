@@ -34,8 +34,8 @@ public class Scene {
         _camera = new Camera(new Vector3f(0, 0, 0), new Quaternionf(0, 0, 0, 1));
         _components.add(_camera);
 
-        testText = TextureFactory.T2dFromFile("resources/textures/avazimmos.png");
-        test = MaterialFactory.FromFiles("resources/shaders/shader.vert", "resources/shaders/shader.frag", new Texture2DResource[] {testText});
+        testText = TextureFactory.T2dFromFile("test", "resources/textures/avazimmos.png");
+        test = MaterialFactory.FromFiles("test2", "resources/shaders/shader.vert", "resources/shaders/shader.frag", new Texture2DResource[] {testText});
 
         Vertex[] vertices = {
                 new Vertex(new Vector3f(.5f, .5f, .0f), new Vector2f(1.0f, 1.0f)),

@@ -1,23 +1,21 @@
+/*
 package Core.Renderer;
 
 import Core.IO.Log;
 import Core.Renderer.Scene.FrameScene;
 import Core.Resources.ResourceManager;
-import org.lwjgl.BufferUtils;
+import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
-import org.lwjgl.nanovg.NVGColor;
-import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
 
-import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwShowWindow;
-import static org.lwjgl.nanovg.NanoVG.*;
 import static org.lwjgl.nanovg.NanoVGGL3.*;
+import static org.lwjgl.opengl.GL.createCapabilities;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
@@ -25,30 +23,33 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 public class Renderer {
 
     private static Renderer _renderer;
+
+
+
     public static Renderer Get() {
         if (_renderer == null) _renderer = new Renderer();
         return _renderer;
     }
 
-    private long _windowContext;
-    private boolean _bShutDown;
+    private long _glfwContext;
     private FrameScene _frameScene;
-    private long _vgContext;
+    private long _nvgContext;
 
     private Renderer() {
 
         Log.Display("Create renderer");
 
+        _glfwContext = RenderUtils.InitializeGlfw(800, 600, "Coffee3D Engine");
+        RenderUtils.InitializeOpenGL(new Vector4f(.5f, .5f, .8f, 1.f));
+        _nvgContext = RenderUtils.InitializeNanoVG();
 
-        _bShutDown = false;
-
-        initOpenGL();
     }
 
     public void ShutDown() {
         ResourceManager.ClearResources();
-        shutdownOpenGl();
-        _renderer = null;
+        RenderUtils.ShutdownNanoVG();
+        RenderUtils.ShutDownOpenGL();
+        RenderUtils.ShutDownGlfw();
     }
 
     public void run() {
@@ -64,30 +65,19 @@ public class Renderer {
     }
 
     public void stop() {
-        _bShutDown = true;
+        glfwSetWindowShouldClose(_glfwContext, true)    ;
     }
 
     private void cycleRenderLoop()
     {
-        while (!glfwWindowShouldClose(_windowContext)) {
+        while (!glfwWindowShouldClose(_glfwContext)) {
             glfwPollEvents();
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
             _frameScene.RenderScene();
 
-/*
-            nvgBeginFrame(_vgContext, 800, 600, 1);
-            byte[] test = new byte[] {1,2,3,4, 5, 6, 7, 8, 9, 10, 11, 12 ,13 ,14 ,15 ,16};
-            ByteBuffer bfr = BufferUtils.createByteBuffer(16);
-            bfr.put(test);
-            bfr.flip();
-            nvgFillColor(_vgContext, new NVGColor(bfr));
-            nvgRoundedRect(_vgContext, 0, 10, 50, 70, 5);
-            nvgFill(_vgContext);
-            nvgEndFrame(_vgContext);
-*/
-            glfwSwapBuffers(_windowContext); // swap the color buffers
+            glfwSwapBuffers(_glfwContext); // swap the color buffers
         }
     }
 
@@ -106,30 +96,30 @@ public class Renderer {
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
         // Create glfw windows
-        _windowContext = glfwCreateWindow(800, 600, "Coffee3D", NULL, NULL);
-        if ( _windowContext == NULL ) Log.Fail("Failed to create the GLFW window");
+        _glfwContext = glfwCreateWindow(800, 600, "Coffee3D", NULL, NULL);
+        if ( _glfwContext == NULL ) Log.Fail("Failed to create the GLFW window");
 
         try ( MemoryStack stack = stackPush() ) {
             IntBuffer pWidth = stack.mallocInt(1); // int*
             IntBuffer pHeight = stack.mallocInt(1); // int*
 
-            glfwGetWindowSize(_windowContext, pWidth, pHeight);
+            glfwGetWindowSize(_glfwContext, pWidth, pHeight);
 
             GLFWVidMode videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
             glfwSetWindowPos(
-                    _windowContext,
+                    _glfwContext,
                     (videoMode.width() - pWidth.get(0)) / 2,
                     (videoMode.height() - pHeight.get(0)) / 2
             );
         }
 
-        glfwMakeContextCurrent(_windowContext);
+        glfwMakeContextCurrent(_glfwContext);
         glfwSwapInterval(1);
 
-        glfwShowWindow(_windowContext);
+        glfwShowWindow(_glfwContext);
 
-        GL.createCapabilities();
+        createCapabilities();
 
         setupCallbacks();
 
@@ -138,8 +128,8 @@ public class Renderer {
 
         _frameScene = new FrameScene();
 
-        _vgContext = nvgCreate(true ? 0 : NVG_ANTIALIAS);
-        if (_vgContext == NULL) {
+        _nvgContext = nvgCreate(0);
+        if (_nvgContext == NULL) {
            Log.Error("Could not init nanovg.");
         }
 
@@ -148,13 +138,13 @@ public class Renderer {
     private void setupCallbacks() {
 
         // keyboard callback
-        glfwSetKeyCallback(_windowContext, (window, key, scancode, action, mods) -> {
+        glfwSetKeyCallback(_glfwContext, (window, key, scancode, action, mods) -> {
             if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
                 glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
         });
 
         // resize viewport
-        glfwSetFramebufferSizeCallback(_windowContext, (window, width, height) -> {
+        glfwSetFramebufferSizeCallback(_glfwContext, (window, width, height) -> {
             glViewport(0,0,width,height);
         });
     }
@@ -167,10 +157,11 @@ public class Renderer {
         Log.Display("Shutting down Glfw");
 
 
-        glfwFreeCallbacks(_windowContext);
-        glfwDestroyWindow(_windowContext);
+        glfwFreeCallbacks(_glfwContext);
+        glfwDestroyWindow(_glfwContext);
         glfwTerminate();
         glfwSetErrorCallback(null).free();
     }
 
 }
+*/

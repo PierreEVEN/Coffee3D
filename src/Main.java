@@ -1,8 +1,8 @@
-import Core.Renderer.Renderer;
+import Core.Renderer.Window;
+import Editor.EditorRenderModule;
 
 public class Main {
     public static void main(String[] args) {
-        Renderer.Get().run();
+        Window.GetPrimaryWindow().run(new EditorRenderModule());
     }
-
 }

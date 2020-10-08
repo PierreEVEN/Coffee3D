@@ -1,6 +1,5 @@
 package Core.Resources;
 
-import Core.IO.Log;
 import Core.Renderer.Scene.Scene;
 import Core.Types.Vertex;
 import org.lwjgl.BufferUtils;
@@ -10,10 +9,10 @@ import java.nio.IntBuffer;
 
 import static org.lwjgl.opengl.GL46.*;
 
-public class MeshResource extends GraphicResource {
+public class MeshResource {
 
-    private Vertex[] _vertices;
-    private int[] _indices;
+    private final Vertex[] _vertices;
+    private final int[] _indices;
 
     private int _meshVao;
     private int _meshEbo;
@@ -23,7 +22,6 @@ public class MeshResource extends GraphicResource {
         _indices = indices;
     }
 
-    @Override
     public void load() {
 
         // Generate vertex buffer
@@ -63,7 +61,7 @@ public class MeshResource extends GraphicResource {
         float[] data = new float[vertices.length * Vertex.GetFloatSize()];
         for (int i = 0; i < vertices.length; ++i) {
             // position
-            data[i * Vertex.GetFloatSize() + 0] = vertices[i].position.x;
+            data[i * Vertex.GetFloatSize()] = vertices[i].position.x;
             data[i * Vertex.GetFloatSize() + 1] = vertices[i].position.y;
             data[i * Vertex.GetFloatSize() + 2] = vertices[i].position.z;
 
@@ -87,17 +85,13 @@ public class MeshResource extends GraphicResource {
         return data;
     }
 
-    @Override
     public void unload() {
 
     }
 
-    @Override
     public void use(Scene context) {
         glBindVertexArray(_meshVao);
-
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _meshEbo);
-
         glDrawElements(GL_TRIANGLES, _indices.length, GL_UNSIGNED_INT, 0);
     }
 }

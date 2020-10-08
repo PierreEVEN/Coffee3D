@@ -14,11 +14,12 @@ public class MaterialFactory {
 
     /**
      * Create material resource that contains vertex and fragment data from source file path.
+     * @param resourceName
      * @param vertexFile
      * @param fragmentFile
      * @return generated material resource
      */
-    public static MaterialResource FromFiles(String vertexFile, String fragmentFile) { return FromFiles(vertexFile, fragmentFile, null); }
+    public static MaterialResource FromFiles(String resourceName, String vertexFile, String fragmentFile) { return FromFiles(resourceName, vertexFile, fragmentFile, null); }
 
     /**
      * Create material resource that contains vertex and fragment data from source file path. Also link given textures to theses resources.
@@ -27,7 +28,7 @@ public class MaterialFactory {
      * @param textures
      * @return generated material resource
      */
-    public static MaterialResource FromFiles(String vertexFile, String fragmentFile, TextureResource[] textures) {
+    public static MaterialResource FromFiles(String resourceName, String vertexFile, String fragmentFile, TextureResource[] textures) {
         // Load shader data
         try {
             File file = new File(vertexFile);
@@ -39,7 +40,7 @@ public class MaterialFactory {
             inputStream = new FileInputStream(file);
             String fragmentData = new String(inputStream.readAllBytes());
             inputStream.close();
-            return FromData(vertexData, fragmentData, textures);
+            return FromData(resourceName, vertexData, fragmentData, textures);
         }
         catch (Exception e) {
             Log.Fail("failed to load shader file : " + e.getMessage());
@@ -53,7 +54,7 @@ public class MaterialFactory {
      * @param fragmentData
      * @return generated material resource
      */
-    public static MaterialResource FromData(String vertexData, String fragmentData) { return FromData(vertexData, fragmentData, null); }
+    public static MaterialResource FromData(String resourceName, String vertexData, String fragmentData) { return FromData(resourceName, vertexData, fragmentData, null); }
 
     /**
      * Create material resource that contains vertex and fragment data from shader string data.
@@ -61,8 +62,8 @@ public class MaterialFactory {
      * @param fragmentData
      * @return generated material resource
      */
-    public static MaterialResource FromData(String vertexData, String fragmentData, TextureResource[] textures) {
-        MaterialResource mat = new MaterialResource(vertexData, fragmentData, textures);
+    public static MaterialResource FromData(String resourceName, String vertexData, String fragmentData, TextureResource[] textures) {
+        MaterialResource mat = new MaterialResource(resourceName, vertexData, fragmentData, textures);
         mat.load();
         return mat;
     }

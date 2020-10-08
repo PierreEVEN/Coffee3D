@@ -13,8 +13,8 @@ public class Texture2DResource extends TextureResource {
     private int _width, _height;
     private int[] _data;
 
-    public Texture2DResource(int[] data, int width, int height) {
-        super();
+    public Texture2DResource(String resourceName, int[] data, int width, int height) {
+        super(resourceName);
         _data = data;
         _width = width;
         _height = height;

@@ -31,8 +31,8 @@ public class MaterialResource extends GraphicResource {
      */
     private TextureResource[] _textures;
 
-    public MaterialResource(String vertexData, String fragmentData, TextureResource[] textures) {
-        super();
+    public MaterialResource(String resourceName, String vertexData, String fragmentData, TextureResource[] textures) {
+        super(resourceName);
         _vertexData = vertexData;
         _fragmentData = fragmentData;
         _textures = textures;

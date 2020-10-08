@@ -2,11 +2,15 @@ package Core.Resources;
 
 import Core.Renderer.Scene.Scene;
 
-public class StaticMesh {
+/**
+ * NIY
+ */
+public class StaticMesh extends GraphicResource {
     private MeshResource[] _sections;
     private MaterialResource[] _materials;
 
-    public StaticMesh(MeshResource[] sections, MaterialResource[] materials) {
+    public StaticMesh(String resourceName, MeshResource[] sections, MaterialResource[] materials) {
+        super(resourceName);
         _sections = sections;
         _materials = materials;
     }
@@ -16,6 +20,28 @@ public class StaticMesh {
         for(int i = 0; i < _sections.length; ++i) {
             if (_materials.length >= i) _materials[i].use(context);
             _sections[i].use(context);
+        }
+    }
+
+    @Override
+    public void load() {
+        for(MeshResource section : _sections) {
+            section.load();
+        }
+    }
+
+    @Override
+    public void unload() {
+        for(MeshResource section : _sections) {
+            section.unload();
+        }
+        _sections = null;
+    }
+
+    @Override
+    public void use(Scene context) {
+        for(MeshResource section : _sections) {
+            section.use(context);
         }
     }
 }

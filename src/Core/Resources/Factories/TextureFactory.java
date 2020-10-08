@@ -24,7 +24,7 @@ public class TextureFactory {
      * @param filePath
      * @return generated texture resource
      */
-    public static Texture2DResource T2dFromFile(String filePath) {
+    public static Texture2DResource T2dFromFile(String resourceName, String filePath) {
         try {
             BufferedImage bfr = ImageIO.read(new File(filePath));
             int[] pixels = new int[bfr.getWidth() * bfr.getHeight()];
@@ -47,7 +47,7 @@ public class TextureFactory {
                 }
             }
 
-            T2dFromData(result, bfr.getWidth(), bfr.getHeight());
+            T2dFromData(resourceName, result, bfr.getWidth(), bfr.getHeight());
         }
         catch(Exception e) {
             Log.Error("failed to open texture : " + e.getMessage());
@@ -62,8 +62,8 @@ public class TextureFactory {
      * @param height
      * @return generated texture resource
      */
-    public static Texture2DResource T2dFromData(int[] data, int width, int height) {
-        Texture2DResource resource = new Texture2DResource(data, width, height);
+    public static Texture2DResource T2dFromData(String resourceName, int[] data, int width, int height) {
+        Texture2DResource resource = new Texture2DResource(resourceName, data, width, height);
         resource.load();
         return resource;
     }
