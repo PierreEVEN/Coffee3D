@@ -30,6 +30,8 @@ public class RenderUtils {
 
         Log.Display("Initialize OpenGL");
 
+        GLFWErrorCallback.createPrint(System.err).set();
+
         Log.Warning("a");
         // Initialize Glfw
         if ( !glfwInit() ) Log.Fail("Failed to initialize glfw");
