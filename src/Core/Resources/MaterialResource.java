@@ -69,6 +69,9 @@ public class MaterialResource extends GraphicResource {
         glDetachShader(_materialHandle, fragmentShaderId);
         glDeleteShader(vertexShaderId);
         glDeleteShader(fragmentShaderId);
+
+        int uniformBlockIndexRed = glGetUniformBlockIndex(_materialHandle, "shader_data");
+        glUniformBlockBinding(_materialHandle, uniformBlockIndexRed, 0);
     }
 
     @Override
@@ -105,6 +108,14 @@ public class MaterialResource extends GraphicResource {
         glUniform1i(glGetUniformLocation(_materialHandle, parameterName), value);
     }
 
+    /**
+     * set material float parameter from parameter name
+     * @param parameterName
+     * @param value
+     */
+    public void setFloatParameter(String parameterName, float value) {
+        glUniform1f(glGetUniformLocation(_materialHandle, parameterName), value);
+    }
 
     /**
      * set material int parameter from parameter name
