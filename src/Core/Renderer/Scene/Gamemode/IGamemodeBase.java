@@ -12,6 +12,10 @@ public abstract class IGamemodeBase {
         _scene = scene;
     }
 
+    public void update(Scene context) {
+        getController().update(context);
+    }
+
     protected Scene getScene() { return _scene; }
 
 }

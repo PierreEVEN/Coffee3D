@@ -4,6 +4,7 @@ import Core.IO.Log;
 import Core.Resources.MeshResource;
 import Core.Assets.StaticMesh;
 import Core.Types.Vertex;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
@@ -15,25 +16,24 @@ import static org.lwjgl.assimp.Assimp.*;
 
 public class MeshFactory {
     public static MeshResource[] FromFile(String resourceName, String filePath) {
-        AIScene aiScene = aiImportFile(resourceName, aiProcess_Triangulate);
-        if (aiScene == null) Log.Error("Failed to load model " + resourceName);
+        AIScene aiScene = aiImportFile(filePath, aiProcess_Triangulate);
+        if (aiScene == null) Log.Error("Failed to load model " + resourceName + " : " + filePath);
 
         int numMeshes = aiScene.mNumMeshes();
         PointerBuffer aiMeshes = aiScene.mMeshes();
         MeshResource[] meshes = new MeshResource[numMeshes];
         for (int i = 0; i < numMeshes; i++) {
-            meshes[i] = processMesh(resourceName + "i", AIMesh.create(aiMeshes.get(i)));
+            meshes[i] = processMesh(resourceName + i, AIMesh.create(aiMeshes.get(i)));
         }
-        return null;
+        return meshes;
     }
 
     private static MeshResource processMesh(String resourceName, AIMesh aiMesh) {
-        List<Vertex> vertices = new ArrayList<>();
 
-        processVertices(aiMesh, vertices);
+        Vertex[] vertices = processVertices(aiMesh);
         int[] indices = processIndices(aiMesh);
 
-        return FromResources(resourceName, (Vertex[])vertices.toArray(), indices);
+        return FromResources(resourceName, vertices, indices);
     }
 
     private static int[] processIndices(AIMesh aiMesh) {
@@ -43,24 +43,36 @@ public class MeshFactory {
         for (int i = 0; i < faceCount; ++i) {
             AIFace face = facesBuffer.get(i);
             if (face.mNumIndices() != 3) {
-                Log.Error("AIFace.mNumIndices() != 3");
+                Log.Error("AIFace.mNumIndices() != 3 : " + face.mNumIndices());
             }
             else {
-                result[i * 3] = face.mIndices().array()[0];
-                result[i * 1] = face.mIndices().array()[1];
-                result[i * 2] = face.mIndices().array()[2];
+                result[i * 3] = face.mIndices().get(0);
+                result[i * 3 + 1] = face.mIndices().get(1);
+                result[i * 3 + 2] = face.mIndices().get(2);;
             }
         }
         return result;
     }
-    private static void processVertices(AIMesh aiMesh, List<Vertex> vertices) {
+    private static Vertex[] processVertices(AIMesh aiMesh) {
+
+        Vertex[] vertices = new Vertex[aiMesh.mNumVertices()];
+
         AIVector3D.Buffer aiVertices = aiMesh.mVertices();
+        AIVector3D.Buffer texCoords = aiMesh.mTextureCoords(0);
+
+        int numTextCoords = texCoords != null ? texCoords.remaining() : 0;
+
+        int cnt = 0;
         while (aiVertices.remaining() > 0) {
             AIVector3D aiVertex = aiVertices.get();
-            vertices.add(new Vertex(
-                    new Vector3f(aiVertex.x(), aiVertex.y(), aiVertex.z()))
+            AIVector3D texCoord = texCoords.get();
+            vertices[cnt] = new Vertex(
+                    new Vector3f(aiVertex.x(), aiVertex.y(), aiVertex.z()),
+                    numTextCoords == vertices.length ? new Vector2f(texCoord.x(), texCoord.y()) : new Vector2f()
             );
+            cnt++;
         }
+        return vertices;
     }
 
     public static MeshResource FromResources(String resourceName, Vertex[] vertices, int[] indices) {

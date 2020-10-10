@@ -6,6 +6,8 @@ import Core.Resources.ResourceManager;
 import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWFramebufferSizeCallback;
+import org.lwjgl.glfw.GLFWMouseButtonCallback;
 
 import java.io.IOException;
 
@@ -62,6 +64,14 @@ public class Window {
 
         showCursor(false);
 
+        glfwSetFramebufferSizeCallback(_glfwWindowHandle, new GLFWFramebufferSizeCallback() {
+            @Override
+            public void invoke(long window, int width, int height) {
+                _bfrWidth = width;
+                _bfrHeight = height;
+                glViewport(0, 0, width, height);
+            }
+        });
         renderLoop();
 
         ResourceManager.ClearResources();

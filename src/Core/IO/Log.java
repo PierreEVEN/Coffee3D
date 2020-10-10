@@ -27,7 +27,22 @@ public class Log {
 
     public static void Display(String message) { Print(message, LogVerbosity.DISPLAY); }
     public static void Warning(String message) { Print(message, LogVerbosity.WARNING); }
-    public static void Error(String message) { Print(message, LogVerbosity.ERROR); }
-    public static void Fail(String message) { Print(message, LogVerbosity.FAIL); }
+    public static void Error(String message) {
+        Print(message, LogVerbosity.ERROR);
+        printStackTrace();
+    }
+    public static void Fail(String message) {
+        Print(message, LogVerbosity.FAIL);
+        printStackTrace();
+    }
 
+    private static void printStackTrace() {
+        StackTraceElement[] elements = Thread.currentThread().getStackTrace();
+        for (int i = 1; i < elements.length; i++) {
+            StackTraceElement s = elements[i];
+            System.out.println("\tat " + s.getClassName() + "." + s.getMethodName()
+                    + "(" + s.getFileName() + ":" + s.getLineNumber() + ")");
+        }
+        System.exit(1);
+    }
 }

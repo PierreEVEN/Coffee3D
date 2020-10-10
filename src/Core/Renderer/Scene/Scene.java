@@ -1,15 +1,14 @@
 package Core.Renderer.Scene;
 
 import Core.Assets.Material;
+import Core.Assets.StaticMesh;
 import Core.Assets.Texture2D;
 import Core.Renderer.Scene.Components.Camera;
 import Core.Renderer.Scene.Components.SceneComponent;
 import Core.Renderer.Scene.Gamemode.DefaultGamemode;
 import Core.Renderer.Scene.Gamemode.IGamemodeBase;
 import Core.Renderer.Window;
-import Core.Factories.MaterialFactory;
 import Core.Resources.MeshResource;
-import Core.Resources.Texture2DResource;
 import Core.Types.Vertex;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
@@ -17,6 +16,8 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
+
+import static org.lwjgl.opengl.GL46.*;
 
 public class Scene {
     private Camera _camera;
@@ -30,6 +31,9 @@ public class Scene {
     Material testMat;
     Texture2D testTexture;
     MeshResource testMesh;
+    StaticMesh testSm;
+
+
     public Scene() {
         //Initialize properties
         _components = new ArrayList<>();
@@ -41,10 +45,13 @@ public class Scene {
         //Create scene UBO
         _sceneUbo = new SceneStaticBuffer();
 
+        //Update gamemode
         _gamemode = new DefaultGamemode(this);
 
+        glEnable(GL_DEPTH_TEST);
+
         //testText = TextureFactory.T2dFromFile("test", "resources/textures/avazimmos.png");
-        testTexture = new Texture2D("testText", "resources/textures/avazimmos.png");
+        testTexture = new Texture2D("testText", "resources/textures/defaultGrid.png");
         testMat = new Material("testMat", "resources/shaders/shader");
        //         MaterialFactory.FromFiles("test2", "resources/shaders/shader.vert", "resources/shaders/shader.frag", new Texture2DResource[] {testTexture});
 
@@ -63,8 +70,8 @@ public class Scene {
         };
 
         testMesh = new MeshResource("test3", vertices, indices);
+        testSm = new StaticMesh("cube", "resources/models/test.fbx");
         testMesh.load();
-
     }
 
     public void close() {
@@ -76,18 +83,17 @@ public class Scene {
 
         testMat.use(this);
 
+        _gamemode.update(this);
+
         Matrix4f model = new Matrix4f().identity(); // make sure to initialize matrix to identity matrix first
 
         // translate
         model = model.translate(new Vector3f(0,0,0));
 
         // rotate
-        model = model.rotate(10, new Vector3f(1.0f, 0.3f, 0.5f));
+        //model = model.rotate(10, new Vector3f(1.0f, 0.3f, 0.5f));
 
-        _camera.setPosition(new Vector3f(0, 0, 0));
-        _camera.setFieldOfView(45);
-
-        _camera.setPosition(new Vector3f(2, 0, -1));
+        //_camera.setRotation(new Quaternionf().identity());
 
         testMat.getShader().setMatrixParameter("model", model);
         testMat.getShader().setMatrixParameter("view", _camera.getViewMatrix());
@@ -96,6 +102,7 @@ public class Scene {
         testMat.getShader().setFloatParameter("test", 4.f);
 
         testMesh.use(this);
+        testSm.use(this);
 
         for (SceneComponent component : _components) {
             component.draw(this);
@@ -105,16 +112,12 @@ public class Scene {
     public Camera getCamera() { return _camera; }
 
     public Matrix4f getProjection() {
-        if (_camera.enablePerspective()) {
             return new Matrix4f().perspective(
                     (float) Math.toRadians(_camera.getFieldOfView()),
                     Window.GetPrimaryWindow().getPixelWidth() / (float) Window.GetPrimaryWindow().getPixelHeight(),
                     _camera.getNearClipPlane(),
                     _camera.getFarClipPlane()
             );
-        }
-        else {
-            return new Matrix4f().identity();
-        }
+
     }
 }

@@ -16,6 +16,6 @@ public class StaticMeshComponent extends SceneComponent {
 
     @Override
     public void draw(Scene context) {
-        _mesh.draw(context);
+        _mesh.use(context);
     }
 }

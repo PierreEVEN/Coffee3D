@@ -7,7 +7,7 @@ import org.joml.Vector3f;
 
 public class Camera extends SceneComponent {
 
-    private float _fov, _zmin, _zmax;
+    private float _pitch, _yaw, _fov, _zmin, _zmax;
     private static final Vector3f CAMERA_UP = new Vector3f(0, 1, 0);
     private boolean _bUsePerspective = true;
 
@@ -16,11 +16,22 @@ public class Camera extends SceneComponent {
     private static final float MIN_PITCH = -80;
 
     public void addPitchInput(float delta) {
-        getRotation().rotateZ((float)Math.toRadians(delta));
+        _pitch += delta;
+        if (_pitch < -80) _pitch = -80;
+        if (_pitch > 80) _pitch = 80;
+        sendRotation();
     }
 
     public void addYawInput(float delta) {
-        getRotation().rotateY((float)Math.toRadians(delta));
+        _yaw += delta;
+        sendRotation();
+    }
+
+    private void sendRotation() {
+        Quaternionf rot = new Quaternionf().identity()
+                .rotateZ((float)Math.toRadians(_pitch))
+                .rotateY((float)Math.toRadians(_yaw));
+        setRotation(rot);
     }
 
     public Camera(Vector3f position, Quaternionf rotation) {
@@ -31,7 +42,7 @@ public class Camera extends SceneComponent {
     }
 
     public Matrix4f getViewMatrix() {
-        return new Matrix4f().lookAt(getPosition(), new Vector3f(getPosition()).add(getForwardVector()), CAMERA_UP);
+        return new Matrix4f().lookAt(getPosition(), new Vector3f(getPosition()).add(getForwardVector()), getUpVector());
     }
 
     @Override
@@ -39,6 +50,8 @@ public class Camera extends SceneComponent {
 
     public void setFieldOfView(float fov) {
         _fov = fov;
+        if (_fov < 1) _fov = 1;
+        if (_fov > 160) _fov = 160;
     }
 
     public float getFieldOfView() {

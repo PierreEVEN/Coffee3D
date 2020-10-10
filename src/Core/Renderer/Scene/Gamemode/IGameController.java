@@ -2,14 +2,11 @@ package Core.Renderer.Scene.Gamemode;
 
 import Core.Renderer.Scene.Scene;
 import Core.Renderer.Window;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWCursorPosCallback;
-import org.lwjgl.glfw.GLFWKeyCallback;
-import org.lwjgl.glfw.GLFWMouseButtonCallback;
+import org.lwjgl.glfw.*;
 
 public abstract class IGameController {
 
-    private Scene _scene;
+    private final Scene _scene;
 
     private double _cursorPosX = 0;
     private double _cursorPosY = 0;
@@ -21,8 +18,10 @@ public abstract class IGameController {
         _scene = scene;
     }
 
+    abstract void update(Scene context);
     abstract void mouseEvent(int button, int action, int mods);
     abstract void keyboardEvent(int key, int scancode, int action, int mods);
+    abstract void scrollEvent(double xOffset, double yOffset);
     protected void cursorPosEvent(double x, double y) {
         _cursorDeltaX = x - _cursorPosX;
         _cursorDeltaY = y - _cursorPosY;
@@ -55,6 +54,13 @@ public abstract class IGameController {
             @Override
             public void invoke(long window, double x, double y) {
                 cursorPosEvent(x, y);
+            }
+        });
+
+        GLFW.glfwSetScrollCallback(Window.GetPrimaryWindow().getGlfwWindowHandle(), new GLFWScrollCallback() {
+            @Override
+            public void invoke(long window, double xOffset, double yOffset) {
+                scrollEvent(xOffset, yOffset);
             }
         });
 

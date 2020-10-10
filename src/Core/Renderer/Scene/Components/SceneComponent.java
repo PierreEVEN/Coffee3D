@@ -59,25 +59,26 @@ public abstract class SceneComponent {
 
     public Vector3f getRightVector() {
         Vector3f vec = new Vector3f();
-        _rotation.normalizedPositiveY(vec);
+        _rotation.normalizedPositiveZ(vec);
         return vec;
     }
 
     public Vector3f getUpVector() {
         Vector3f vec = new Vector3f();
-        _rotation.normalizedPositiveZ(vec);
+        _rotation.normalizedPositiveY(vec);
         return vec;
     }
 
-    public void AddWorldOffset(Vector3f offset) {
+    public void addWorldOffset(Vector3f offset) {
         setPosition(new Vector3f(getPosition()).add(offset));
     }
 
-    public void AddLocalOffset(Vector3f offset) {
+    public void addLocalOffset(Vector3f offset) {
         Vector3f worldOffset = new Vector3f().zero()
                 .add(new Vector3f(getForwardVector()).mul(offset.x))
                 .add(new Vector3f(getRightVector()).mul(offset.y))
                 .add(new Vector3f(getUpVector()).mul(offset.z));
+        addWorldOffset(worldOffset);
     }
 
     public void attachToComponent(SceneComponent parent) {
