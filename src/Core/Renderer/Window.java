@@ -49,13 +49,6 @@ public class Window {
      * @param renderModule
      */
     public void run(IRenderModule renderModule) {
-
-        try {
-            String current = new java.io.File( "." ).getCanonicalPath();
-            System.out.println("Current dir:"+current);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         _renderModule = renderModule;
 
         _glfwWindowHandle = RenderUtils.InitializeGlfw(_bfrWidth, _bfrHeight, _windowTitle);
@@ -126,6 +119,10 @@ public class Window {
     }
 
     public boolean captureMouse() { return !_bDisplayCursor; }
+
+    public void setDrawMode(int drawMode) {
+        glPolygonMode( GL_FRONT_AND_BACK, drawMode );
+    }
 
     public void showCursor(boolean bshow) {
         _bDisplayCursor = bshow;

@@ -1,18 +1,11 @@
-package Core.Resources.Factories;
+package Core.Factories;
 
 import Core.IO.Log;
 import Core.Resources.Texture2DResource;
-import de.matthiasmann.twl.utils.PNGDecoder;
-import org.lwjgl.BufferUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.*;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
-import java.nio.ShortBuffer;
 
 /**
  * Handle texture resource creation

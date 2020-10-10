@@ -1,14 +1,13 @@
 package Core.Renderer.Scene;
 
-import Core.IO.Log;
+import Core.Assets.Material;
+import Core.Assets.Texture2D;
 import Core.Renderer.Scene.Components.Camera;
 import Core.Renderer.Scene.Components.SceneComponent;
 import Core.Renderer.Scene.Gamemode.DefaultGamemode;
 import Core.Renderer.Scene.Gamemode.IGamemodeBase;
 import Core.Renderer.Window;
-import Core.Resources.Factories.MaterialFactory;
-import Core.Resources.Factories.TextureFactory;
-import Core.Resources.MaterialResource;
+import Core.Factories.MaterialFactory;
 import Core.Resources.MeshResource;
 import Core.Resources.Texture2DResource;
 import Core.Types.Vertex;
@@ -16,12 +15,8 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-import org.lwjgl.glfw.GLFW;
 
-import java.io.*;
 import java.util.ArrayList;
-
-import static org.lwjgl.opengl.GL11.*;
 
 public class Scene {
     private Camera _camera;
@@ -32,8 +27,8 @@ public class Scene {
 
 
 
-    MaterialResource test;
-    Texture2DResource testText;
+    Material testMat;
+    Texture2D testTexture;
     MeshResource testMesh;
     public Scene() {
         //Initialize properties
@@ -48,8 +43,12 @@ public class Scene {
 
         _gamemode = new DefaultGamemode(this);
 
-        testText = TextureFactory.T2dFromFile("test", "resources/textures/avazimmos.png");
-        test = MaterialFactory.FromFiles("test2", "resources/shaders/shader.vert", "resources/shaders/shader.frag", new Texture2DResource[] {testText});
+        //testText = TextureFactory.T2dFromFile("test", "resources/textures/avazimmos.png");
+        testTexture = new Texture2D("testText", "resources/textures/avazimmos.png");
+        testMat = new Material("testMat", "resources/shaders/shader");
+       //         MaterialFactory.FromFiles("test2", "resources/shaders/shader.vert", "resources/shaders/shader.frag", new Texture2DResource[] {testTexture});
+
+
 
         Vertex[] vertices = {
                 new Vertex(new Vector3f(.5f, .5f, .0f), new Vector2f(1.0f, 1.0f)),
@@ -63,7 +62,7 @@ public class Scene {
                 0, 2, 3
         };
 
-        testMesh = new MeshResource(vertices, indices);
+        testMesh = new MeshResource("test3", vertices, indices);
         testMesh.load();
 
     }
@@ -75,7 +74,7 @@ public class Scene {
     public void renderScene() {
         _sceneUbo.use(this);
 
-        test.use(this);
+        testMat.use(this);
 
         Matrix4f model = new Matrix4f().identity(); // make sure to initialize matrix to identity matrix first
 
@@ -90,11 +89,11 @@ public class Scene {
 
         _camera.setPosition(new Vector3f(2, 0, -1));
 
-        test.setMatrixParameter("model", model);
-        test.setMatrixParameter("view", _camera.getViewMatrix());
-        test.setMatrixParameter("projection", getProjection());
+        testMat.getShader().setMatrixParameter("model", model);
+        testMat.getShader().setMatrixParameter("view", _camera.getViewMatrix());
+        testMat.getShader().setMatrixParameter("projection", getProjection());
 
-        test.setFloatParameter("test", 4.f);
+        testMat.getShader().setFloatParameter("test", 4.f);
 
         testMesh.use(this);
 

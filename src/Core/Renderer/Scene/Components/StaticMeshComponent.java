@@ -1,7 +1,7 @@
 package Core.Renderer.Scene.Components;
 
 import Core.Renderer.Scene.Scene;
-import Core.Resources.StaticMesh;
+import Core.Assets.StaticMesh;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 

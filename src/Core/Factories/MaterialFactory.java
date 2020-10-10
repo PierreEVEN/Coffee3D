@@ -1,4 +1,4 @@
-package Core.Resources.Factories;
+package Core.Factories;
 
 import Core.IO.Log;
 import Core.Resources.MaterialResource;

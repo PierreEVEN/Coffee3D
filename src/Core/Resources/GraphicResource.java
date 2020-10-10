@@ -15,4 +15,9 @@ public abstract class GraphicResource {
     public abstract void load();
     public abstract void unload();
     public abstract void use(Scene context);
+
+    @Override
+    public String toString() {
+        return _resourceName;
+    }
 }

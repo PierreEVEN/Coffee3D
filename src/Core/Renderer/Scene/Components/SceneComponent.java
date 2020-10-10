@@ -4,9 +4,13 @@ import Core.Renderer.Scene.Scene;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import java.util.List;
+
 public abstract class SceneComponent {
     private Vector3f _position;
     private Quaternionf _rotation;
+    private SceneComponent _parent = null;
+    private List<SceneComponent> _children = null;
 
     protected SceneComponent(Vector3f position, Quaternionf rotation) {
         _position = position;
@@ -74,5 +78,17 @@ public abstract class SceneComponent {
                 .add(new Vector3f(getForwardVector()).mul(offset.x))
                 .add(new Vector3f(getRightVector()).mul(offset.y))
                 .add(new Vector3f(getUpVector()).mul(offset.z));
+    }
+
+    public void attachToComponent(SceneComponent parent) {
+        detach();
+        if (parent == null) return;
+        _parent = parent;
+        if (!_parent._children.contains(this)) _parent._children.add(this);
+    }
+
+    public void detach() {
+        if (_parent != null && _parent._children.contains(this)) _parent._children.remove(this);
+        _parent = null;
     }
 }

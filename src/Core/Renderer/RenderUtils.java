@@ -32,7 +32,6 @@ public class RenderUtils {
 
         GLFWErrorCallback.createPrint(System.err).set();
 
-        Log.Warning("a");
         // Initialize Glfw
         if ( !glfwInit() ) Log.Fail("Failed to initialize glfw");
 

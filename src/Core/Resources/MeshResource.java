@@ -9,7 +9,7 @@ import java.nio.IntBuffer;
 
 import static org.lwjgl.opengl.GL46.*;
 
-public class MeshResource {
+public class MeshResource extends GraphicResource {
 
     private final Vertex[] _vertices;
     private final int[] _indices;
@@ -17,7 +17,8 @@ public class MeshResource {
     private int _meshVao;
     private int _meshEbo;
 
-    public MeshResource(Vertex[] vertices, int[] indices) {
+    public MeshResource(String resourceName, Vertex[] vertices, int[] indices) {
+        super(resourceName);
         _vertices = vertices;
         _indices = indices;
     }

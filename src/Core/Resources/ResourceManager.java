@@ -8,11 +8,11 @@ import java.util.Map;
 
 public class ResourceManager {
 
-    private static HashMap<String, GraphicResource> _resources = new HashMap<String, GraphicResource>();
+    private static HashMap<String, GraphicResource> _resources = new HashMap<>();
     public static HashMap<String, GraphicResource> GetResources() { return _resources; }
 
     public static void RegisterResource(GraphicResource resource) {
-        if (_resources.containsKey(resource)) {
+        if (_resources.containsKey(resource.getName())) {
             Log.Fail("Resource named " + resource.getName() + " already exist");
             return;
         }
@@ -34,6 +34,4 @@ public class ResourceManager {
         Log.Warning("failed to find resoure '" + resourceName + "'");
         return null;
     }
-
-
 }
