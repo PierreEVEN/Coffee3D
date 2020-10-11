@@ -34,7 +34,6 @@ public class Scene implements Serializable {
         _camera.attachToScene(this);
         _gameMode = new DefaultGamemode(this);
 
-
         // Create sample assets
         new Texture2D("gridTexture", "resources/textures/defaultGrid.png");
         new Texture2D("grass", "resources/textures/grassSeamless.png");
@@ -82,12 +81,6 @@ public class Scene implements Serializable {
     }
 
     public void renderScene() {
-        //set openGL parameters
-        glEnable(GL_DEPTH_TEST);
-        glEnable(GL_CULL_FACE);
-        glCullFace(GL_FRONT);
-        glFrontFace(GL_CW);
-
         // Tick gameMode
         _gameMode.update(this);
 

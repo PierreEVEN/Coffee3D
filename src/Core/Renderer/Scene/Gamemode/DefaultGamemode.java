@@ -9,7 +9,7 @@ public class DefaultGamemode extends IGamemodeBase {
     public DefaultGamemode(Scene scene) {
         super(scene);
         _defaultController = new DefaultController(scene);
-        _defaultController.enable();
+        //_defaultController.enable();
     }
 
     @Override

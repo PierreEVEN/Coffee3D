@@ -12,5 +12,6 @@
     <orderEntry type="library" name="joml" level="project" />
     <orderEntry type="library" name="lwjgl-assimp-javadoc" level="project" />
     <orderEntry type="library" name="pngdecoder-0.13" level="project" />
+    <orderEntry type="library" name="imgui-binding-1.78-1.3.0-javadoc" level="project" />
   </component>
 </module>

@@ -1,18 +1,25 @@
 package Core.Renderer;
 
 import Core.IO.Log;
+import Core.UI.ImGuiImplementation;
+import imgui.*;
+import imgui.callback.*;
+import imgui.flag.*;
+import imgui.gl3.ImGuiImplGl3;
 import org.joml.*;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.system.MemoryStack;
 
+import java.io.*;
 import java.nio.IntBuffer;
+import java.util.Objects;
 
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.nanovg.NanoVGGL3.nvgCreate;
 import static org.lwjgl.opengl.GL.createCapabilities;
 import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.system.MemoryStack.stackPush;
+
 
 public class RenderUtils {
 
@@ -70,16 +77,11 @@ public class RenderUtils {
         return _windowContext;
     }
 
-    public static long InitializeNanoVG() {
-        long _vgContext = nvgCreate(0);
-        if (_vgContext == 0) {
-            Log.Error("Could not init nanovg.");
-            return -1;
-        }
-        return _vgContext;
+    public static void InitializeImgui(long glfwWindowHandle) {
+        ImGuiImplementation.Get().init(glfwWindowHandle);
     }
 
-    public static void ShutdownNanoVG() {
+    public static void ShutdownImgui() {
 
     }
 
