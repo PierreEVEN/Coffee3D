@@ -1,0 +1,12 @@
+unnamed package
+Core
+Core.Assets
+Core.Factories
+Core.IO
+Core.Renderer
+Core.Renderer.Scene
+Core.Renderer.Scene.Components
+Core.Renderer.Scene.Gamemode
+Core.Resources
+Core.Types
+Editor

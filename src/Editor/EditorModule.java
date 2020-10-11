@@ -1,11 +1,8 @@
 package Editor;
 
-import Core.IRenderModule;
+import Core.IEngineModule;
 
-public class EditorRenderModule implements IRenderModule {
-
-
-
+public class EditorModule implements IEngineModule {
 
     @Override
     public void LoadResources() {

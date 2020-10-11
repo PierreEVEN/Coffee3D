@@ -35,6 +35,7 @@ public class Texture2DResource extends TextureResource {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
         glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, new float[] {1,0,0,0});
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
 
     @Override

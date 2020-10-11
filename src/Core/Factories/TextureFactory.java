@@ -40,7 +40,7 @@ public class TextureFactory {
                 }
             }
 
-            T2dFromData(resourceName, result, bfr.getWidth(), bfr.getHeight());
+            return T2dFromData(resourceName, result, bfr.getWidth(), bfr.getHeight());
         }
         catch(Exception e) {
             Log.Error("failed to open texture : " + e.getMessage());

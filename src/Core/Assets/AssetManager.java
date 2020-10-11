@@ -20,10 +20,10 @@ public class AssetManager {
         _assets.clear();
     }
 
-    public static Asset GetAsset(String assetName) {
+    public static <T> T GetAsset(String assetName) {
         Asset asset = _assets.get(assetName);
         if (asset != null) {
-            return asset;
+            return (T)asset;
         }
         Log.Warning("failed to find asset '" + assetName + "'");
         return null;

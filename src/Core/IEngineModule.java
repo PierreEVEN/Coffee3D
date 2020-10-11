@@ -1,6 +1,6 @@
 package Core;
 
-public interface IRenderModule {
+public interface IEngineModule {
     void LoadResources();
 
     void BuildLevel();

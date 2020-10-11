@@ -1,2 +1,2 @@
 # Coffee3D
-Java basic game engine
+3D game engine made with lwjgl

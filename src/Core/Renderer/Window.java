@@ -1,16 +1,12 @@
 package Core.Renderer;
 
 import Core.IO.Log;
-import Core.IRenderModule;
+import Core.IEngineModule;
 import Core.Renderer.Scene.Scene;
 import Core.Resources.ResourceManager;
 import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWFramebufferSizeCallback;
-import org.lwjgl.glfw.GLFWMouseButtonCallback;
-
-import java.io.IOException;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL46.*;
@@ -27,7 +23,7 @@ public class Window {
     private double _lastFrameTime;
     private boolean _bDisplayCursor;
 
-    private IRenderModule _renderModule;
+    private IEngineModule _renderModule;
 
     /**
      * Singleton used to reference the primary window
@@ -51,7 +47,7 @@ public class Window {
      * (cleanup resource after execution)
      * @param renderModule
      */
-    public void run(IRenderModule renderModule) {
+    public void run(IEngineModule renderModule) {
         _renderModule = renderModule;
 
         _glfwWindowHandle = RenderUtils.InitializeGlfw(_bfrWidth, _bfrHeight, _windowTitle);

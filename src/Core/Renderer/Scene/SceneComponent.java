@@ -4,11 +4,12 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-public class SceneComponent {
+public class SceneComponent implements Serializable {
     private Vector3f _position;
     private Quaternionf _rotation;
     private Vector3f _scale;
