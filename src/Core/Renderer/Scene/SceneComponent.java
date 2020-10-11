@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-public abstract class SceneComponent {
+public class SceneComponent {
     private Vector3f _position;
     private Quaternionf _rotation;
     private Vector3f _scale;
@@ -54,7 +54,7 @@ public abstract class SceneComponent {
         }
     }
 
-    protected abstract void draw(Scene context);
+    protected void draw(Scene context) {}
 
     public void setPosition(Vector3f position) {
         _position = position;

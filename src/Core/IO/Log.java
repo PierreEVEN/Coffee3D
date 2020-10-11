@@ -22,7 +22,7 @@ public class Log {
             case FAIL -> color = ANSI_PURPLE;
         }
 
-        System.out.println(color + message + ANSI_RESET);
+        Logger.Get().print(message, color);
     }
 
     public static void Display(String message) { Print(message, LogVerbosity.DISPLAY); }

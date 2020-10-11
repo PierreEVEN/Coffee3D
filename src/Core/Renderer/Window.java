@@ -110,6 +110,8 @@ public class Window {
             _renderModule.DrawUI(_nanoVgHandle);
 
             glfwSwapBuffers(_glfwWindowHandle); // swap the color buffers
+
+            System.gc();
         }
     }
 

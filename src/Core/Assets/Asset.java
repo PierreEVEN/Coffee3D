@@ -5,8 +5,8 @@ import Core.Renderer.Scene.Scene;
 import java.io.Serializable;
 
 public abstract class Asset implements Serializable {
-    private String _name;
-    private String _filePath;
+    private final String _name;
+    private final String _filePath;
 
     protected Asset(String name, String filePath) {
         _filePath = filePath;

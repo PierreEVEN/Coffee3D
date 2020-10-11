@@ -3,13 +3,11 @@ package Core.Assets;
 import Core.Factories.MaterialFactory;
 import Core.Renderer.Scene.Scene;
 import Core.Resources.MaterialResource;
-import Core.Resources.ResourceManager;
-import Core.Resources.TextureResource;
 
 public class Material extends Asset {
 
     private transient MaterialResource _mat;
-    private String[] _textureNames;
+    private final String[] _textureNames;
 
     public Material(String name, String filePath) {
         super(name, filePath);

@@ -9,11 +9,8 @@ import Core.Renderer.Scene.Components.StaticMeshComponent;
 import Core.Renderer.Scene.Gamemode.DefaultGamemode;
 import Core.Renderer.Scene.Gamemode.IGamemodeBase;
 import Core.Renderer.Window;
-import Core.Resources.MeshResource;
-import Core.Types.Vertex;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
-import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
@@ -32,7 +29,7 @@ public class Scene {
 
     Material testMat;
     Texture2D testTexture;
-    Material matCHelou;
+    Material matChelou;
 
 
     public Scene() {
@@ -48,39 +45,50 @@ public class Scene {
 
         testTexture = new Texture2D("testText", "resources/textures/defaultGrid.png");
         testMat = new Material("testMat", "resources/shaders/shader");
-        matCHelou = new Material("matChelou", "resources/shaders/test");
-
-        StaticMeshComponent parent = new StaticMeshComponent(
-                new StaticMesh("test", "resources/models/test.fbx", new String[] { "testMat" }),
-                new Vector3f(0,0,0),
-                new Quaternionf().fromAxisAngleDeg(new Vector3f(0,0,1), 10),
-                new Vector3f(1,1,1)
-        );
-        parent.attachToScene(this);
+        matChelou = new Material("matChelou", "resources/shaders/test");
 
         StaticMesh cube = new StaticMesh("cube", "resources/models/cube.fbx", new String[] { "matChelou" });
+        StaticMesh testSm = new StaticMesh("test", "resources/models/test.fbx", new String[] { "testMat" });
 
-        new StaticMeshComponent(
-                cube,
-                new Vector3f(0,0,2),
-                new Quaternionf().fromAxisAngleDeg(new Vector3f(1,0,0), 25),
-                new Vector3f(1.5f,0.8f,1)
-        ).attachToComponent(parent);
 
-        StaticMeshComponent subChild = new StaticMeshComponent(
-                cube,
-                new Vector3f(0,4,1),
-                new Quaternionf().fromAxisAngleDeg(new Vector3f(1,2,0).normalize(), 8789),
-                new Vector3f(1.5f,0.8f,1.4f)
-        );
-        subChild.attachToComponent(parent);
+        SceneComponent root = new SceneComponent(new Vector3f(0,0,0), new Quaternionf().identity(), new Vector3f(1,1,1));
 
-        new StaticMeshComponent(
-                cube,
-                new Vector3f(3,2,1),
-                new Quaternionf().fromAxisAngleDeg(new Vector3f(1,2,0).normalize(), 489),
-                new Vector3f(1.1f,0.8f,0.02f)
-        ).attachToComponent(subChild);
+        root.attachToScene(this);
+
+        Random rnd = new Random();
+        for (int i = 0; i < 300; ++i) {
+            float range = 200;
+
+            StaticMeshComponent parent = new StaticMeshComponent(
+                    testSm,
+                    new Vector3f(rnd.nextFloat() * range - range / 2 , rnd.nextFloat() * range - range / 2, rnd.nextFloat() * range - range / 2),
+                    new Quaternionf().fromAxisAngleDeg(new Vector3f(0, 0, 1), 10),
+                    new Vector3f(1, 1, 1)
+            );
+            parent.attachToComponent(root);
+
+            new StaticMeshComponent(
+                    cube,
+                    new Vector3f(0, 0, 2),
+                    new Quaternionf().fromAxisAngleDeg(new Vector3f(1, 0, 0), 25),
+                    new Vector3f(1.5f, 0.8f, 1)
+            ).attachToComponent(parent);
+
+            StaticMeshComponent subChild = new StaticMeshComponent(
+                    cube,
+                    new Vector3f(0, 4, 1),
+                    new Quaternionf().fromAxisAngleDeg(new Vector3f(1, 2, 0).normalize(), 8789),
+                    new Vector3f(1.5f, 0.8f, 1.4f)
+            );
+            subChild.attachToComponent(parent);
+
+            new StaticMeshComponent(
+                    cube,
+                    new Vector3f(3, 2, 1),
+                    new Quaternionf().fromAxisAngleDeg(new Vector3f(1, 2, 0).normalize(), 489),
+                    new Vector3f(1.1f, 0.8f, 0.02f)
+            ).attachToComponent(subChild);
+        }
     }
 
     public void renderScene() {
@@ -95,16 +103,18 @@ public class Scene {
         testMat.use(this);
         testMat.getShader().setMatrixParameter("view", _camera.getViewMatrix());
         testMat.getShader().setMatrixParameter("projection", getProjection());
-        matCHelou.use(this);
-        matCHelou.getShader().setMatrixParameter("view", _camera.getViewMatrix());
-        matCHelou.getShader().setMatrixParameter("projection", getProjection());
+        matChelou.use(this);
+        matChelou.getShader().setMatrixParameter("view", _camera.getViewMatrix());
+        matChelou.getShader().setMatrixParameter("projection", getProjection());
 
 
         for (SceneComponent component : _components) {
-            if (component instanceof StaticMeshComponent) component.setPosition(new Vector3f((float)Math.sin(GLFW.glfwGetTime()) * 4,
-                    (float)Math.sin(GLFW.glfwGetTime() * 2) * 3,
-                    (float)Math.sin(GLFW.glfwGetTime() * 0.5f) * 2));
-            if (component instanceof StaticMeshComponent) component.setScale(new Vector3f(((float)Math.sin(GLFW.glfwGetTime() * 4.2f) + 2) / 3,1,1));
+            if (!(component instanceof Camera)) component.getLocalPosition().x = (float)Math.sin(GLFW.glfwGetTime()) * 4;
+            if (!(component instanceof Camera)) component.getLocalPosition().y = (float)Math.sin(GLFW.glfwGetTime() * 2) * 3;
+            if (!(component instanceof Camera)) component.getLocalPosition().z = (float)Math.sin(GLFW.glfwGetTime() * 0.5f) * 2;
+
+            if (!(component instanceof Camera)) component.getLocalScale().x = ((float)Math.sin(GLFW.glfwGetTime() * 4.2f) + 2) / 3;
+
             component.drawInternal(this);
         }
     }
