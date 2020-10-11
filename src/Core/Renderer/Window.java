@@ -113,7 +113,10 @@ public class Window {
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT); // clear the framebuffer
 
+            glBindBuffer(GL_FRAMEBUFFER, _windowScene.getFramebuffer().getBufferId());
             _windowScene.renderScene();
+
+            glBindBuffer(GL_FRAMEBUFFER, 0);
 
             IntBuffer winWidth = BufferUtils.createIntBuffer(1);
             IntBuffer winHeight = BufferUtils.createIntBuffer(1);
@@ -149,6 +152,8 @@ public class Window {
             ImGui.setNextWindowDockID(dockspaceID , ImGuiCond.FirstUseEver);
             if (ImGui.begin("Dockable Window"))
             {
+                ImGui.image(_windowScene.getFramebuffer().getColorBuffer(), _windowScene.getFramebuffer().getWidth(), _windowScene.getFramebuffer().getHeight());
+
                 ImGui.textUnformatted("Test");
             }
             ImGui.end();

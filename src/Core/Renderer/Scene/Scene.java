@@ -4,6 +4,7 @@ import Core.Assets.AssetManager;
 import Core.Assets.Material;
 import Core.Assets.StaticMesh;
 import Core.Assets.Texture2D;
+import Core.IO.Log;
 import Core.Renderer.Scene.Components.Camera;
 import Core.Renderer.Scene.Components.StaticMeshComponent;
 import Core.Renderer.Scene.Gamemode.DefaultGamemode;
@@ -14,6 +15,7 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
+import java.awt.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
@@ -23,7 +25,7 @@ import static org.lwjgl.opengl.GL46.*;
 public class Scene implements Serializable {
     private final transient Camera _camera;
     private final transient IGamemodeBase _gameMode;
-
+    private final Framebuffer _sceneBuffer;
     private final ArrayList<SceneComponent> _components;
 
 
@@ -33,6 +35,7 @@ public class Scene implements Serializable {
         _camera = new Camera(new Vector3f(0, 0, 0), new Quaternionf(0, 0, 0, 1));
         _camera.attachToScene(this);
         _gameMode = new DefaultGamemode(this);
+        _sceneBuffer = new Framebuffer(Window.GetPrimaryWindow().getPixelWidth(), Window.GetPrimaryWindow().getPixelHeight());
 
         // Create sample assets
         new Texture2D("gridTexture", "resources/textures/defaultGrid.png");
@@ -81,6 +84,10 @@ public class Scene implements Serializable {
     }
 
     public void renderScene() {
+
+        glBindBuffer(GL_FRAMEBUFFER, _sceneBuffer.getBufferId());
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
         // Tick gameMode
         _gameMode.update(this);
 
@@ -106,6 +113,8 @@ public class Scene implements Serializable {
 
             component.drawInternal(this);
         }
+
+        glBindBuffer(GL_FRAMEBUFFER, 0);
     }
 
     /**
@@ -130,6 +139,8 @@ public class Scene implements Serializable {
             _components.add(rootComponent);
         }
     }
+
+    public Framebuffer getFramebuffer() { return _sceneBuffer; }
 
     public Camera getCamera() { return _camera; }
 
