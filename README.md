@@ -1,5 +1,5 @@
 # Coffee3D
-Java basic game engine
+3D game engine running on openGL
 
 required libraries :
     -lwjgl https://www.lwjgl.org/customize
