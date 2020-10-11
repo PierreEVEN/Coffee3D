@@ -3,8 +3,9 @@ package Core.Renderer.Scene;
 import Core.Assets.Material;
 import Core.Assets.StaticMesh;
 import Core.Assets.Texture2D;
+import Core.IO.Log;
 import Core.Renderer.Scene.Components.Camera;
-import Core.Renderer.Scene.Components.SceneComponent;
+import Core.Renderer.Scene.Components.StaticMeshComponent;
 import Core.Renderer.Scene.Gamemode.DefaultGamemode;
 import Core.Renderer.Scene.Gamemode.IGamemodeBase;
 import Core.Renderer.Window;
@@ -14,14 +15,15 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import static org.lwjgl.opengl.GL46.*;
 
 public class Scene {
     private Camera _camera;
-    private SceneStaticBuffer _sceneUbo;
     private IGamemodeBase _gamemode;
 
     private ArrayList<SceneComponent> _components;
@@ -30,8 +32,7 @@ public class Scene {
 
     Material testMat;
     Texture2D testTexture;
-    MeshResource testMesh;
-    StaticMesh testSm;
+    Material matCHelou;
 
 
     public Scene() {
@@ -42,70 +43,92 @@ public class Scene {
         _camera = new Camera(new Vector3f(0, 0, 0), new Quaternionf(0, 0, 0, 1));
         _components.add(_camera);
 
-        //Create scene UBO
-        _sceneUbo = new SceneStaticBuffer();
-
         //Update gamemode
         _gamemode = new DefaultGamemode(this);
 
-        glEnable(GL_DEPTH_TEST);
-
-        //testText = TextureFactory.T2dFromFile("test", "resources/textures/avazimmos.png");
         testTexture = new Texture2D("testText", "resources/textures/defaultGrid.png");
         testMat = new Material("testMat", "resources/shaders/shader");
-       //         MaterialFactory.FromFiles("test2", "resources/shaders/shader.vert", "resources/shaders/shader.frag", new Texture2DResource[] {testTexture});
+        matCHelou = new Material("matChelou", "resources/shaders/test");
 
+        StaticMeshComponent parent = new StaticMeshComponent(
+                new StaticMesh("test", "resources/models/test.fbx", new String[] { "testMat" }),
+                new Vector3f(0,0,0),
+                new Quaternionf().fromAxisAngleDeg(new Vector3f(0,0,1), 10),
+                new Vector3f(1,1,1)
+        );
+        parent.attachToScene(this);
 
+        StaticMesh cube = new StaticMesh("cube", "resources/models/cube.fbx", new String[] { "matChelou" });
 
-        Vertex[] vertices = {
-                new Vertex(new Vector3f(.5f, .5f, .0f), new Vector2f(1.0f, 1.0f)),
-                new Vertex(new Vector3f(.5f, -.5f, .0f), new Vector2f(1.0f, 0.0f)),
-                new Vertex(new Vector3f(-.5f, -.5f, .0f), new Vector2f(0.0f, 0.0f)),
-                new Vertex(new Vector3f(-.5f, .5f, .0f), new Vector2f(0.0f, 1.0f)),
-        };
+        new StaticMeshComponent(
+                cube,
+                new Vector3f(0,0,2),
+                new Quaternionf().fromAxisAngleDeg(new Vector3f(1,0,0), 25),
+                new Vector3f(1.5f,0.8f,1)
+        ).attachToComponent(parent);
 
-        int[] indices = {
-                0, 1, 2,
-                0, 2, 3
-        };
+        StaticMeshComponent subChild = new StaticMeshComponent(
+                cube,
+                new Vector3f(0,4,1),
+                new Quaternionf().fromAxisAngleDeg(new Vector3f(1,2,0).normalize(), 8789),
+                new Vector3f(1.5f,0.8f,1.4f)
+        );
+        subChild.attachToComponent(parent);
 
-        testMesh = new MeshResource("test3", vertices, indices);
-        testSm = new StaticMesh("cube", "resources/models/test.fbx");
-        testMesh.load();
-    }
-
-    public void close() {
-
+        new StaticMeshComponent(
+                cube,
+                new Vector3f(3,2,1),
+                new Quaternionf().fromAxisAngleDeg(new Vector3f(1,2,0).normalize(), 489),
+                new Vector3f(1.1f,0.8f,0.02f)
+        ).attachToComponent(subChild);
     }
 
     public void renderScene() {
-        _sceneUbo.use(this);
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_FRONT);
+        glFrontFace(GL_CW);
 
-        testMat.use(this);
-
+        // Tick gameMode
         _gamemode.update(this);
 
-        Matrix4f model = new Matrix4f().identity(); // make sure to initialize matrix to identity matrix first
-
-        // translate
-        model = model.translate(new Vector3f(0,0,0));
-
-        // rotate
-        //model = model.rotate(10, new Vector3f(1.0f, 0.3f, 0.5f));
-
-        //_camera.setRotation(new Quaternionf().identity());
-
-        testMat.getShader().setMatrixParameter("model", model);
+        testMat.use(this);
         testMat.getShader().setMatrixParameter("view", _camera.getViewMatrix());
         testMat.getShader().setMatrixParameter("projection", getProjection());
+        matCHelou.use(this);
+        matCHelou.getShader().setMatrixParameter("view", _camera.getViewMatrix());
+        matCHelou.getShader().setMatrixParameter("projection", getProjection());
 
-        testMat.getShader().setFloatParameter("test", 4.f);
-
-        testMesh.use(this);
-        testSm.use(this);
 
         for (SceneComponent component : _components) {
-            component.draw(this);
+            if (component instanceof StaticMeshComponent) component.setPosition(new Vector3f((float)Math.sin(GLFW.glfwGetTime()) * 4,
+                    (float)Math.sin(GLFW.glfwGetTime() * 2) * 3,
+                    (float)Math.sin(GLFW.glfwGetTime() * 0.5f) * 2));
+            if (component instanceof StaticMeshComponent) component.setScale(new Vector3f(((float)Math.sin(GLFW.glfwGetTime() * 4.2f) + 2) / 3,1,1));
+            component.drawInternal(this);
+        }
+    }
+
+    /**
+     * Make component root on this scene.
+     * (don't call this method yourself, use component.attachToScene(sceneParam));
+     * @param rootComponent
+     */
+    protected void attachComponent(SceneComponent rootComponent) {
+        if (rootComponent != null && !_components.contains(rootComponent)) {
+            rootComponent.detach();
+            _components.add(rootComponent);
+        }
+    }
+
+    /**
+     * Unregister component from this scene.
+     * (don't call this method yourself, use component.detach());
+     * @param rootComponent
+     */
+    protected void detachComponent(SceneComponent rootComponent) {
+        if (rootComponent != null && _components.contains(rootComponent)) {
+            _components.add(rootComponent);
         }
     }
 
@@ -118,6 +141,5 @@ public class Scene {
                     _camera.getNearClipPlane(),
                     _camera.getFarClipPlane()
             );
-
     }
 }

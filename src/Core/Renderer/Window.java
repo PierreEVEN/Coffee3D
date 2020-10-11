@@ -1,5 +1,6 @@
 package Core.Renderer;
 
+import Core.IO.Log;
 import Core.IRenderModule;
 import Core.Renderer.Scene.Scene;
 import Core.Resources.ResourceManager;
@@ -54,7 +55,7 @@ public class Window {
         _renderModule = renderModule;
 
         _glfwWindowHandle = RenderUtils.InitializeGlfw(_bfrWidth, _bfrHeight, _windowTitle);
-        RenderUtils.InitializeOpenGL(new Vector4f(.5f, .5f, .8f, 1.f));
+        RenderUtils.InitializeOpenGL(new Vector4f(.1f, .1f, .15f, 1.f));
         _nanoVgHandle = RenderUtils.InitializeNanoVG();
 
         _renderModule.LoadResources();
@@ -80,6 +81,8 @@ public class Window {
         RenderUtils.ShutDownGlfw();
     }
 
+    private double lastTime = 0;
+
     /**
      * Poll glfw events,
      * then draw window content
@@ -88,6 +91,15 @@ public class Window {
         while (!glfwWindowShouldClose(_glfwWindowHandle)) {
             _deltaTime = GLFW.glfwGetTime() - _lastFrameTime;
             _lastFrameTime = GLFW.glfwGetTime();
+
+
+
+            if (lastTime > 1) {
+                lastTime = 0;
+                Log.Display("delta : " + Window.GetPrimaryWindow().getDeltaTime());
+            }
+            lastTime += Window.GetPrimaryWindow().getDeltaTime();
+
 
             glfwPollEvents();
 

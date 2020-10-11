@@ -80,7 +80,6 @@ public class MeshResource extends GraphicResource {
             data[i * Vertex.GetFloatSize() + 9] = vertices[i].vertexColor.y;
             data[i * Vertex.GetFloatSize() + 10] = vertices[i].vertexColor.z;
             data[i * Vertex.GetFloatSize() + 11] = vertices[i].vertexColor.w;
-
         }
 
         return data;

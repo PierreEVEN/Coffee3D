@@ -5,9 +5,6 @@ import Core.Types.SceneBufferData;
 import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 
-import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
-
 import static org.lwjgl.opengl.GL46.*;
 
 public class SceneStaticBuffer extends GraphicResource {
@@ -40,7 +37,7 @@ public class SceneStaticBuffer extends GraphicResource {
     public void use(Scene context) {
         bufferData.viewMatrix = new Matrix4f().identity();//context.getCamera().getViewMatrix();
         bufferData.worldProjection = new Matrix4f().identity();//context.getProjection();
-        bufferData.cameraPosition = context.getCamera().getPosition();
+        bufferData.cameraPosition = context.getCamera().getLocalPosition();
 
         float[] data = new float[1];
         data[0] = (float)GLFW.glfwGetTime();

@@ -1,6 +1,7 @@
 package Core.Renderer.Scene.Components;
 
 import Core.Renderer.Scene.Scene;
+import Core.Renderer.Scene.SceneComponent;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -35,14 +36,14 @@ public class Camera extends SceneComponent {
     }
 
     public Camera(Vector3f position, Quaternionf rotation) {
-        super(position, rotation);
+        super(position, rotation, new Vector3f(1,1,1));
         _fov = 45.f;
-        _zmin = 0.0001f;
-        _zmax = 100.f;
+        _zmin = 0.001f;
+        _zmax = 500.f;
     }
 
     public Matrix4f getViewMatrix() {
-        return new Matrix4f().lookAt(getPosition(), new Vector3f(getPosition()).add(getForwardVector()), getUpVector());
+        return new Matrix4f().lookAt(getLocalPosition(), new Vector3f(getLocalPosition()).add(getForwardVector()), getUpVector());
     }
 
     @Override
