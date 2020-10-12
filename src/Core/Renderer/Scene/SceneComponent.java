@@ -1,6 +1,5 @@
 package Core.Renderer.Scene;
 
-import Core.IO.Log;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;

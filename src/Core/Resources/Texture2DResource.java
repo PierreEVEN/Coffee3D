@@ -1,17 +1,18 @@
 package Core.Resources;
 
-import Core.IO.Log;
+import Core.IO.LogOutput.Log;
 import Core.Renderer.Scene.Scene;
-
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 
 import static org.lwjgl.opengl.GL30.*;
 
+/**
+ * Simple texture 2D
+ */
 public class Texture2DResource extends TextureResource {
 
-    private int _width, _height;
-    private int[] _data;
+    private final int _width;
+    private final int _height;
+    private final int[] _data;
 
     public Texture2DResource(String resourceName, int[] data, int width, int height) {
         super(resourceName);
@@ -43,16 +44,25 @@ public class Texture2DResource extends TextureResource {
         glDeleteTextures(_textureHandle);
     }
 
-    public int getTextureHandle() {
-        return _textureHandle;
-    }
-
+    /**
+     * Texture width
+     * @return width
+     */
     public int getWidth() { return _width; }
 
+    /**
+     * Texture height
+     * @return height
+     */
     public int getHeight() { return _height; }
 
+    /**
+     * Texture2D is usually linked to a desired material
+     * never call 'use' on a texture2D
+     * @param context scene context
+     */
     @Override
     public void use(Scene context) {
-        Log.Error("Textures must be linked to material resource");
+        Log.Error("a Texture2D must be linked to material resource");
     }
 }

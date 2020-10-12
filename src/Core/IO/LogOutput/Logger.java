@@ -1,4 +1,4 @@
-package Core.IO;
+package Core.IO.LogOutput;
 
 import java.io.FileWriter;
 import java.nio.file.Files;

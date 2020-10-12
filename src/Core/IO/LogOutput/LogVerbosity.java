@@ -1,4 +1,4 @@
-package Core.IO;
+package Core.IO.LogOutput;
 
 public enum LogVerbosity {
     DISPLAY,

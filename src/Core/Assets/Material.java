@@ -1,7 +1,6 @@
 package Core.Assets;
 
 import Core.Factories.MaterialFactory;
-import Core.IO.Log;
 import Core.Renderer.Scene.Scene;
 import Core.Resources.MaterialResource;
 
@@ -37,7 +36,7 @@ public class Material extends Asset {
         List<Texture2D> res = new ArrayList<>();
         if (_textureNames == null) return res;
         for (String texture : _textureNames) {
-            Texture2D foundTexture = AssetManager.GetAsset(texture);
+            Texture2D foundTexture = AssetManager.FindAsset(texture);
             if (foundTexture != null) res.add(foundTexture);
         }
         return res;

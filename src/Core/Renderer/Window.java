@@ -1,16 +1,11 @@
 package Core.Renderer;
 
-import Core.IO.Inputs.GlfwInputHandler;
 import Core.IEngineModule;
-import Core.IO.Log;
-import Core.Renderer.Scene.RenderScene;
+import Core.IO.LogOutput.Log;
 import Core.Resources.ResourceManager;
 import Core.UI.ImGuiImplementation;
 import imgui.ImGui;
 import imgui.ImGuiIO;
-import imgui.flag.ImGuiCond;
-import imgui.flag.ImGuiDockNodeFlags;
-import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWFramebufferSizeCallback;
@@ -55,16 +50,19 @@ public class Window {
     public void run(IEngineModule engineModule) {
         _engineModule = engineModule;
 
+        Log.Display("initialize glfw");
         _glfwWindowHandle = RenderUtils.InitializeGlfw(_bfrWidth, _bfrHeight, _windowTitle);
-        RenderUtils.InitializeOpenGL(new Vector4f(.5f, .7f, .9f, 1.f));
-        RenderUtils.InitializeImgui(_glfwWindowHandle);
+        Log.Display("initialize openGL");
+        RenderUtils.InitializeOpenGL();
+        Log.Display("initialize imGui");
+        ImGuiImplementation.Get().init(_glfwWindowHandle);
+        showCursor(true);
 
         Log.Display("load resources");
         _engineModule.LoadResources();
 
         Log.Display("build level");
-        _engineModule.BuildLevel();
-
+        _engineModule.PreInitialize();
 
         glfwSetFramebufferSizeCallback(_glfwWindowHandle, new GLFWFramebufferSizeCallback() {
             @Override
@@ -75,16 +73,19 @@ public class Window {
             }
         });
 
-        showCursor(true);
 
-        GlfwInputHandler.Initialize(_glfwWindowHandle);
-
+        Log.Display("Start render loop");
         renderLoop();
 
+        Log.Display("Clear resources");
         ResourceManager.ClearResources();
-        RenderUtils.ShutdownImgui();
+        Log.Display("Clear imGui resources");
+        ImGuiImplementation.Get().shutDown();
+        Log.Display("Shutting down opengl");
         RenderUtils.ShutDownOpenGL();
-        RenderUtils.ShutDownGlfw();
+        Log.Display("Shutting down glfw");
+        RenderUtils.ShutDownGlfw(_glfwWindowHandle);
+        Log.Display("done");
     }
 
     /**
@@ -97,12 +98,12 @@ public class Window {
             // Update delta time
             updateDeltaTime();
 
+            // Poll inputs
+            glfwPollEvents();
+
             // Clear background buffer
             glClearColor(0,0,0,1);
             glClear(GL_COLOR_BUFFER_BIT);
-
-            // Poll inputs
-            glfwPollEvents();
 
             _engineModule.DrawScene();
             initUI();

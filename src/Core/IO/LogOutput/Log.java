@@ -1,7 +1,11 @@
-package Core.IO;
+package Core.IO.LogOutput;
 
+/**
+ * Receive log events
+ */
 public class Log {
 
+    /** log colors */
     private static final String ANSI_RESET = "\u001B[0m";
     private static final String ANSI_BLACK = "\u001B[30m";
     private static final String ANSI_RED = "\u001B[31m";
@@ -13,6 +17,11 @@ public class Log {
     private static final String ANSI_WHITE = "\u001B[37m";
 
 
+    /**
+     * Print log
+     * @param message   text
+     * @param verbosity verbosity
+     */
     public static void Print(String message, LogVerbosity verbosity) {
         String color = ANSI_WHITE;
         switch (verbosity) {
@@ -21,16 +30,34 @@ public class Log {
             case ERROR -> color = ANSI_RED;
             case FAIL -> color = ANSI_PURPLE;
         }
-
         Logger.Get().print(message, color);
     }
 
+    /**
+     * print display message
+     * @param message text
+     */
     public static void Display(String message) { Print(message, LogVerbosity.DISPLAY); }
+
+    /**
+     * print warning message
+     * @param message text
+     */
     public static void Warning(String message) { Print(message, LogVerbosity.WARNING); }
+
+    /**
+     * print error message
+     * @param message text
+     */
     public static void Error(String message) {
         Print(message, LogVerbosity.ERROR);
         printStackTrace();
     }
+
+    /**
+     * print fail message
+     * @param message text
+     */
     public static void Fail(String message) {
         Print(message, LogVerbosity.FAIL);
         printStackTrace();

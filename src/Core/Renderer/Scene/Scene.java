@@ -1,29 +1,18 @@
 package Core.Renderer.Scene;
 
-import Core.Assets.AssetManager;
-import Core.Assets.Material;
-import Core.Assets.StaticMesh;
-import Core.Assets.Texture2D;
 import Core.Renderer.Scene.Components.Camera;
-import Core.Renderer.Scene.Components.StaticMeshComponent;
 import Core.Renderer.Scene.Gamemode.DefaultGamemode;
 import Core.Renderer.Scene.Gamemode.IGamemodeBase;
 import Core.Renderer.Window;
 import org.joml.Matrix4f;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Random;
-
-import static org.lwjgl.opengl.GL46.*;
 
 public class Scene implements Serializable {
     private final transient Camera _camera;
     private final transient IGamemodeBase _gameMode;
     private final ArrayList<SceneComponent> _components;
-
 
     public Scene() {
         _components = new ArrayList<>();
@@ -34,20 +23,6 @@ public class Scene implements Serializable {
     public void renderScene() {
         // Tick gameMode
         _gameMode.update(this);
-
-        Material foundMat = AssetManager.GetAsset("testMat");
-        if (foundMat != null) {
-            foundMat.use(this);
-            foundMat.getShader().setMatrixParameter("view", _camera.getViewMatrix());
-            foundMat.getShader().setMatrixParameter("projection", getProjection());
-        }
-        foundMat = AssetManager.GetAsset("matWeird");
-        if (foundMat != null) {
-            foundMat.use(this);
-            foundMat.getShader().setMatrixParameter("view", _camera.getViewMatrix());
-            foundMat.getShader().setMatrixParameter("projection", getProjection());
-        }
-
         // Draw attached components
         for (SceneComponent component : _components) {
             component.drawInternal(this);

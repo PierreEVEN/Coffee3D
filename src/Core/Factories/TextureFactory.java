@@ -1,6 +1,6 @@
 package Core.Factories;
 
-import Core.IO.Log;
+import Core.IO.LogOutput.Log;
 import Core.Resources.Texture2DResource;
 
 import javax.imageio.ImageIO;

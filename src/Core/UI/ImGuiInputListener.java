@@ -11,7 +11,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT_SUPER;
 
 public class ImGuiInputListener implements IInputListener {
 
-    private ImGuiIO _io = null;
+    private ImGuiIO _io;
 
     public ImGuiInputListener(long glfwWindowHandle) {
         _io = ImGui.getIO();
@@ -29,7 +29,6 @@ public class ImGuiInputListener implements IInputListener {
                 return glfwGetClipboardString(glfwWindowHandle);
             }
         });
-
     }
 
     @Override
@@ -77,7 +76,5 @@ public class ImGuiInputListener implements IInputListener {
     }
 
     @Override
-    public void cursorPosCallback(double x, double y) {
-
-    }
+    public void cursorPosCallback(double x, double y) {}
 }

@@ -1,24 +1,27 @@
 package Core.Resources;
 
-import Core.IO.Log;
+import Core.IO.LogOutput.Log;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
+/**
+ * Handle resources
+ */
 public class ResourceManager {
 
-    private static HashMap<String, GraphicResource> _resources = new HashMap<>();
-    public static HashMap<String, GraphicResource> GetResources() { return _resources; }
+    private static final HashMap<String, GraphicResource> _resources = new HashMap<>();
 
     public static void RegisterResource(GraphicResource resource) {
-        if (_resources.containsKey(resource.getName())) {
-            Log.Fail("Resource named " + resource.getName() + " already exist");
+        if (_resources.containsKey(resource.toString())) {
+            Log.Fail("Resource named " + resource.toString() + " already exist");
             return;
         }
-        _resources.put(resource.getName(), resource);
+        _resources.put(resource.toString(), resource);
     }
 
+    /**
+     * Free all resources
+     */
     public static void ClearResources() {
         for (GraphicResource resource : _resources.values()) {
             resource.unload();
@@ -26,12 +29,17 @@ public class ResourceManager {
         _resources.clear();
     }
 
-    public static GraphicResource GetResource(String resourceName) {
+    /**
+     * Find resource by name
+     * @param resourceName resource name
+     * @return  found resource
+     */
+    public static <T> T FindResource(String resourceName) {
         GraphicResource resource = _resources.get(resourceName);
         if (resource != null) {
-            return resource;
+            return ((T) resource);
         }
-        Log.Warning("failed to find resoure '" + resourceName + "'");
+        Log.Warning("failed to find resource '" + resourceName + "'");
         return null;
     }
 }

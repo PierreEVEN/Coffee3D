@@ -2,10 +2,7 @@ package Core;
 
 public interface IEngineModule {
     void LoadResources();
-
-    void BuildLevel();
-
+    void PreInitialize();
     void DrawScene();
-
     void DrawUI();
 }

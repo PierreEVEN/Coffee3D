@@ -1,16 +1,12 @@
 package Core.Factories;
 
-import Core.IO.Log;
+import Core.IO.LogOutput.Log;
 import Core.Resources.MeshResource;
-import Core.Assets.StaticMesh;
 import Core.Types.Vertex;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.lwjgl.assimp.Assimp.*;
 

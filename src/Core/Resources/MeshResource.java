@@ -9,13 +9,15 @@ import java.nio.IntBuffer;
 
 import static org.lwjgl.opengl.GL46.*;
 
+/**
+ * Handle index and vertex buffers of a mesh
+ */
 public class MeshResource extends GraphicResource {
 
     private final Vertex[] _vertices;
     private final int[] _indices;
 
-    private int _meshVao;
-    private int _meshEbo;
+    private int _meshVao, _meshEbo;
 
     public MeshResource(String resourceName, Vertex[] vertices, int[] indices) {
         super(resourceName);

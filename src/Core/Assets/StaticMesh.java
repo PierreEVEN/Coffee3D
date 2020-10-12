@@ -1,19 +1,16 @@
 package Core.Assets;
 
 import Core.Factories.MeshFactory;
-import Core.IO.Log;
+import Core.IO.LogOutput.Log;
 import Core.Renderer.Scene.Scene;
 import Core.Resources.MeshResource;
 import org.joml.Matrix4f;
 
 import java.util.ArrayList;
 
-/**
- * NIY
- */
 public class StaticMesh extends Asset {
     private transient MeshResource[] _sections;
-    private String[] _materialNames;
+    private final String[] _materialNames;
 
     public StaticMesh(String name, String filePath, String[] materials) {
         super(name, filePath);
@@ -34,7 +31,7 @@ public class StaticMesh extends Asset {
     public Material[] getMaterials() {
         ArrayList<Material> materials = new ArrayList<>();
         for (String mat : _materialNames) {
-            Material foundMat = (Material) AssetManager.GetAsset(mat);
+            Material foundMat = AssetManager.FindAsset(mat);
             if (foundMat != null) {
                 materials.add(foundMat);
             }

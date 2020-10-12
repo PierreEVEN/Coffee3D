@@ -1,7 +1,6 @@
 package Core.Renderer.Scene;
 
-import Core.IO.Log;
-import Core.Resources.GraphicResource;
+import Core.IO.LogOutput.Log;
 
 import static org.lwjgl.opengl.GL46.*;
 

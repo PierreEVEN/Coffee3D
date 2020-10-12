@@ -1,17 +1,21 @@
 package Core.IO.Inputs;
 
-import imgui.ImGui;
-import imgui.callback.ImStrConsumer;
-import imgui.callback.ImStrSupplier;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.lwjgl.glfw.GLFW.*;
 
+/**
+ * Refactor glfw input system
+ */
 public class GlfwInputHandler
 {
     private static List<IInputListener> _listeners = new ArrayList<>();
+
+    /**
+     * Add listener
+     * @param listener listener
+     */
     public static void AddListener(IInputListener listener) {
         if (_listeners == null) {
             _listeners = new ArrayList<>();
@@ -19,8 +23,12 @@ public class GlfwInputHandler
         _listeners.add(listener);
     }
 
+    /**
+     * Remove listener
+     * @param listener listener
+     */
     public static void UnbindListener(IInputListener listener) {
-        if (listener != null && _listeners != null && _listeners.contains(listener)) {
+        if (listener != null && _listeners != null) {
             _listeners.remove(listener);
         }
     }
@@ -55,6 +63,10 @@ public class GlfwInputHandler
         }
     }
 
+    /**
+     * initialize (should be done once by the engine)
+     * @param glfwWindowHandle window context
+     */
     public static void Initialize(long glfwWindowHandle) {
         glfwSetKeyCallback(glfwWindowHandle, (w, key, scancode, action, mods) -> keyCallback(key, scancode, action, mods));
         glfwSetCharCallback(glfwWindowHandle, (w, c) -> charCallback(c));

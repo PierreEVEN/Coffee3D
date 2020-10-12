@@ -1,7 +1,6 @@
 package Core.Assets;
 
 import Core.Factories.TextureFactory;
-import Core.IO.Log;
 import Core.Renderer.Scene.Scene;
 import Core.Resources.Texture2DResource;
 

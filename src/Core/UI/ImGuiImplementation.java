@@ -99,7 +99,6 @@ public class ImGuiImplementation {
         final ImFontAtlas fontAtlas = io.getFonts();
 
         // First of all we add a default font, which is 'ProggyClean.ttf, 13px'
-        fontAtlas.addFontDefault();
 
         final ImFontConfig fontConfig = new ImFontConfig(); // Keep in mind that creation of the ImFontConfig will allocate native memory
         fontConfig.setMergeMode(true); // All fonts added while this mode is turned on will be merged with the previously added font
@@ -119,7 +118,9 @@ public class ImGuiImplementation {
         fontConfig.setRasterizerMultiply(1.2f); // This will make fonts a bit more readable
 
         // We can add new fonts directly from file
-        fontAtlas.addFontFromFileTTF("resources/fonts/roboto/Roboto-Medium.ttf", 13, fontConfig);
+        fontAtlas.addFontFromFileTTF("resources/fonts/roboto/Roboto-Medium.ttf", 20, fontConfig);
+        fontAtlas.addFontFromFileTTF("resources/fonts/roboto/Roboto-Medium.ttf", 10, fontConfig);
+        fontAtlas.addFontFromFileTTF("resources/fonts/roboto/Roboto-Medium.ttf", 30, fontConfig);
 
         fontConfig.destroy(); // After all fonts were added we don't need this config more
 
@@ -132,4 +133,7 @@ public class ImGuiImplementation {
         GlfwInputHandler.AddListener(new ImGuiInputListener(glfwWindowHandle));
     }
 
+    public void shutDown() {
+        imGuiGl3.dispose();
+    }
 }

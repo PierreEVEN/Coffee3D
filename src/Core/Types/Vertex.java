@@ -6,10 +6,25 @@ import org.joml.Vector4f;
 
 import java.io.Serializable;
 
-public class Vertex implements Serializable {
+/**
+ * Basically a vertex data wrapper
+ */
+public final class Vertex implements Serializable {
+    /**
+     * vertex position
+     */
     public Vector3f position;
+    /**
+     * vertex texture coordinate
+     */
     public Vector2f texCoords;
+    /**
+     * vertex normal
+     */
     public Vector3f normals;
+    /**
+     * vertex color
+     */
     public Vector4f vertexColor;
 
     public Vertex(Vector3f pos) {
@@ -40,8 +55,16 @@ public class Vertex implements Serializable {
         vertexColor = colors;
     }
 
+    /**
+     * get structure byte size
+     * @return byte count
+     */
     public static int GetByteSize() { return GetFloatSize() * 4; }
 
+    /**
+     * get structure float size
+     * @return float count
+     */
     public static int GetFloatSize() {
         return 3 +//pos
                 2 +//coords

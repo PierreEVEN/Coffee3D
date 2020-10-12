@@ -1,41 +1,27 @@
 package Core.Renderer;
 
-import Core.IO.Log;
-import Core.UI.ImGuiImplementation;
-import imgui.*;
-import imgui.callback.*;
-import imgui.flag.*;
-import imgui.gl3.ImGuiImplGl3;
-import org.joml.*;
+import Core.IO.Inputs.GlfwInputHandler;
+import Core.IO.LogOutput.Log;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
 
-import java.io.*;
 import java.nio.IntBuffer;
-import java.util.Objects;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL.createCapabilities;
-import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
 
 public class RenderUtils {
 
-    public static void InitializeOpenGL(Vector4f clearColor) {
-
+    public static void InitializeOpenGL() {
         createCapabilities();
-
-        glClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
-
     }
 
     public static long InitializeGlfw(int width, int height, String title) {
-
         long _windowContext = -1;
-
-        Log.Display("Initialize OpenGL");
 
         GLFWErrorCallback.createPrint(System.err).set();
 
@@ -49,10 +35,8 @@ public class RenderUtils {
 
         // Create glfw windows
         _windowContext = glfwCreateWindow(width, height, title, 0, 0);
-        if ( _windowContext == 0 ) {
-            Log.Fail("Failed to create the GLFW window");
-            return -1;
-        }
+        if ( _windowContext == 0 ) Log.Fail("Failed to create the GLFW window");
+        glfwMakeContextCurrent(_windowContext);
 
         try ( MemoryStack stack = stackPush() ) {
             IntBuffer pWidth = stack.mallocInt(1); // int*
@@ -69,27 +53,21 @@ public class RenderUtils {
             );
         }
 
-        glfwMakeContextCurrent(_windowContext);
+        // Enable double buffering
         glfwSwapInterval(1);
-
         glfwShowWindow(_windowContext);
+
+        // Create input handler
+        GlfwInputHandler.Initialize(_windowContext);
 
         return _windowContext;
     }
 
-    public static void InitializeImgui(long glfwWindowHandle) {
-        ImGuiImplementation.Get().init(glfwWindowHandle);
-    }
-
-    public static void ShutdownImgui() {
-
-    }
-
     public static void ShutDownOpenGL() {
-
+        GL.destroy();
     }
 
-    public static void ShutDownGlfw() {
-
+    public static void ShutDownGlfw(long context) {
+        glfwDestroyWindow(context);
     }
 }

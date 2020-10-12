@@ -1,9 +1,7 @@
 package Core.Renderer.Scene.Gamemode;
 
-import Core.IO.Log;
 import Core.Renderer.Scene.Scene;
 import Core.Renderer.Window;
-import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 

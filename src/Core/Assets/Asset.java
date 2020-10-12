@@ -4,6 +4,9 @@ import Core.Renderer.Scene.Scene;
 
 import java.io.Serializable;
 
+/**
+ * Asset base class
+ */
 public abstract class Asset implements Serializable {
     private final String _name;
     private final String _filePath;
@@ -15,14 +18,29 @@ public abstract class Asset implements Serializable {
         load();
     }
 
+    /**
+     * Load asset into memory
+     */
     public abstract void load();
+
+    /**
+     * Draw item into given scene
+     * @param context draw context
+     */
     public abstract void use(Scene context);
 
+    /**
+     * get asset name
+     * @return asset name
+     */
     public String getName() { return _name; }
+
+    /**
+     * get asset file path
+     * @return relative path
+     */
     public String getFilepath() { return _filePath; }
 
     @Override
-    public String toString() {
-        return _name;
-    }
+    public String toString() { return getName(); }
 }
