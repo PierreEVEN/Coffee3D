@@ -1,6 +1,7 @@
 package Core.Renderer.Scene.Gamemode;
 
 import Core.IO.Inputs.GlfwInputHandler;
+import Core.IO.LogOutput.Log;
 import Core.Renderer.Scene.Scene;
 
 public class DefaultGamemode extends IGamemodeBase {
@@ -11,7 +12,6 @@ public class DefaultGamemode extends IGamemodeBase {
         super(scene);
         _defaultController = new DefaultController(scene);
         GlfwInputHandler.AddListener(_defaultController);
-        //_defaultController.enable();
     }
 
     @Override

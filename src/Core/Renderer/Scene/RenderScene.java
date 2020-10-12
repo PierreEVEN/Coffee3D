@@ -1,5 +1,7 @@
 package Core.Renderer.Scene;
 
+import Core.Renderer.Window;
+import org.joml.Matrix4f;
 import org.joml.Vector4f;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -29,6 +31,7 @@ public class RenderScene extends Scene {
         glEnable(GL_CULL_FACE);
         glCullFace(GL_FRONT);
         glFrontFace(GL_CW);
+        glViewport(0, 0, getFramebuffer().getWidth(), getFramebuffer().getHeight());
 
         // render scene content
         super.renderScene();
@@ -38,4 +41,14 @@ public class RenderScene extends Scene {
     }
 
     public Framebuffer getFramebuffer() { return _sceneBuffer; }
+
+    @Override
+    public Matrix4f getProjection() {
+        return new Matrix4f().perspective(
+                (float) Math.toRadians(getCamera().getFieldOfView()),
+                _sceneBuffer.getWidth() / (float) _sceneBuffer.getHeight(),
+                getCamera().getNearClipPlane(),
+                getCamera().getFarClipPlane()
+        );
+    }
 }

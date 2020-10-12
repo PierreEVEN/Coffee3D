@@ -105,6 +105,8 @@ public class Window {
             glClearColor(0,0,0,1);
             glClear(GL_COLOR_BUFFER_BIT);
 
+            glViewport(0, 0, getPixelWidth(), getPixelHeight());
+
             _engineModule.DrawScene();
             initUI();
             _engineModule.DrawUI();
@@ -161,7 +163,7 @@ public class Window {
      * close window
      */
     public void close() {
-        glfwWindowShouldClose(_glfwWindowHandle);
+        glfwSetWindowShouldClose(_glfwWindowHandle, true);
     }
 
     public long getGlfwWindowHandle() { return _glfwWindowHandle; }

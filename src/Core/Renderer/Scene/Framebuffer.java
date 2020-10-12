@@ -31,7 +31,7 @@ public class Framebuffer {
         // now that we actually created the framebuffer and added all attachments we want to check if it is actually complete now
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
         {
-            Log.Error("failed to create frameBuffer");
+            Log.Warning("failed to create frameBuffer");
         }
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
@@ -44,7 +44,6 @@ public class Framebuffer {
     }
 
     public void resizeFramebuffer(int width, int height) {
-        glViewport(0, 0, width, height);
         _fbWidth = width;
         _fbHeight = height;
         createFramebuffer();
