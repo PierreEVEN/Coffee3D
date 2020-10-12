@@ -4,7 +4,6 @@ import Core.Assets.AssetManager;
 import Core.Assets.Material;
 import Core.Assets.StaticMesh;
 import Core.Assets.Texture2D;
-import Core.IO.Log;
 import Core.Renderer.Scene.Components.Camera;
 import Core.Renderer.Scene.Components.StaticMeshComponent;
 import Core.Renderer.Scene.Gamemode.DefaultGamemode;
@@ -15,7 +14,6 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
-import java.awt.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
@@ -49,7 +47,7 @@ public class Scene implements Serializable {
         SceneComponent root = new SceneComponent(new Vector3f(0,0,0), new Quaternionf().identity(), new Vector3f(1,1,1));
         root.attachToScene(this);
         Random rnd = new Random();
-        for (int i = 0; i < 300; ++i) {
+        for (int i = 0; i < 100; ++i) {
             float range = 200;
             StaticMeshComponent parent = new StaticMeshComponent(
                     AssetManager.GetAsset("test"),
@@ -105,12 +103,6 @@ public class Scene implements Serializable {
         }
 
         for (SceneComponent component : _components) {
-            if (!(component instanceof Camera)) component.getLocalPosition().x = (float)Math.sin(GLFW.glfwGetTime()) * 4;
-            if (!(component instanceof Camera)) component.getLocalPosition().y = (float)Math.sin(GLFW.glfwGetTime() * 2) * 3;
-            if (!(component instanceof Camera)) component.getLocalPosition().z = (float)Math.sin(GLFW.glfwGetTime() * 0.5f) * 2;
-
-            if (!(component instanceof Camera)) component.getLocalScale().x = ((float)Math.sin(GLFW.glfwGetTime() * 0.5f) + 2) / 3;
-
             component.drawInternal(this);
         }
 

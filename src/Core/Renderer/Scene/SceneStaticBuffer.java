@@ -37,7 +37,7 @@ public class SceneStaticBuffer extends GraphicResource {
     public void use(Scene context) {
         bufferData.viewMatrix = new Matrix4f().identity();//context.getCamera().getViewMatrix();
         bufferData.worldProjection = new Matrix4f().identity();//context.getProjection();
-        bufferData.cameraPosition = context.getCamera().getLocalPosition();
+        bufferData.cameraPosition = context.getCamera().getRelativePosition();
 
         float[] data = new float[1];
         data[0] = (float)GLFW.glfwGetTime();

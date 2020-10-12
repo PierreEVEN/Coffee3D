@@ -1,5 +1,6 @@
 package Core.Renderer;
 
+import Core.IO.Inputs.GlfwInputHandler;
 import Core.IO.Log;
 import Core.IEngineModule;
 import Core.Renderer.Scene.Scene;
@@ -77,6 +78,9 @@ public class Window {
                 glViewport(0, 0, width, height);
             }
         });
+
+        GlfwInputHandler.Initialize(_glfwWindowHandle);
+
         renderLoop();
 
         ResourceManager.ClearResources();

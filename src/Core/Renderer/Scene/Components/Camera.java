@@ -32,7 +32,7 @@ public class Camera extends SceneComponent {
         Quaternionf rot = new Quaternionf().identity()
                 .rotateZ((float)Math.toRadians(_pitch))
                 .rotateY((float)Math.toRadians(_yaw));
-        setRotation(rot);
+        setRelativeRotation(rot);
     }
 
     public Camera(Vector3f position, Quaternionf rotation) {
@@ -43,7 +43,7 @@ public class Camera extends SceneComponent {
     }
 
     public Matrix4f getViewMatrix() {
-        return new Matrix4f().lookAt(getLocalPosition(), new Vector3f(getLocalPosition()).add(getForwardVector()), getUpVector());
+        return new Matrix4f().lookAt(getRelativePosition(), new Vector3f(getRelativePosition()).add(getForwardVector()), getUpVector());
     }
 
     @Override

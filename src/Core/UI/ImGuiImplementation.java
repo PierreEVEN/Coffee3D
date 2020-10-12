@@ -1,5 +1,6 @@
 package Core.UI;
 
+import Core.IO.Inputs.GlfwInputHandler;
 import imgui.ImFontAtlas;
 import imgui.ImFontConfig;
 import imgui.ImGui;
@@ -49,8 +50,8 @@ public class ImGuiImplementation {
         io.setBackendFlags(ImGuiBackendFlags.HasMouseCursors); // Mouse cursors to display while resizing windows etc.
         io.setBackendPlatformName("imgui_java_impl_glfw"); // For clarity reasons
         io.setBackendRendererName("imgui_java_impl_lwjgl"); // For clarity reasons
-        io.setConfigFlags(ImGuiConfigFlags.DockingEnable);
-        io.setConfigFlags(ImGuiConfigFlags.ViewportsEnable);
+        io.addConfigFlags(ImGuiConfigFlags.DockingEnable);
+        io.addConfigFlags(ImGuiConfigFlags.ViewportsEnable);
 
         // Keyboard mapping. ImGui will use those indices to peek into the io.KeysDown[] array.
         final int[] keyMap = new int[ImGuiKey.COUNT];
@@ -90,63 +91,6 @@ public class ImGuiImplementation {
         mouseCursors[ImGuiMouseCursor.NotAllowed] = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
 
         // ------------------------------------------------------------
-        // Here goes GLFW callbacks to update user input in Dear ImGui
-
-        glfwSetKeyCallback(glfwWindowHandle, (w, key, scancode, action, mods) -> {
-            if (action == GLFW_PRESS) {
-                io.setKeysDown(key, true);
-            } else if (action == GLFW_RELEASE) {
-                io.setKeysDown(key, false);
-            }
-
-            io.setKeyCtrl(io.getKeysDown(GLFW_KEY_LEFT_CONTROL) || io.getKeysDown(GLFW_KEY_RIGHT_CONTROL));
-            io.setKeyShift(io.getKeysDown(GLFW_KEY_LEFT_SHIFT) || io.getKeysDown(GLFW_KEY_RIGHT_SHIFT));
-            io.setKeyAlt(io.getKeysDown(GLFW_KEY_LEFT_ALT) || io.getKeysDown(GLFW_KEY_RIGHT_ALT));
-            io.setKeySuper(io.getKeysDown(GLFW_KEY_LEFT_SUPER) || io.getKeysDown(GLFW_KEY_RIGHT_SUPER));
-        });
-
-        glfwSetCharCallback(glfwWindowHandle, (w, c) -> {
-            if (c != GLFW_KEY_DELETE) {
-                io.addInputCharacter(c);
-            }
-        });
-
-        glfwSetMouseButtonCallback(glfwWindowHandle, (w, button, action, mods) -> {
-            final boolean[] mouseDown = new boolean[5];
-
-            mouseDown[0] = button == GLFW_MOUSE_BUTTON_1 && action != GLFW_RELEASE;
-            mouseDown[1] = button == GLFW_MOUSE_BUTTON_2 && action != GLFW_RELEASE;
-            mouseDown[2] = button == GLFW_MOUSE_BUTTON_3 && action != GLFW_RELEASE;
-            mouseDown[3] = button == GLFW_MOUSE_BUTTON_4 && action != GLFW_RELEASE;
-            mouseDown[4] = button == GLFW_MOUSE_BUTTON_5 && action != GLFW_RELEASE;
-
-            io.setMouseDown(mouseDown);
-
-            if (!io.getWantCaptureMouse() && mouseDown[1]) {
-                ImGui.setWindowFocus(null);
-            }
-        });
-
-        glfwSetScrollCallback(glfwWindowHandle, (w, xOffset, yOffset) -> {
-            io.setMouseWheelH(io.getMouseWheelH() + (float) xOffset);
-            io.setMouseWheel(io.getMouseWheel() + (float) yOffset);
-        });
-
-        io.setSetClipboardTextFn(new ImStrConsumer() {
-            @Override
-            public void accept(final String s) {
-                glfwSetClipboardString(glfwWindowHandle, s);
-            }
-        });
-
-        io.setGetClipboardTextFn(new ImStrSupplier() {
-            @Override
-            public String get() {
-                return glfwGetClipboardString(glfwWindowHandle);
-            }
-        });
-
-        // ------------------------------------------------------------
         // Fonts configuration
 
         // -------------------
@@ -184,5 +128,8 @@ public class ImGuiImplementation {
         // This method SHOULD be called after you've initialized your ImGui configuration (fonts and so on).
         // ImGui context should be created as well.
         imGuiGl3.init();
+
+        GlfwInputHandler.AddListener(new ImGuiInputListener(glfwWindowHandle));
     }
+
 }

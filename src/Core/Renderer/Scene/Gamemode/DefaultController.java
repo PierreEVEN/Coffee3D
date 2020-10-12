@@ -35,10 +35,17 @@ public class DefaultController extends IGameController {
     }
 
     @Override
-    void mouseEvent(int button, int action, int mods) {}
+    public void cursorPosCallback(double x, double y) {
+        super.cursorPosCallback(x, y);
+        if (Window.GetPrimaryWindow().captureMouse()) {
+            getScene().getCamera().addYawInput((float)getCursorDeltaX() * (float)Window.GetPrimaryWindow().getDeltaTime() * 50);
+            getScene().getCamera().addPitchInput((float)getCursorDeltaY() * (float)Window.GetPrimaryWindow().getDeltaTime() * 50);
+        }
+    }
+
 
     @Override
-    void keyboardEvent(int key, int scancode, int action, int mods) {
+    public void keyCallback(int key, int scancode, int action, int mods) {
         if (action == GLFW.GLFW_PRESS) {
             switch (key) {
                 case GLFW.GLFW_KEY_ESCAPE -> Window.GetPrimaryWindow().switchCursor();
@@ -51,16 +58,17 @@ public class DefaultController extends IGameController {
     }
 
     @Override
-    void scrollEvent(double xOffset, double yOffset) {
-        getScene().getCamera().setFieldOfView(getScene().getCamera().getFieldOfView() + (float)yOffset * -2);
+    public void charCallback(int chr) {
+
     }
 
     @Override
-    protected void cursorPosEvent(double x, double y) {
-        super.cursorPosEvent(x, y);
-        if (Window.GetPrimaryWindow().captureMouse()) {
-            getScene().getCamera().addYawInput((float)getCursorDeltaX() * (float)Window.GetPrimaryWindow().getDeltaTime() * 50);
-            getScene().getCamera().addPitchInput((float)getCursorDeltaY() * (float)Window.GetPrimaryWindow().getDeltaTime() * 50);
-        }
+    public void mouseButtonCallback(int button, int action, int mods) {
+
+    }
+
+    @Override
+    public void scrollCallback(double xOffset, double yOffset) {
+        getScene().getCamera().setFieldOfView(getScene().getCamera().getFieldOfView() + (float)yOffset * -2);
     }
 }

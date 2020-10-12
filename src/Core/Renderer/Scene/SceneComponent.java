@@ -1,5 +1,6 @@
 package Core.Renderer.Scene;
 
+import Core.IO.Log;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -7,46 +8,26 @@ import org.joml.Vector3f;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 public class SceneComponent implements Serializable {
-    private Vector3f _position;
-    private Quaternionf _rotation;
-    private Vector3f _scale;
-    private SceneComponent _parent = null;
-    private List<SceneComponent> _children = null;
-    private Scene _parentScene;
-
+    /**
+     * constructor
+     * @param position relative position
+     * @param rotation relative rotation
+     * @param scale    relative scale
+     */
     protected SceneComponent(Vector3f position, Quaternionf rotation, Vector3f scale) {
         _position = position;
         _rotation = rotation;
         _scale = scale;
     }
 
-    public Vector3f getLocalPosition() {
-        return _position;
-    }
-    public Quaternionf getLocalRotation() { return _rotation; }
-    public Vector3f getLocalScale() { return _scale; }
 
-    public Matrix4f getLocalTransformationMatrix() {
-        return new Matrix4f()
-                .identity()
-                .translate(getLocalPosition())
-                .rotate(getLocalRotation())
-                .scale(getLocalScale());
-    }
-
-    public Matrix4f getWorldTransformationMatrix() {
-        if (_parent != null) {
-            return new Matrix4f(_parent.getWorldTransformationMatrix()).mul(getLocalTransformationMatrix());
-        }
-        else {
-            return getLocalTransformationMatrix();
-        }
-    }
-
-    public final void drawInternal(Scene context) {
+    /**
+     * draw a root component and its children to given scene
+     * @param context draw context
+     */
+    protected final void drawInternal(Scene context) {
         draw(context);
         if (_children != null) {
             for (SceneComponent comp : _children) {
@@ -55,68 +36,191 @@ public class SceneComponent implements Serializable {
         }
     }
 
+    /**
+     * implement to draw stuff
+     * @param context scene context
+     */
     protected void draw(Scene context) {}
 
-    public void setPosition(Vector3f position) {
-        _position = position;
+
+    /******************************************************************/
+    /*                                                                */
+    /*                         TRANSLATION                            */
+    /*                                                                */
+    /******************************************************************/
+
+    /**
+     * relative position
+     */
+    private Vector3f _position;
+
+    /**
+     * relative rotation
+     */
+    private Quaternionf _rotation;
+
+    /**
+     * relative scale
+     */
+    private Vector3f _scale;
+
+    /**
+     * get component position relative to it's parent
+     * @return local position
+     */
+    public Vector3f getRelativePosition() { return _position; }
+
+    /**
+     * get component rotation relative to it's parent
+     * @return local rotation
+     */
+    public Quaternionf getRelativeRotation() { return _rotation; }
+
+    /**
+     * get component scale relative to it's parent
+     * @return local scale
+     */
+    public Vector3f getRelativeScale() { return _scale; }
+
+    /**
+     * build relative transformation matrix
+     * @return relative transform
+     */
+    public Matrix4f getRelativeTransformationMatrix() {
+        return new Matrix4f()
+                .identity()
+                .translate(getRelativePosition())
+                .rotate(getRelativeRotation())
+                .scale(getRelativeScale());
     }
 
-    public void setRotation(Quaternionf quat) {
-        _rotation = quat;
+    /**
+     * build absolute transformation matrix
+     * @return world transform
+     */
+    public Matrix4f getWorldTransformationMatrix() {
+        if (_parent != null) {
+            return new Matrix4f(_parent.getWorldTransformationMatrix()).mul(getRelativeTransformationMatrix());
+        }
+        else {
+            return getRelativeTransformationMatrix();
+        }
     }
 
-    public void setScale(Vector3f scale) {
-        _scale = scale;
-    }
+    /**
+     * set component relative position
+     * @param position local position
+     */
+    public void setRelativePosition(Vector3f position) { _position = position; }
 
+    /**
+     * set component relative rotation
+     * @param quat local rotation
+     */
+    public void setRelativeRotation(Quaternionf quat) { _rotation = quat; }
+
+    /**
+     * set component relative scale
+     * @param scale  local scale
+     */
+    public void setRelativeScale(Vector3f scale) { _scale = scale; }
+
+    /**
+     * get component relative roll axis
+     * @return local roll axis
+     */
     public float getRoll() {
         Vector3f angles = new Vector3f();
-        getLocalRotation().getEulerAnglesXYZ(angles);
+        getRelativeRotation().getEulerAnglesXYZ(angles);
         return angles.x;
     }
 
+    /**
+     * get component relative pitch axis
+     * @return local pitch axis
+     */
     public float getPitch() {
         Vector3f angles = new Vector3f();
-        getLocalRotation().getEulerAnglesXYZ(angles);
+        getRelativeRotation().getEulerAnglesXYZ(angles);
         return angles.y;
     }
 
+    /**
+     * get component relative yaw axis
+     * @return local yaw axis
+     */
     public float getYaw() {
         Vector3f angles = new Vector3f();
-        getLocalRotation().getEulerAnglesXYZ(angles);
+        getRelativeRotation().getEulerAnglesXYZ(angles);
         return angles.z;
     }
 
+    /**
+     * get component local forward unit vector
+     * @return forward vector
+     */
     public Vector3f getForwardVector() {
         Vector3f vec = new Vector3f();
         _rotation.normalizedPositiveX(vec);
         return vec;
     }
 
+    /**
+     * get component local right unit vector
+     * @return right vector
+     */
     public Vector3f getRightVector() {
         Vector3f vec = new Vector3f();
         _rotation.normalizedPositiveZ(vec);
         return vec;
     }
 
+    /**
+     * get component local up unit vector
+     * @return up vector
+     */
     public Vector3f getUpVector() {
         Vector3f vec = new Vector3f();
         _rotation.normalizedPositiveY(vec);
         return vec;
     }
 
-    public void addWorldOffset(Vector3f offset) {
-        setPosition(new Vector3f(getLocalPosition()).add(offset));
-    }
-
+    /**
+     * add local position offset to this component
+     * @param offset local movement
+     */
     public void addLocalOffset(Vector3f offset) {
-        Vector3f worldOffset = new Vector3f().zero()
-                .add(new Vector3f(getForwardVector()).mul(offset.x))
-                .add(new Vector3f(getRightVector()).mul(offset.y))
-                .add(new Vector3f(getUpVector()).mul(offset.z));
-        addWorldOffset(worldOffset);
+        _position.x += offset.x;
+        _position.y += offset.y;
+        _position.z += offset.z;
     }
+    
+    /******************************************************************/
+    /*                                                                */
+    /*                         SCENE GRAPH                            */
+    /*                                                                */
+    /******************************************************************/
 
+    /**
+     * parent component
+     */
+    private SceneComponent _parent = null;
+
+    /**
+     * attached children
+     */
+    private List<SceneComponent> _children = null;
+
+    /**
+     * parent scene
+     */
+    private Scene _parentScene;
+
+    /**
+     * make this component a root of the given scene.
+     * (also detach this component from it's previous parent)
+     * @param parentScene
+     */
     public void attachToScene(Scene parentScene) {
         if (parentScene == null) return;
         detach();
@@ -124,6 +228,11 @@ public class SceneComponent implements Serializable {
         parentScene.attachComponent(this);
     }
 
+    /**
+     * make given component parent of this one
+     * (also detach this component from it's previous parent)
+     * @param parent
+     */
     public void attachToComponent(SceneComponent parent) {
         if (parent == null) return;
         if (parent._children == null) parent._children = new ArrayList<>();
@@ -132,10 +241,59 @@ public class SceneComponent implements Serializable {
         if (!_parent._children.contains(this)) _parent._children.add(this);
     }
 
+    /**
+     * detach component from parent scene or component.
+     * don't forget to attach it to a scene or component
+     * else it become a zombie component
+     */
     public void detach() {
         if (_parent != null && _parent._children.contains(this)) _parent._children.remove(this); //Detach from parent component
         if (_parentScene != null) _parentScene.detachComponent(this); //Detach from scene
         _parentScene = null;
         _parent = null;
+    }
+
+    /**
+     * a zombie component is a component that has no parent scene or component.
+     * (should never append)
+     * @return is zombie
+     */
+    public boolean isZombie() {
+        return _parentScene == null && _parent == null;
+    }
+
+    /**
+     * Is this component a root component
+     * true if no parent component or scene is found
+     * @return is root
+     */
+    public boolean isRoot() {
+        return _parentScene != null && _parent == null;
+    }
+
+    /**
+     * Test if this component has given parent in it's hierarchy.
+     * @param parent wanted parent
+     * @return has parent
+     */
+    public boolean isChildOf(SceneComponent parent) {
+        if (parent == this) return true;
+        if (_parent != null) return _parent.isChildOf(parent);
+        return false;
+    }
+
+    /**
+     * Test if this component has given child in it's hierarchy
+     * @param child wanted child
+     * @return has child
+     */
+    public boolean isParentOf(SceneComponent child) {
+        if (child == this) return true;
+        if (_children != null) {
+            for (SceneComponent tChild : _children) {
+                if (tChild.isParentOf(child)) return true;
+            }
+        }
+        return false;
     }
 }
