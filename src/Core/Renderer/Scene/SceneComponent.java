@@ -16,7 +16,7 @@ public class SceneComponent implements Serializable {
      * @param rotation relative rotation
      * @param scale    relative scale
      */
-    protected SceneComponent(Vector3f position, Quaternionf rotation, Vector3f scale) {
+    public SceneComponent(Vector3f position, Quaternionf rotation, Vector3f scale) {
         _position = position;
         _rotation = rotation;
         _scale = scale;
@@ -186,10 +186,26 @@ public class SceneComponent implements Serializable {
     }
 
     /**
-     * add local position offset to this component
+     * add local position offset to this component rotation
      * @param offset local movement
      */
     public void addLocalOffset(Vector3f offset) {
+        _position.x += getForwardVector().x * offset.x +
+                getRightVector().x * offset.y +
+                getUpVector().x * offset.z;
+        _position.y += getForwardVector().y * offset.x +
+                getRightVector().y * offset.y +
+                getUpVector().y * offset.z;
+        _position.z += getForwardVector().z * offset.x +
+                getRightVector().z * offset.y +
+                getUpVector().z * offset.z;
+    }
+
+    /**
+     * add local position offset to parent component rotation
+     * @param offset relative movement
+     */
+    public void addRelativeOffset(Vector3f offset) {
         _position.x += offset.x;
         _position.y += offset.y;
         _position.z += offset.z;

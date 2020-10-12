@@ -12,7 +12,6 @@ import Core.Renderer.Window;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
-import org.lwjgl.glfw.GLFW;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -23,69 +22,16 @@ import static org.lwjgl.opengl.GL46.*;
 public class Scene implements Serializable {
     private final transient Camera _camera;
     private final transient IGamemodeBase _gameMode;
-    private final Framebuffer _sceneBuffer;
     private final ArrayList<SceneComponent> _components;
 
 
     public Scene() {
-        //Initialize properties
         _components = new ArrayList<>();
-        _camera = new Camera(new Vector3f(0, 0, 0), new Quaternionf(0, 0, 0, 1));
-        _camera.attachToScene(this);
         _gameMode = new DefaultGamemode(this);
-        _sceneBuffer = new Framebuffer(Window.GetPrimaryWindow().getPixelWidth(), Window.GetPrimaryWindow().getPixelHeight());
-
-        // Create sample assets
-        new Texture2D("gridTexture", "resources/textures/defaultGrid.png");
-        new Texture2D("grass", "resources/textures/grassSeamless.png");
-        new Material("testMat", "resources/shaders/shader", new String[] {"gridTexture"});
-        new Material("matWeird", "resources/shaders/shader", new String[] {"grass"});
-        new StaticMesh("test", "resources/models/test.fbx", new String[] { "testMat" });
-        new StaticMesh("cube", "resources/models/cube.fbx", new String[] { "matWeird" });
-
-        // Create basic hierarchy
-        SceneComponent root = new SceneComponent(new Vector3f(0,0,0), new Quaternionf().identity(), new Vector3f(1,1,1));
-        root.attachToScene(this);
-        Random rnd = new Random();
-        for (int i = 0; i < 100; ++i) {
-            float range = 200;
-            StaticMeshComponent parent = new StaticMeshComponent(
-                    AssetManager.GetAsset("test"),
-                    new Vector3f(rnd.nextFloat() * range - range / 2 , rnd.nextFloat() * range - range / 2, rnd.nextFloat() * range - range / 2),
-                    new Quaternionf().fromAxisAngleDeg(new Vector3f(0, 0, 1), 10),
-                    new Vector3f(1, 1, 1)
-            );
-            parent.attachToComponent(root);
-
-            new StaticMeshComponent(
-                    AssetManager.GetAsset("cube"),
-                    new Vector3f(0, 0, 2),
-                    new Quaternionf().fromAxisAngleDeg(new Vector3f(1, 0, 0), 25),
-                    new Vector3f(1.5f, 0.8f, 1)
-            ).attachToComponent(parent);
-
-            StaticMeshComponent subChild = new StaticMeshComponent(
-                    AssetManager.GetAsset("cube"),
-                    new Vector3f(0, 4, 1),
-                    new Quaternionf().fromAxisAngleDeg(new Vector3f(1, 2, 0).normalize(), 8789),
-                    new Vector3f(1.5f, 0.8f, 1.4f)
-            );
-            subChild.attachToComponent(parent);
-
-            new StaticMeshComponent(
-                    AssetManager.GetAsset("cube"),
-                    new Vector3f(3, 2, 1),
-                    new Quaternionf().fromAxisAngleDeg(new Vector3f(1, 2, 0).normalize(), 489),
-                    new Vector3f(1.1f, 0.8f, 0.02f)
-            ).attachToComponent(subChild);
-        }
+        _camera = new Camera(this);
     }
 
     public void renderScene() {
-
-        glBindBuffer(GL_FRAMEBUFFER, _sceneBuffer.getBufferId());
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
         // Tick gameMode
         _gameMode.update(this);
 
@@ -102,11 +48,10 @@ public class Scene implements Serializable {
             foundMat.getShader().setMatrixParameter("projection", getProjection());
         }
 
+        // Draw attached components
         for (SceneComponent component : _components) {
             component.drawInternal(this);
         }
-
-        glBindBuffer(GL_FRAMEBUFFER, 0);
     }
 
     /**
@@ -131,8 +76,6 @@ public class Scene implements Serializable {
             _components.add(rootComponent);
         }
     }
-
-    public Framebuffer getFramebuffer() { return _sceneBuffer; }
 
     public Camera getCamera() { return _camera; }
 

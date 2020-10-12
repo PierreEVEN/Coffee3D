@@ -35,8 +35,9 @@ public class Camera extends SceneComponent {
         setRelativeRotation(rot);
     }
 
-    public Camera(Vector3f position, Quaternionf rotation) {
-        super(position, rotation, new Vector3f(1,1,1));
+    public Camera(Scene parentScene) {
+        super(new Vector3f().zero(), new Quaternionf().identity(), new Vector3f(1,1,1));
+        attachToScene(parentScene);
         _fov = 45.f;
         _zmin = 0.001f;
         _zmax = 500.f;

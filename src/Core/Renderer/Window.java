@@ -1,14 +1,13 @@
 package Core.Renderer;
 
 import Core.IO.Inputs.GlfwInputHandler;
-import Core.IO.Log;
 import Core.IEngineModule;
-import Core.Renderer.Scene.Scene;
+import Core.IO.Log;
+import Core.Renderer.Scene.RenderScene;
 import Core.Resources.ResourceManager;
 import Core.UI.ImGuiImplementation;
 import imgui.ImGui;
 import imgui.ImGuiIO;
-import imgui.ImVec2;
 import imgui.flag.ImGuiCond;
 import imgui.flag.ImGuiDockNodeFlags;
 import org.joml.Vector4f;
@@ -28,12 +27,10 @@ public class Window {
     private int _bfrHeight;
     private long _glfwWindowHandle;
     private String _windowTitle;
-    private Scene _windowScene;
     private double _deltaTime;
     private double _lastFrameTime;
     private boolean _bDisplayCursor;
-
-    private IEngineModule _renderModule;
+    private IEngineModule _engineModule;
 
     /**
      * Singleton used to reference the primary window
@@ -47,28 +44,27 @@ public class Window {
     private Window() {
         _bfrWidth = 800;
         _bfrHeight = 600;
-        _glfwWindowHandle = -1;
-        _windowTitle = "Coffee3D Engine";
+        _windowTitle = "Coffee3D";
     }
 
     /**
      * Initialize opengl context, and start render loop
      * (cleanup resource after execution)
-     * @param renderModule
+     * @param engineModule
      */
-    public void run(IEngineModule renderModule) {
-        _renderModule = renderModule;
+    public void run(IEngineModule engineModule) {
+        _engineModule = engineModule;
 
         _glfwWindowHandle = RenderUtils.InitializeGlfw(_bfrWidth, _bfrHeight, _windowTitle);
         RenderUtils.InitializeOpenGL(new Vector4f(.5f, .7f, .9f, 1.f));
         RenderUtils.InitializeImgui(_glfwWindowHandle);
 
-        _renderModule.LoadResources();
-        _renderModule.BuildLevel();
+        Log.Display("load resources");
+        _engineModule.LoadResources();
 
-        _windowScene = new Scene();
+        Log.Display("build level");
+        _engineModule.BuildLevel();
 
-        showCursor(true);
 
         glfwSetFramebufferSizeCallback(_glfwWindowHandle, new GLFWFramebufferSizeCallback() {
             @Override
@@ -78,6 +74,8 @@ public class Window {
                 glViewport(0, 0, width, height);
             }
         });
+
+        showCursor(true);
 
         GlfwInputHandler.Initialize(_glfwWindowHandle);
 
@@ -89,92 +87,61 @@ public class Window {
         RenderUtils.ShutDownGlfw();
     }
 
-    private double lastTime = 0;
-
     /**
      * Poll glfw events,
      * then draw window content
      */
     private void renderLoop() {
         while (!glfwWindowShouldClose(_glfwWindowHandle)) {
-            _deltaTime = GLFW.glfwGetTime() - _lastFrameTime;
-            _lastFrameTime = GLFW.glfwGetTime();
 
-            glEnable(GL_STENCIL_TEST);
-            glEnable(GL_DEPTH_TEST);
-            glEnable(GL_CULL_FACE);
-            glCullFace(GL_FRONT);
-            glFrontFace(GL_CW);
+            // Update delta time
+            updateDeltaTime();
 
-            if (lastTime > 1) {
-                lastTime = 0;
-                Log.Display("delta : " + Window.GetPrimaryWindow().getDeltaTime());
-            }
-            lastTime += Window.GetPrimaryWindow().getDeltaTime();
+            // Clear background buffer
+            glClearColor(0,0,0,1);
+            glClear(GL_COLOR_BUFFER_BIT);
 
-
+            // Poll inputs
             glfwPollEvents();
 
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT); // clear the framebuffer
-
-            glBindBuffer(GL_FRAMEBUFFER, _windowScene.getFramebuffer().getBufferId());
-            _windowScene.renderScene();
-
-            glBindBuffer(GL_FRAMEBUFFER, 0);
-
-            IntBuffer winWidth = BufferUtils.createIntBuffer(1);
-            IntBuffer winHeight = BufferUtils.createIntBuffer(1);
-            IntBuffer fbWidth = BufferUtils.createIntBuffer(1);
-            IntBuffer fbHeight = BufferUtils.createIntBuffer(1);
-            DoubleBuffer mousePosX = BufferUtils.createDoubleBuffer(1);
-            DoubleBuffer mousePosY = BufferUtils.createDoubleBuffer(1);
-
-            glfwGetWindowSize(_glfwWindowHandle, winWidth, winHeight);
-            glfwGetFramebufferSize(_glfwWindowHandle, fbWidth, fbHeight);
-            glfwGetCursorPos(_glfwWindowHandle, mousePosX, mousePosY);
-
-            final ImGuiIO io = ImGui.getIO();
-            io.setDisplaySize(winWidth.get(0), winHeight.get(0));
-            io.setDisplayFramebufferScale((float) fbWidth.get(0) / winWidth.get(0), (float) fbHeight.get(0) / winHeight.get(0));
-            io.setMousePos((float) mousePosX.get(0), (float) mousePosY.get(0));
-            io.setDeltaTime((float) _deltaTime);
-
-            ImGui.newFrame();
-
-
-            int dockspaceID = 0;
-            if (ImGui.begin("Master Window"/*, nullptr, ImGuiWindowFlags_MenuBar*/))
-            {
-                ImGui.textUnformatted("DockSpace below");
-
-                // Declare Central dockspace
-                dockspaceID = ImGui.getID("HUB_DockSpace");
-                ImGui.dockSpace(dockspaceID, 0.f, 0.f, ImGuiDockNodeFlags.None | ImGuiDockNodeFlags.PassthruCentralNode/*|ImGuiDockNodeFlags_NoResize*/);
-            }
-            ImGui.end();
-
-            ImGui.setNextWindowDockID(dockspaceID , ImGuiCond.FirstUseEver);
-            if (ImGui.begin("Dockable Window"))
-            {
-                ImGui.image(_windowScene.getFramebuffer().getColorBuffer(), _windowScene.getFramebuffer().getWidth(), _windowScene.getFramebuffer().getHeight());
-
-                ImGui.textUnformatted("Test");
-            }
-            ImGui.end();
-
-
-
-            ImGui.showDemoWindow();
-
+            _engineModule.DrawScene();
+            initUI();
+            _engineModule.DrawUI();
             ImGui.render();
             ImGuiImplementation.Get().render();
 
-            _renderModule.DrawUI(0);
+            glfwSwapBuffers(_glfwWindowHandle);
 
-            glfwSwapBuffers(_glfwWindowHandle); // swap the color buffers
-
+            // Flush gc to avoid garbage accumulation.
             System.gc();
         }
+    }
+
+
+    private void initUI() {
+        IntBuffer winWidth = BufferUtils.createIntBuffer(1);
+        IntBuffer winHeight = BufferUtils.createIntBuffer(1);
+        IntBuffer fbWidth = BufferUtils.createIntBuffer(1);
+        IntBuffer fbHeight = BufferUtils.createIntBuffer(1);
+        DoubleBuffer mousePosX = BufferUtils.createDoubleBuffer(1);
+        DoubleBuffer mousePosY = BufferUtils.createDoubleBuffer(1);
+
+        glfwGetWindowSize(_glfwWindowHandle, winWidth, winHeight);
+        glfwGetFramebufferSize(_glfwWindowHandle, fbWidth, fbHeight);
+        glfwGetCursorPos(_glfwWindowHandle, mousePosX, mousePosY);
+
+        final ImGuiIO io = ImGui.getIO();
+        io.setDisplaySize(winWidth.get(0), winHeight.get(0));
+        io.setDisplayFramebufferScale((float) fbWidth.get(0) / winWidth.get(0), (float) fbHeight.get(0) / winHeight.get(0));
+        io.setMousePos((float) mousePosX.get(0), (float) mousePosY.get(0));
+        io.setDeltaTime((float) _deltaTime);
+
+        ImGui.newFrame();
+    }
+
+    private void updateDeltaTime() {
+        _deltaTime = GLFW.glfwGetTime() - _lastFrameTime;
+        _lastFrameTime = GLFW.glfwGetTime();
     }
 
     /**

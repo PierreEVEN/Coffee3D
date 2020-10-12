@@ -5,5 +5,7 @@ public interface IEngineModule {
 
     void BuildLevel();
 
-    void DrawUI(long nvg);
+    void DrawScene();
+
+    void DrawUI();
 }
