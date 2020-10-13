@@ -21,8 +21,11 @@ import imgui.flag.ImGuiDockNodeFlags;
 import imgui.flag.ImGuiWindowFlags;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.Random;
+
+import static org.lwjgl.opengl.GL11.*;
 
 public class EditorModule implements IEngineModule {
 
@@ -77,6 +80,12 @@ public class EditorModule implements IEngineModule {
                     new Vector3f(1.1f, 0.8f, 0.02f)
             ).attachToComponent(subChild);
         }
+
+        String vendor = glGetString(GL_VENDOR);
+        String renderer = glGetString(GL_RENDERER);
+
+        GLFW.glfwSetWindowTitle(Window.GetPrimaryWindow().getGlfwWindowHandle(), "Coffee3D Editor - " + vendor + " " + renderer);
+
     }
 
     @Override
