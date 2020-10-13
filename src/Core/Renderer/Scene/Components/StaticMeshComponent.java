@@ -25,4 +25,6 @@ public class StaticMeshComponent extends SceneComponent {
         _mesh.setMaterialModel(getWorldTransformationMatrix());
         _mesh.use(context);
     }
+
+    public StaticMesh getStaticMesh() { return _mesh; }
 }

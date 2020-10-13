@@ -10,11 +10,15 @@ import Core.Renderer.Scene.RenderScene;
 import Core.Renderer.Scene.Scene;
 import Core.Renderer.Scene.SceneComponent;
 import Core.Renderer.Window;
-import Core.UI.DrawScenWindow;
+import Editor.UI.Browsers.ContentBrowser;
+import Editor.UI.LevelEditor.LevelEditorViewport;
+import Editor.UI.SceneViewport;
+import Editor.UI.Browsers.ResourcesViewer;
+import Editor.UI.Tools.StyleEditor;
 import imgui.ImGui;
+import imgui.ImVec2;
 import imgui.flag.ImGuiDockNodeFlags;
 import imgui.flag.ImGuiWindowFlags;
-import imgui.type.ImBoolean;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -23,7 +27,6 @@ import java.util.Random;
 public class EditorModule implements IEngineModule {
 
     private Scene _rootScene;
-    private Scene _scene2;
 
     @Override
     public void LoadResources() {
@@ -38,15 +41,6 @@ public class EditorModule implements IEngineModule {
     @Override
     public void PreInitialize() {
         _rootScene = new RenderScene(800, 600);
-        _scene2 = new RenderScene(800, 600);
-
-       new StaticMeshComponent(
-                AssetManager.FindAsset("test"),
-                new Vector3f().zero(),
-                new Quaternionf().fromAxisAngleDeg(new Vector3f(0, 0, 1), 10),
-                new Vector3f(1, 1, 1)
-        ).attachToScene(_scene2);
-
 
         SceneComponent root = new SceneComponent(new Vector3f(0,0,0), new Quaternionf().identity(), new Vector3f(1,1,1));
         root.attachToScene(_rootScene);
@@ -102,24 +96,7 @@ public class EditorModule implements IEngineModule {
         }
 
         _rootScene.renderScene();
-
-        foundMat = AssetManager.FindAsset("testMat");
-        if (foundMat != null) {
-            foundMat.use(_scene2);
-            foundMat.getShader().setMatrixParameter("view", _scene2.getCamera().getViewMatrix());
-            foundMat.getShader().setMatrixParameter("projection", _scene2.getProjection());
-        }
-        foundMat = AssetManager.FindAsset("matWeird");
-        if (foundMat != null) {
-            foundMat.use(_scene2);
-            foundMat.getShader().setMatrixParameter("view", _scene2.getCamera().getViewMatrix());
-            foundMat.getShader().setMatrixParameter("projection", _scene2.getProjection());
-        }
-        _scene2.renderScene();
     }
-
-    ImBoolean bSHowViewport = new ImBoolean(false);
-    ImBoolean bSHowViewport2 = new ImBoolean(false);
 
     @Override
     public void DrawUI() {
@@ -138,31 +115,19 @@ public class EditorModule implements IEngineModule {
                 ImGui.endMenu();
             }
             if (ImGui.beginMenu("Window")) {
-                ImGui.checkbox("Viewport 1 ", bSHowViewport);
-                ImGui.checkbox("Viewport 2 ", bSHowViewport2);
+                if (ImGui.menuItem("Viewport 1")) new LevelEditorViewport((RenderScene) _rootScene, "Scene viewport");
+                if (ImGui.menuItem("Content browser")) new ContentBrowser("Content browser");
+                if (ImGui.menuItem("Resource viewer")) new ResourcesViewer("resource viewer");
+                if (ImGui.menuItem("Style editor")) new StyleEditor("Style editor");
                 ImGui.endMenu();
             }
+
+            String fpsText = "ms / fps : " + ((float)Window.GetPrimaryWindow().getDeltaTime() + " / " + (int)(1 / (float)Window.GetPrimaryWindow().getDeltaTime()));
+            ImVec2 fpsTextSize = new ImVec2();
+            ImGui.calcTextSize(fpsTextSize , fpsText);
+            ImGui.dummy(ImGui.getContentRegionAvailX() - fpsTextSize.x - 10, 0.f);
+            ImGui.text(fpsText);
         }
         ImGui.endMainMenuBar();
-
-        if (bSHowViewport.get()) {
-            if (ImGui.begin("Viewport 1", bSHowViewport)) {
-                if (_rootScene instanceof RenderScene) {
-                    RenderScene renderScene = (RenderScene) _rootScene;
-                    DrawScenWindow.Draw(renderScene);
-                }
-            }
-            ImGui.end();
-        }
-
-        if (bSHowViewport2.get()) {
-            if (ImGui.begin("Viewport 2", bSHowViewport2)) {
-                if (_rootScene instanceof RenderScene) {
-                    RenderScene renderScene2 = (RenderScene) _scene2;
-                    DrawScenWindow.Draw(renderScene2);
-                }
-            }
-            ImGui.end();
-        }
     }
 }

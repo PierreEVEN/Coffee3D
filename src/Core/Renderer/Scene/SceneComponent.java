@@ -231,6 +231,8 @@ public class SceneComponent implements Serializable {
      */
     private Scene _parentScene;
 
+    public List<SceneComponent> getChildren() { return _children; }
+
     /**
      * make this component a root of the given scene.
      * (also detach this component from it's previous parent)

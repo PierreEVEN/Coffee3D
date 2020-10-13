@@ -3,7 +3,8 @@ package Core.Renderer;
 import Core.IEngineModule;
 import Core.IO.LogOutput.Log;
 import Core.Resources.ResourceManager;
-import Core.UI.ImGuiImplementation;
+import Core.UI.ImGuiImpl.ImGuiImplementation;
+import Core.UI.SubWindows.SubWindow;
 import imgui.ImGui;
 import imgui.ImGuiIO;
 import org.lwjgl.BufferUtils;
@@ -110,6 +111,7 @@ public class Window {
             _engineModule.DrawScene();
             initUI();
             _engineModule.DrawUI();
+            SubWindow.DrawWindows();
             ImGui.render();
             ImGuiImplementation.Get().render();
 

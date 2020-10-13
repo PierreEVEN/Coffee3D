@@ -2,6 +2,8 @@ package Core.Assets;
 
 import Core.IO.LogOutput.Log;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 /**
@@ -9,6 +11,8 @@ import java.util.HashMap;
  */
 public class AssetManager {
     private static final HashMap<String, Asset> _assets = new HashMap<>();
+
+    public static Collection<Asset> GetAssets() { return _assets.values(); }
 
     /**
      * register asset

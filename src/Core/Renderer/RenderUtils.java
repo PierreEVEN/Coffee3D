@@ -9,8 +9,11 @@ import org.lwjgl.system.MemoryStack;
 
 import java.nio.IntBuffer;
 
+import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL.createCapabilities;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL13.GL_MULTISAMPLE;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
 
@@ -18,6 +21,8 @@ public class RenderUtils {
 
     public static void InitializeOpenGL() {
         createCapabilities();
+
+        glEnable(GL_MULTISAMPLE);
     }
 
     public static long InitializeGlfw(int width, int height, String title) {
@@ -32,6 +37,7 @@ public class RenderUtils {
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+        glfwWindowHint(GLFW_SAMPLES, 16);
 
         // Create glfw windows
         _windowContext = glfwCreateWindow(width, height, title, 0, 0);
@@ -54,7 +60,7 @@ public class RenderUtils {
         }
 
         // Enable double buffering
-        glfwSwapInterval(1);
+        glfwSwapInterval(0);
         glfwShowWindow(_windowContext);
 
         // Create input handler
@@ -68,6 +74,9 @@ public class RenderUtils {
     }
 
     public static void ShutDownGlfw(long context) {
+
+        glfwFreeCallbacks(context);
         glfwDestroyWindow(context);
+        glfwTerminate();
     }
 }

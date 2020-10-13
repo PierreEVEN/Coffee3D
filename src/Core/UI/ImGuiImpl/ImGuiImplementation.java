@@ -1,19 +1,15 @@
-package Core.UI;
+package Core.UI.ImGuiImpl;
 
 import Core.IO.Inputs.GlfwInputHandler;
 import imgui.ImFontAtlas;
 import imgui.ImFontConfig;
 import imgui.ImGui;
 import imgui.ImGuiIO;
-import imgui.callback.ImStrConsumer;
-import imgui.callback.ImStrSupplier;
 import imgui.flag.ImGuiBackendFlags;
 import imgui.flag.ImGuiConfigFlags;
 import imgui.flag.ImGuiKey;
 import imgui.flag.ImGuiMouseCursor;
 import imgui.gl3.ImGuiImplGl3;
-
-import java.io.*;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -27,7 +23,6 @@ public class ImGuiImplementation {
 
     private static final ImGuiImplGl3 imGuiGl3 = new ImGuiImplGl3();
     private static final long[] mouseCursors = new long[ImGuiMouseCursor.COUNT];
-
 
     public void render() {
         imGuiGl3.renderDrawData(ImGui.getDrawData());
@@ -45,7 +40,6 @@ public class ImGuiImplementation {
         // Initialize ImGuiIO config
         final ImGuiIO io = ImGui.getIO();
 
-        io.setIniFilename(null); // We don't want to save .ini file
         io.setConfigFlags(ImGuiConfigFlags.NavEnableKeyboard); // Navigation with keyboard
         io.setBackendFlags(ImGuiBackendFlags.HasMouseCursors); // Mouse cursors to display while resizing windows etc.
         io.setBackendPlatformName("imgui_java_impl_glfw"); // For clarity reasons
@@ -135,5 +129,6 @@ public class ImGuiImplementation {
 
     public void shutDown() {
         imGuiGl3.dispose();
+        ImGui.destroyContext();
     }
 }

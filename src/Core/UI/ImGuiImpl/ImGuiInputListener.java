@@ -1,4 +1,4 @@
-package Core.UI;
+package Core.UI.ImGuiImpl;
 
 import Core.IO.Inputs.IInputListener;
 import imgui.ImGui;

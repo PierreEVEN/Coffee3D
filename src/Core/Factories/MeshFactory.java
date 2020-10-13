@@ -19,7 +19,7 @@ public class MeshFactory {
         PointerBuffer aiMeshes = aiScene.mMeshes();
         MeshResource[] meshes = new MeshResource[numMeshes];
         for (int i = 0; i < numMeshes; i++) {
-            meshes[i] = processMesh(resourceName + i, AIMesh.create(aiMeshes.get(i)));
+            meshes[i] = processMesh(resourceName + "_section" + i, AIMesh.create(aiMeshes.get(i)));
         }
         return meshes;
     }

@@ -29,6 +29,8 @@ public class Scene implements Serializable {
         }
     }
 
+    public ArrayList<SceneComponent> getComponents() { return _components; }
+
     /**
      * Make component root on this scene.
      * (don't call this method yourself, use component.attachToScene(sceneParam));

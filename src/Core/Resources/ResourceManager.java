@@ -2,6 +2,8 @@ package Core.Resources;
 
 import Core.IO.LogOutput.Log;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 /**
@@ -10,6 +12,8 @@ import java.util.HashMap;
 public class ResourceManager {
 
     private static final HashMap<String, GraphicResource> _resources = new HashMap<>();
+
+    public static Collection<GraphicResource> GetResources() { return _resources.values(); }
 
     public static void RegisterResource(GraphicResource resource) {
         if (_resources.containsKey(resource.toString())) {
