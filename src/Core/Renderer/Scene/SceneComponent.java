@@ -16,9 +16,9 @@ public class SceneComponent implements Serializable {
      * @param scale    relative scale
      */
     public SceneComponent(Vector3f position, Quaternionf rotation, Vector3f scale) {
-        _position = position;
-        _rotation = rotation;
-        _scale = scale;
+        this._position = position;
+        this._rotation = rotation;
+        this._scale = scale;
     }
 
 
@@ -110,7 +110,7 @@ public class SceneComponent implements Serializable {
      * set component relative position
      * @param position local position
      */
-    public void setRelativePosition(Vector3f position) { _position = position; }
+    public void setRelativePosition(Vector3f position) { this._position = position; }
 
     /**
      * set component relative rotation
@@ -122,7 +122,7 @@ public class SceneComponent implements Serializable {
      * set component relative scale
      * @param scale  local scale
      */
-    public void setRelativeScale(Vector3f scale) { _scale = scale; }
+    public void setRelativeScale(Vector3f scale) { this._scale = scale; }
 
     /**
      * get component relative roll axis

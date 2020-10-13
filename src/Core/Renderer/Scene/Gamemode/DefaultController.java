@@ -18,6 +18,7 @@ public class DefaultController extends IGameController {
 
     @Override
     void update(Scene context) {
+        if (!Window.GetPrimaryWindow().captureMouse()) return;
         float movementSpeed = speed * (float)Window.GetPrimaryWindow().getDeltaTime();
 
         if (GLFW.glfwGetKey(Window.GetPrimaryWindow().getGlfwWindowHandle(), GLFW.GLFW_KEY_W) == GLFW.GLFW_PRESS)
@@ -37,25 +38,24 @@ public class DefaultController extends IGameController {
     @Override
     public void cursorPosCallback(double x, double y) {
         super.cursorPosCallback(x, y);
-        if (Window.GetPrimaryWindow().captureMouse()) {
-            getScene().getCamera().addYawInput((float)getCursorDeltaX() * (float)Window.GetPrimaryWindow().getDeltaTime() * 50);
-            getScene().getCamera().addPitchInput((float)getCursorDeltaY() * (float)Window.GetPrimaryWindow().getDeltaTime() * 50);
-        }
+        if (!Window.GetPrimaryWindow().captureMouse()) return;
+        getScene().getCamera().addYawInput((float) getCursorDeltaX() * (float) Window.GetPrimaryWindow().getDeltaTime() * 50);
+        getScene().getCamera().addPitchInput((float) getCursorDeltaY() * (float) Window.GetPrimaryWindow().getDeltaTime() * 50);
     }
 
 
     @Override
     public void keyCallback(int key, int scancode, int action, int mods) {
+       if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_PRESS) Window.GetPrimaryWindow().switchCursor();
+        if (!Window.GetPrimaryWindow().captureMouse()) return;
         if (action == GLFW.GLFW_PRESS) {
             switch (key) {
-                case GLFW.GLFW_KEY_ESCAPE -> Window.GetPrimaryWindow().showCursor(false);
-                case GLFW.GLFW_KEY_P -> Window.GetPrimaryWindow().showCursor(true);
                 case GLFW.GLFW_KEY_F1 -> Window.GetPrimaryWindow().setDrawMode(GL_FILL);
                 case GLFW.GLFW_KEY_F2 -> Window.GetPrimaryWindow().setDrawMode(GL_LINE);
                 case GLFW.GLFW_KEY_F3 -> Window.GetPrimaryWindow().setDrawMode(GL_POINT);
                 case GLFW.GLFW_KEY_F5 -> getScene().getCamera().setPerspective(!getScene().getCamera().enablePerspective());
-                case GLFW.GLFW_KEY_PAGE_UP -> speed *= 1.5f;
-                case GLFW.GLFW_KEY_PAGE_DOWN -> speed /= 1.5f;
+                case GLFW.GLFW_KEY_PAGE_UP -> getScene().getCamera().setFieldOfView(getScene().getCamera().getFieldOfView() / 1.2f);
+                case GLFW.GLFW_KEY_PAGE_DOWN -> getScene().getCamera().setFieldOfView(getScene().getCamera().getFieldOfView() * 1.2f);
             }
         }
     }
@@ -67,11 +67,13 @@ public class DefaultController extends IGameController {
 
     @Override
     public void mouseButtonCallback(int button, int action, int mods) {
-
+        if (button == GLFW.GLFW_MOUSE_BUTTON_2 && action == GLFW.GLFW_PRESS) Window.GetPrimaryWindow().showCursor(false);
+        if (button == GLFW.GLFW_MOUSE_BUTTON_2 && action == GLFW.GLFW_RELEASE) Window.GetPrimaryWindow().showCursor(true);
     }
 
     @Override
     public void scrollCallback(double xOffset, double yOffset) {
-        getScene().getCamera().setFieldOfView(getScene().getCamera().getFieldOfView() + (float)yOffset * -2);
+        if (!Window.GetPrimaryWindow().captureMouse()) return;
+        if (yOffset != 0) speed *= yOffset / 4 + 1;
     }
 }

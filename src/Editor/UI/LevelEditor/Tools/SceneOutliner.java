@@ -4,15 +4,22 @@ import Core.Renderer.Scene.Components.StaticMeshComponent;
 import Core.Renderer.Scene.Scene;
 import Core.Renderer.Scene.SceneComponent;
 import Core.UI.SubWindows.SubWindow;
+import Editor.UI.LevelEditor.LevelEditorViewport;
+import imgui.ImColor;
 import imgui.ImGui;
+import imgui.ImVec4;
+import imgui.flag.ImGuiCol;
+import imgui.flag.ImGuiTreeNodeFlags;
 
 public class SceneOutliner extends SubWindow {
     Scene _parentScene;
+    LevelEditorViewport _parentViewport;
 
 
-    public SceneOutliner(Scene parentScene, String windowName) {
+    public SceneOutliner(LevelEditorViewport parentViewport, String windowName) {
         super(windowName);
-        _parentScene = parentScene;
+        _parentScene = parentViewport.getScene();
+        _parentViewport = parentViewport;
     }
 
     int nodeIndex = 0;
@@ -26,7 +33,14 @@ public class SceneOutliner extends SubWindow {
             componentName = "sm_" + ((StaticMeshComponent)comp).getStaticMesh().getName();
         }
 
-        if (ImGui.treeNode(componentName + "##" + nodeIndex)) {
+        int flags = ImGuiTreeNodeFlags.OpenOnDoubleClick;
+        if (comp.getChildren() == null || comp.getChildren().size() == 0) flags |= ImGuiTreeNodeFlags.Leaf;
+        if (comp == _parentViewport.getEditedComponent()) flags |= ImGuiTreeNodeFlags.Selected;
+
+        boolean bExpand = ImGui.treeNodeEx(componentName + "##" + nodeIndex, flags);
+        if (ImGui.isItemClicked()) _parentViewport.editComponent(comp);
+        if (bExpand) {
+            //ImGui.sameLine();
             if (comp.getChildren() != null) {
                 for (SceneComponent child : comp.getChildren()) {
                     drawNode(child);

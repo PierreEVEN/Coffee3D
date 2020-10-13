@@ -10,6 +10,7 @@ import Core.Renderer.Scene.RenderScene;
 import Core.Renderer.Scene.Scene;
 import Core.Renderer.Scene.SceneComponent;
 import Core.Renderer.Window;
+import Core.UI.SubWindows.DemoWindow;
 import Editor.UI.Browsers.ContentBrowser;
 import Editor.UI.LevelEditor.LevelEditorViewport;
 import Editor.UI.SceneViewport;
@@ -128,6 +129,7 @@ public class EditorModule implements IEngineModule {
                 if (ImGui.menuItem("Content browser")) new ContentBrowser("Content browser");
                 if (ImGui.menuItem("Resource viewer")) new ResourcesViewer("resource viewer");
                 if (ImGui.menuItem("Style editor")) new StyleEditor("Style editor");
+                if (ImGui.menuItem("Demo window")) new DemoWindow("Demo window");
                 ImGui.endMenu();
             }
 

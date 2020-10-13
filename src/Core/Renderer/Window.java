@@ -4,6 +4,7 @@ import Core.IEngineModule;
 import Core.IO.LogOutput.Log;
 import Core.Resources.ResourceManager;
 import Core.UI.ImGuiImpl.ImGuiImplementation;
+import Core.UI.PropertyHelper.FieldWriter;
 import Core.UI.SubWindows.SubWindow;
 import imgui.ImGui;
 import imgui.ImGuiIO;
@@ -50,6 +51,8 @@ public class Window {
      */
     public void run(IEngineModule engineModule) {
         _engineModule = engineModule;
+
+        FieldWriter.RegisterPrimitiveWriters();
 
         Log.Display("initialize glfw");
         _glfwWindowHandle = RenderUtils.InitializeGlfw(_bfrWidth, _bfrHeight, _windowTitle);
