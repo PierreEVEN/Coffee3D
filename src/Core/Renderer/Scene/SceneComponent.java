@@ -16,9 +16,9 @@ public class SceneComponent implements Serializable {
      * @param scale    relative scale
      */
     public SceneComponent(Vector3f position, Quaternionf rotation, Vector3f scale) {
-        _position = position;
-        _rotation = rotation;
-        _scale = scale;
+        this.position = position;
+        this.rotation = rotation;
+        this.scale = scale;
     }
 
 
@@ -51,35 +51,35 @@ public class SceneComponent implements Serializable {
     /**
      * relative position
      */
-    private Vector3f _position;
+    public Vector3f position;
 
     /**
      * relative rotation
      */
-    private Quaternionf _rotation;
+    public Quaternionf rotation;
 
     /**
      * relative scale
      */
-    private Vector3f _scale;
+    public Vector3f scale;
 
     /**
      * get component position relative to it's parent
      * @return local position
      */
-    public Vector3f getRelativePosition() { return _position; }
+    public Vector3f getRelativePosition() { return position; }
 
     /**
      * get component rotation relative to it's parent
      * @return local rotation
      */
-    public Quaternionf getRelativeRotation() { return _rotation; }
+    public Quaternionf getRelativeRotation() { return rotation; }
 
     /**
      * get component scale relative to it's parent
      * @return local scale
      */
-    public Vector3f getRelativeScale() { return _scale; }
+    public Vector3f getRelativeScale() { return scale; }
 
     /**
      * build relative transformation matrix
@@ -110,19 +110,19 @@ public class SceneComponent implements Serializable {
      * set component relative position
      * @param position local position
      */
-    public void setRelativePosition(Vector3f position) { _position = position; }
+    public void setRelativePosition(Vector3f position) { this.position = position; }
 
     /**
      * set component relative rotation
      * @param quat local rotation
      */
-    public void setRelativeRotation(Quaternionf quat) { _rotation = quat; }
+    public void setRelativeRotation(Quaternionf quat) { rotation = quat; }
 
     /**
      * set component relative scale
      * @param scale  local scale
      */
-    public void setRelativeScale(Vector3f scale) { _scale = scale; }
+    public void setRelativeScale(Vector3f scale) { this.scale = scale; }
 
     /**
      * get component relative roll axis
@@ -160,7 +160,7 @@ public class SceneComponent implements Serializable {
      */
     public Vector3f getForwardVector() {
         Vector3f vec = new Vector3f();
-        _rotation.normalizedPositiveX(vec);
+        rotation.normalizedPositiveX(vec);
         return vec;
     }
 
@@ -170,7 +170,7 @@ public class SceneComponent implements Serializable {
      */
     public Vector3f getRightVector() {
         Vector3f vec = new Vector3f();
-        _rotation.normalizedPositiveZ(vec);
+        rotation.normalizedPositiveZ(vec);
         return vec;
     }
 
@@ -180,7 +180,7 @@ public class SceneComponent implements Serializable {
      */
     public Vector3f getUpVector() {
         Vector3f vec = new Vector3f();
-        _rotation.normalizedPositiveY(vec);
+        rotation.normalizedPositiveY(vec);
         return vec;
     }
 
@@ -189,13 +189,13 @@ public class SceneComponent implements Serializable {
      * @param offset local movement
      */
     public void addLocalOffset(Vector3f offset) {
-        _position.x += getForwardVector().x * offset.x +
+        position.x += getForwardVector().x * offset.x +
                 getRightVector().x * offset.y +
                 getUpVector().x * offset.z;
-        _position.y += getForwardVector().y * offset.x +
+        position.y += getForwardVector().y * offset.x +
                 getRightVector().y * offset.y +
                 getUpVector().y * offset.z;
-        _position.z += getForwardVector().z * offset.x +
+        position.z += getForwardVector().z * offset.x +
                 getRightVector().z * offset.y +
                 getUpVector().z * offset.z;
     }
@@ -205,9 +205,9 @@ public class SceneComponent implements Serializable {
      * @param offset relative movement
      */
     public void addRelativeOffset(Vector3f offset) {
-        _position.x += offset.x;
-        _position.y += offset.y;
-        _position.z += offset.z;
+        position.x += offset.x;
+        position.y += offset.y;
+        position.z += offset.z;
     }
     
     /******************************************************************/
