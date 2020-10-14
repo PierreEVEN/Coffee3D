@@ -29,10 +29,6 @@ public class SceneOutliner extends SubWindow {
 
         String componentName = comp.getClass().getSimpleName();
 
-        if (comp instanceof StaticMeshComponent) {
-            componentName = "sm_" + ((StaticMeshComponent)comp).getStaticMesh().getName();
-        }
-
         int flags = ImGuiTreeNodeFlags.OpenOnDoubleClick;
         if (comp.getChildren() == null || comp.getChildren().size() == 0) flags |= ImGuiTreeNodeFlags.Leaf;
         if (comp == _parentViewport.getEditedComponent()) flags |= ImGuiTreeNodeFlags.Selected;

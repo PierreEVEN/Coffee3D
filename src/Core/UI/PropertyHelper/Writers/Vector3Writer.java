@@ -8,6 +8,10 @@ import org.joml.Vector3f;
 import java.lang.reflect.Field;
 
 public class Vector3Writer extends FieldWriter {
+    public Vector3Writer(Class cl) {
+        super(cl);
+    }
+
     @Override
     protected void draw(Field field, Object object) throws IllegalAccessException {
         Vector3f vec = (Vector3f) field.get(object);

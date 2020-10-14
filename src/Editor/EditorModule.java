@@ -5,6 +5,7 @@ import Core.Assets.Material;
 import Core.Assets.StaticMesh;
 import Core.Assets.Texture2D;
 import Core.IEngineModule;
+import Core.IO.LogOutput.Log;
 import Core.Renderer.Scene.Components.StaticMeshComponent;
 import Core.Renderer.Scene.RenderScene;
 import Core.Renderer.Scene.Scene;
@@ -130,6 +131,12 @@ public class EditorModule implements IEngineModule {
                 if (ImGui.menuItem("Resource viewer")) new ResourcesViewer("resource viewer");
                 if (ImGui.menuItem("Style editor")) new StyleEditor("Style editor");
                 if (ImGui.menuItem("Demo window")) new DemoWindow("Demo window");
+                ImGui.endMenu();
+            }
+            if (ImGui.beginMenu("Import")) {
+                if (ImGui.menuItem("Static mesh")) Log.Display("not implemented yet");
+                if (ImGui.menuItem("Material")) Log.Display("not implemented yet");
+                if (ImGui.menuItem("Texture2D")) Log.Display("not implemented yet");
                 ImGui.endMenu();
             }
 

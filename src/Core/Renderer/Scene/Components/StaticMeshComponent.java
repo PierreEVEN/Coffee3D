@@ -1,5 +1,6 @@
 package Core.Renderer.Scene.Components;
 
+import Core.Assets.AssetReference;
 import Core.Assets.Material;
 import Core.Renderer.Scene.Scene;
 import Core.Assets.StaticMesh;
@@ -10,21 +11,22 @@ import org.joml.Vector3f;
 
 public class StaticMeshComponent extends SceneComponent {
 
-    private final StaticMesh _mesh;
+    private AssetReference<StaticMesh> _mesh;
 
     public StaticMeshComponent(StaticMesh mesh, Vector3f position, Quaternionf rotation, Vector3f scale) {
         super(position, rotation, scale);
-        _mesh = mesh;
+        _mesh = new AssetReference(StaticMesh.class, mesh);
     }
 
     @Override
     public void draw(Scene context) {
-        for (Material mat : _mesh.getMaterials()) {
+        if (_mesh.get() == null) return;
+        for (Material mat : _mesh.get().getMaterials()) {
             mat.use(context);
         }
-        _mesh.setMaterialModel(getWorldTransformationMatrix());
-        _mesh.use(context);
+        _mesh.get().setMaterialModel(getWorldTransformationMatrix());
+        _mesh.get().use(context);
     }
 
-    public StaticMesh getStaticMesh() { return _mesh; }
+    public StaticMesh getStaticMesh() { return _mesh.get(); }
 }

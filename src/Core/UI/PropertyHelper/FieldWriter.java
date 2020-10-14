@@ -1,32 +1,49 @@
 package Core.UI.PropertyHelper;
 
+import Core.Assets.Asset;
+import Core.Assets.AssetReference;
 import Core.IO.LogOutput.Log;
 import Core.UI.PropertyHelper.Writers.*;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public abstract class FieldWriter {
 
-    private static HashMap<String, FieldWriter> _writers;
-
-    public static void RegisterWriter(String cl, FieldWriter _writer) {
-        if (_writers == null) _writers = new HashMap<>();
-        _writers.put(cl, _writer);
+    private Class _cl;
+    private static ArrayList<FieldWriter> _writers;
+    public static void RegisterWriter(FieldWriter _writer) {
+        if (_writers == null) _writers = new ArrayList<>();
+        _writers.add(_writer);
     }
-
-    public static FieldWriter Find(String cl) {
+    public static FieldWriter Find(Class cl) {
         if (_writers == null) return null;
-        return _writers.get(cl);
+
+        for (FieldWriter writer : _writers) {
+            if (writer.getType().isAssignableFrom(cl)) {
+                return writer;
+            }
+        }
+        return null;
     }
+
+    public FieldWriter(Class cl) {
+        _cl = cl;
+    }
+
+    public Class getType() { return _cl; }
 
     protected abstract void draw(Field field, Object object) throws IllegalAccessException;
 
     public static void RegisterPrimitiveWriters() {
-        RegisterWriter("float", new FloatWriter());
-        RegisterWriter("Vector3f", new Vector3Writer());
-        RegisterWriter("Quaternionf", new QuaternionWriter());
-        RegisterWriter("int", new IntWriter());
-        RegisterWriter("boolean", new BooleanWriter());
+        RegisterWriter(new FloatWriter(Float.TYPE));
+        RegisterWriter(new IntWriter(Integer.TYPE));
+        RegisterWriter(new BooleanWriter(Boolean.TYPE));
+        RegisterWriter(new Vector3Writer(Vector3f.class));
+        RegisterWriter(new QuaternionWriter(Quaternionf.class));
+        RegisterWriter(new AssetWriter(AssetReference.class));
     }
 }

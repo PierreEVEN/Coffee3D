@@ -22,7 +22,8 @@ public class LevelEditorViewport extends SceneViewport {
 
         if (ImGui.beginMenuBar()) {
             if (ImGui.beginMenu("edit")) {
-                if (ImGui.menuItem("save")) Log.Warning("Not implemented yet");
+                if (ImGui.menuItem("save")) getScene().saveToFile("truc.map");
+                if (ImGui.menuItem("load")) getScene().loadFromFile("truc.map");
                 ImGui.endMenu();
             }
             if (ImGui.beginMenu("window")) {

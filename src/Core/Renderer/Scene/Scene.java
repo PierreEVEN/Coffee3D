@@ -1,18 +1,19 @@
 package Core.Renderer.Scene;
 
+import Core.IO.LogOutput.Log;
 import Core.Renderer.Scene.Components.Camera;
 import Core.Renderer.Scene.Gamemode.DefaultGamemode;
 import Core.Renderer.Scene.Gamemode.IGamemodeBase;
 import Core.Renderer.Window;
 import org.joml.Matrix4f;
 
-import java.io.Serializable;
+import java.io.*;
 import java.util.ArrayList;
 
 public class Scene implements Serializable {
     private final transient Camera _camera;
     private final transient IGamemodeBase _gameMode;
-    private final ArrayList<SceneComponent> _components;
+    private ArrayList<SceneComponent> _components;
 
     public Scene() {
         _components = new ArrayList<>();
@@ -29,11 +30,14 @@ public class Scene implements Serializable {
         }
     }
 
-    public ArrayList<SceneComponent> getComponents() { return _components; }
+    public ArrayList<SceneComponent> getComponents() {
+        return _components;
+    }
 
     /**
      * Make component root on this scene.
      * (don't call this method yourself, use component.attachToScene(sceneParam));
+     *
      * @param rootComponent attached component
      */
     protected void attachComponent(SceneComponent rootComponent) {
@@ -46,6 +50,7 @@ public class Scene implements Serializable {
     /**
      * Unregister component from this scene.
      * (don't call this method yourself, use component.detach());
+     *
      * @param rootComponent detached component
      */
     protected void detachComponent(SceneComponent rootComponent) {
@@ -54,14 +59,40 @@ public class Scene implements Serializable {
         }
     }
 
-    public Camera getCamera() { return _camera; }
+    public Camera getCamera() {
+        return _camera;
+    }
 
     public Matrix4f getProjection() {
-            return new Matrix4f().perspective(
-                    (float) Math.toRadians(_camera.getFieldOfView()),
-                    Window.GetPrimaryWindow().getPixelWidth() / (float) Window.GetPrimaryWindow().getPixelHeight(),
-                    _camera.getNearClipPlane(),
-                    _camera.getFarClipPlane()
-            );
+        return new Matrix4f().perspective(
+                (float) Math.toRadians(_camera.getFieldOfView()),
+                Window.GetPrimaryWindow().getPixelWidth() / (float) Window.GetPrimaryWindow().getPixelHeight(),
+                _camera.getNearClipPlane(),
+                _camera.getFarClipPlane()
+        );
+    }
+
+
+    public void saveToFile(String filePath) {
+        try {
+            FileOutputStream fos = new FileOutputStream(filePath);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(_components);
+        } catch (Exception e) {
+            Log.Warning("failed to serialise scene : " + e.getMessage());
+        }
+    }
+
+    public void loadFromFile(String filePath) {
+        try {
+            FileInputStream fis = new FileInputStream(filePath);
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            ArrayList<SceneComponent> comps = (ArrayList<SceneComponent>) ois.readObject();
+            if (comps != null) _components = comps;
+            ois.close();
+            fis.close();
+        } catch (Exception e) {
+            Log.Warning("failed to deserialize scene : " + e.getMessage());
+        }
     }
 }

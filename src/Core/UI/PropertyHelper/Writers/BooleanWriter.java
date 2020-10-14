@@ -8,6 +8,11 @@ import java.lang.reflect.Field;
 
 public class BooleanWriter extends FieldWriter {
     private ImBoolean _values;
+
+    public BooleanWriter(Class cl) {
+        super(cl);
+    }
+
     @Override
     protected void draw(Field field, Object object) throws IllegalAccessException {
         if (_values == null) _values = new ImBoolean();

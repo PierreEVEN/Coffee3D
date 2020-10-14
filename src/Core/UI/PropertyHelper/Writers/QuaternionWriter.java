@@ -11,6 +11,10 @@ import java.lang.reflect.Field;
 public class QuaternionWriter extends FieldWriter {
     private Vector3f _euler;
 
+    public QuaternionWriter(Class cl) {
+        super(cl);
+    }
+
     @Override
     protected void draw(Field field, Object object) throws IllegalAccessException {
         Quaternionf vec = (Quaternionf) field.get(object);

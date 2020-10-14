@@ -6,6 +6,10 @@ import imgui.ImGui;
 import java.lang.reflect.Field;
 
 public class FloatWriter extends FieldWriter {
+    public FloatWriter(Class cl) {
+        super(cl);
+    }
+
     @Override
     protected void draw(Field field, Object object) throws IllegalAccessException {
         float[] values = {field.getFloat(object)};

@@ -1,6 +1,9 @@
 package Core.UI.PropertyHelper;
 
+import Core.Assets.Asset;
+import Core.Assets.StaticMesh;
 import Core.IO.LogOutput.Log;
+import Core.Renderer.Scene.Components.StaticMeshComponent;
 import imgui.ImGui;
 
 import java.lang.reflect.Field;
@@ -18,8 +21,7 @@ public class StructureReader {
         String nodeName = field.getName() + " (" + field.getType().getSimpleName() + ")" + "##" + debugIndex;
 
         try {
-            FieldWriter foundWriter = FieldWriter.Find(field.getType().getSimpleName());
-
+            FieldWriter foundWriter = FieldWriter.Find(field.getType());
             if (foundWriter != null)
             {
                 // Draw editor if found
