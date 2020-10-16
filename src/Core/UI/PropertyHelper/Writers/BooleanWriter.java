@@ -14,12 +14,13 @@ public class BooleanWriter extends FieldWriter {
     }
 
     @Override
-    protected void draw(Field field, Object object) throws IllegalAccessException {
+    protected boolean draw(Field field, Object object) throws IllegalAccessException {
         if (_values == null) _values = new ImBoolean();
         _values.set(field.getBoolean(object));
         ImGui.checkbox(field.getName() + "##", _values);
         if (_values.get() != field.getBoolean(object)) {
             field.setBoolean(object, _values.get());
         }
+        return false;
     }
 }

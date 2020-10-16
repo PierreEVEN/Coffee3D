@@ -13,7 +13,7 @@ public class Vector3Writer extends FieldWriter {
     }
 
     @Override
-    protected void draw(Field field, Object object) throws IllegalAccessException {
+    protected boolean draw(Field field, Object object) throws IllegalAccessException {
         Vector3f vec = (Vector3f) field.get(object);
         float[] values = {vec.x, vec.y, vec.z};
         ImGui.text(field.getName() + " : ");
@@ -28,5 +28,6 @@ public class Vector3Writer extends FieldWriter {
         if (values[2] != vec.z) {
             vec.z = values[2];
         }
+        return false;
     }
 }
