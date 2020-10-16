@@ -39,7 +39,7 @@ public class EditorModule implements IEngineModule {
         new Texture2D("grass", "resources/textures/grassSeamless.png");
         new Material("testMat", "resources/shaders/shader", new String[] {"gridTexture"});
         new Material("matWeird", "resources/shaders/shader", new String[] {"grass"});
-        new StaticMesh("test", "resources/models/test.fbx", new String[] { "testMat" });
+        new StaticMesh("test", "resources/models/Tram.fbx", new String[] { "testMat" });
         new StaticMesh("cube", "resources/models/cube.fbx", new String[] { "matWeird" });
     }
 
@@ -50,7 +50,7 @@ public class EditorModule implements IEngineModule {
         SceneComponent root = new SceneComponent(new Vector3f(0,0,0), new Quaternionf().identity(), new Vector3f(1,1,1));
         root.attachToScene(_rootScene);
         Random rnd = new Random();
-        for (int i = 0; i < 200; ++i) {
+        for (int i = 0; i < 1; ++i) {
             float range = 200;
             StaticMeshComponent parent = new StaticMeshComponent(
                     AssetManager.FindAsset("test"),
