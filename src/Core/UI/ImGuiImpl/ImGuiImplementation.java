@@ -1,10 +1,7 @@
 package Core.UI.ImGuiImpl;
 
 import Core.IO.Inputs.GlfwInputHandler;
-import imgui.ImFontAtlas;
-import imgui.ImFontConfig;
-import imgui.ImGui;
-import imgui.ImGuiIO;
+import imgui.*;
 import imgui.flag.ImGuiBackendFlags;
 import imgui.flag.ImGuiConfigFlags;
 import imgui.flag.ImGuiKey;
@@ -35,7 +32,20 @@ public class ImGuiImplementation {
 
         // ImGui provides 3 different color schemas for styling. We will use the classic one here.
         // Try others with ImGui.styleColors*() methods.
-        ImGui.styleColorsClassic();
+        ImGui.styleColorsDark();
+
+        ImGuiStyle style = ImGui.getStyle();
+        style.setWindowRounding(0);
+        style.setScrollbarRounding(0);
+        style.setTabRounding(0);
+        style.setWindowBorderSize(1);
+        style.setPopupBorderSize(1);
+        style.setWindowTitleAlign(0.5f, style.getWindowTitleAlignY());
+        style.setFramePadding(6.f, 6.f);
+        style.setWindowPadding(4.f, 4.f);
+        style.setGrabMinSize(16.f);
+        style.setScrollbarSize(20.f);
+        style.setIndentSpacing(30.f);
 
         // Initialize ImGuiIO config
         final ImGuiIO io = ImGui.getIO();

@@ -15,6 +15,7 @@ public class LevelEditorViewport extends SceneViewport {
     public LevelEditorViewport(RenderScene scene, String windowName) {
         super(scene, windowName);
         bHasMenuBar = true;
+        new SceneOutliner(this, "Scene outliner");
     }
 
     @Override

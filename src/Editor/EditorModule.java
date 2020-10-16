@@ -14,6 +14,7 @@ import Core.Renderer.Window;
 import Core.UI.SubWindows.DemoWindow;
 import Editor.UI.Browsers.ContentBrowser;
 import Editor.UI.Browsers.FileBrowser;
+import Editor.UI.Importers.TextureImporter;
 import Editor.UI.LevelEditor.LevelEditorViewport;
 import Editor.UI.SceneViewport;
 import Editor.UI.Browsers.ResourcesViewer;
@@ -40,15 +41,16 @@ public class EditorModule implements IEngineModule {
         new Texture2D("grass", "resources/textures/grassSeamless.png");
         new Material("testMat", "resources/shaders/shader", new String[] {"gridTexture"});
         new Material("matWeird", "resources/shaders/shader", new String[] {"grass"});
-        new StaticMesh("test", "resources/models/Tram.fbx", new String[] { "testMat" });
+        new StaticMesh("test", "resources/models/test.fbx", new String[] { "testMat" });
         new StaticMesh("cube", "resources/models/cube.fbx", new String[] { "matWeird" });
     }
 
     @Override
     public void PreInitialize() {
-        new FileBrowser("test", new String[] {"png"});
-
         _rootScene = new RenderScene(800, 600);
+
+        new LevelEditorViewport((RenderScene) _rootScene, "viewport");
+        new ContentBrowser("Content browser");
 
         SceneComponent root = new SceneComponent(new Vector3f(0,0,0), new Quaternionf().identity(), new Vector3f(1,1,1));
         root.attachToScene(_rootScene);
@@ -114,8 +116,8 @@ public class EditorModule implements IEngineModule {
 
     @Override
     public void DrawUI() {
-        ImGui.setNextWindowPos(0, 20);
-        ImGui.setNextWindowSize(Window.GetPrimaryWindow().getPixelWidth(), Window.GetPrimaryWindow().getPixelHeight() - 20);
+        ImGui.setNextWindowPos(0, 25);
+        ImGui.setNextWindowSize(Window.GetPrimaryWindow().getPixelWidth(), Window.GetPrimaryWindow().getPixelHeight() - 25);
         if (ImGui.begin("Master Window", ImGuiWindowFlags.NoNav | ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoInputs | ImGuiWindowFlags.NoBringToFrontOnFocus)) {
             ImGui.dockSpace(ImGui.getID("Master dockSpace"), 0.f, 0.f, ImGuiDockNodeFlags.PassthruCentralNode);
         }
@@ -140,7 +142,7 @@ public class EditorModule implements IEngineModule {
             if (ImGui.beginMenu("Import")) {
                 if (ImGui.menuItem("Static mesh")) Log.Display("not implemented yet");
                 if (ImGui.menuItem("Material")) Log.Display("not implemented yet");
-                if (ImGui.menuItem("Texture2D")) Log.Display("not implemented yet");
+                if (ImGui.menuItem("Texture2D")) new TextureImporter("Texture importer");
                 ImGui.endMenu();
             }
 

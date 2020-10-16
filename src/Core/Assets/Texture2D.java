@@ -3,6 +3,7 @@ package Core.Assets;
 import Core.Factories.TextureFactory;
 import Core.Renderer.Scene.Scene;
 import Core.Resources.Texture2DResource;
+import imgui.ImGui;
 
 public class Texture2D extends Asset {
 
@@ -24,5 +25,17 @@ public class Texture2D extends Asset {
     @Override
     public void use(Scene context) {
         _texture.use(context);
+    }
+
+    @Override
+    protected void drawThumbnailImage() {
+        if (_texture != null) {
+            if (ImGui.imageButton(_texture.getTextureHandle(), 64, 64, 0, 1, 1, 0)) {
+                // On clicked
+            }
+        }
+        else {
+            super.drawThumbnailImage();
+        }
     }
 }

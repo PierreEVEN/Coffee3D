@@ -47,7 +47,6 @@ public class AssetManager {
         if (asset != null) {
             return (T)asset;
         }
-        Log.Warning("failed to find asset '" + assetName + "'");
         return null;
     }
 

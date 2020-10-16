@@ -27,11 +27,22 @@ public class ContentBrowser extends SubWindow {
         for (Class cl : orderedAssets) {
             ImGui.separator();
             ImGui.text(cl.getSimpleName());
-            ImGui.indent();
+            ArrayList<Asset> subAssets = new ArrayList<>();
             for (Asset asset : assets) {
-                if (asset.getClass() == cl) ImGui.text(asset.toString());
+                if (asset.getClass() == cl) subAssets.add(asset);
             }
-            ImGui.unindent();
+
+            float sizeX = ImGui.getContentRegionAvailX();
+
+            int widthItems = (int)(sizeX / 80);
+            ImGui.columns(widthItems < 1 ? 1 : widthItems, "", false);
+
+            int currentElemIndex = 0;
+            for (Asset elem : subAssets) {
+                elem.drawThumbnail();
+                ImGui.nextColumn();
+            }
+            ImGui.columns(1);
         }
     }
 }

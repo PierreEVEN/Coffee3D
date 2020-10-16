@@ -60,5 +60,4 @@ public class TextureFactory {
         resource.load();
         return resource;
     }
-
 }
