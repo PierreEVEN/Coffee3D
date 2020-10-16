@@ -16,7 +16,7 @@ public class QuaternionWriter extends FieldWriter {
     }
 
     @Override
-    protected void draw(Field field, Object object) throws IllegalAccessException {
+    protected boolean draw(Field field, Object object) throws IllegalAccessException {
         Quaternionf vec = (Quaternionf) field.get(object);
         if (_euler == null) _euler = new Vector3f();
         vec.getEulerAnglesXYZ(_euler);
@@ -33,5 +33,6 @@ public class QuaternionWriter extends FieldWriter {
         if (values[0] != _euler.x || values[1] != _euler.y || values[2] != _euler.z) {
             vec.identity().rotateXYZ((float)Math.toRadians(values[0]), (float)Math.toRadians(values[1]), (float)Math.toRadians(values[2]));
         }
+        return false;
     }
 }

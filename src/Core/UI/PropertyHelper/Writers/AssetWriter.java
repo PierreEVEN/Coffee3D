@@ -15,7 +15,7 @@ public class AssetWriter extends FieldWriter {
     }
 
     @Override
-    protected void draw(Field field, Object object) throws IllegalAccessException {
+    protected boolean draw(Field field, Object object) throws IllegalAccessException {
 
         Asset foundAsset = null;
 
@@ -30,5 +30,6 @@ public class AssetWriter extends FieldWriter {
         if (ImGui.button(foundAsset == null ? "none" : foundAsset.getName(), ImGui.getContentRegionAvailX(), 0.f)) {
             new AssetPicker("Pick asset for " + field.getName(), ref);
         }
+        return false;
     }
 }

@@ -36,7 +36,7 @@ public abstract class FieldWriter {
 
     public Class getType() { return _cl; }
 
-    protected abstract void draw(Field field, Object object) throws IllegalAccessException;
+    protected abstract boolean draw(Field field, Object object) throws IllegalAccessException;
 
     public static void RegisterPrimitiveWriters() {
         RegisterWriter(new FloatWriter(Float.TYPE));

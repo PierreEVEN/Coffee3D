@@ -13,6 +13,7 @@ import Core.Renderer.Scene.SceneComponent;
 import Core.Renderer.Window;
 import Core.UI.SubWindows.DemoWindow;
 import Editor.UI.Browsers.ContentBrowser;
+import Editor.UI.Browsers.FileBrowser;
 import Editor.UI.LevelEditor.LevelEditorViewport;
 import Editor.UI.SceneViewport;
 import Editor.UI.Browsers.ResourcesViewer;
@@ -45,6 +46,8 @@ public class EditorModule implements IEngineModule {
 
     @Override
     public void PreInitialize() {
+        new FileBrowser("test", new String[] {"png"});
+
         _rootScene = new RenderScene(800, 600);
 
         SceneComponent root = new SceneComponent(new Vector3f(0,0,0), new Quaternionf().identity(), new Vector3f(1,1,1));
@@ -120,6 +123,7 @@ public class EditorModule implements IEngineModule {
 
         if (ImGui.beginMainMenuBar()) {
             if (ImGui.beginMenu("Files")) {
+                if (ImGui.menuItem("save all")) { }
                 if (ImGui.menuItem("quit")) {
                     Window.GetPrimaryWindow().close();
                 }

@@ -25,7 +25,9 @@ public class StructureReader {
             if (foundWriter != null)
             {
                 // Draw editor if found
-                foundWriter.draw(field, obj);
+                if (foundWriter.draw(field, obj)) {
+
+                }
             }
             else {
                 // Case no editor were found
