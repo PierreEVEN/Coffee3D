@@ -1,0 +1,41 @@
+package Core.UI.PropertyHelper.Writers;
+
+import Core.Assets.Asset;
+import Core.Assets.AssetManager;
+import Core.Assets.AssetReference;
+import Core.UI.Tools.AssetPicker;
+import imgui.ImGui;
+
+import java.lang.reflect.Field;
+
+public class AssetButton {
+
+    public static <T> void Draw(String fieldName, AssetReference<T> assetRef) {
+        Asset foundAsset = null;
+
+        if (assetRef != null) {
+            foundAsset = (Asset) assetRef.get();
+        }
+        ImGui.beginGroup();
+        ImGui.text(fieldName);
+        ImGui.sameLine();
+        if (ImGui.button(foundAsset == null ? "none" : foundAsset.getName(), ImGui.getContentRegionAvailX(), 0.f)) {
+            new AssetPicker("Pick asset for " + fieldName, assetRef);
+        }
+        ImGui.endGroup();
+
+        if (ImGui.beginDragDropTarget())
+        {
+            byte[] data = ImGui.acceptDragDropPayload ("DDOP_ASSET");
+            if (data != null)
+            {
+                String assetName = new String(data);
+                Asset droppedAsset = AssetManager.FindAsset(assetName);
+                if (droppedAsset != null) {
+                    assetRef.set((T)droppedAsset);
+                }
+            }
+        }
+    }
+
+}

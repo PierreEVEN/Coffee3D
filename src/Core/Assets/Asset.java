@@ -15,6 +15,8 @@ import java.io.Serializable;
  * Asset base class
  */
 public abstract class Asset implements Serializable {
+    private static final long serialVersionUID = -5394125677306125615L;
+
     private final String _name;
     private final String _filePath;
     protected Vector4f assetColor;

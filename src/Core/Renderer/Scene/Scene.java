@@ -1,5 +1,7 @@
 package Core.Renderer.Scene;
 
+import Core.Assets.AssetManager;
+import Core.Assets.Material;
 import Core.IO.LogOutput.Log;
 import Core.Renderer.Scene.Components.Camera;
 import Core.Renderer.Scene.Gamemode.DefaultGamemode;
@@ -10,20 +12,31 @@ import org.joml.Matrix4f;
 import java.io.*;
 import java.util.ArrayList;
 
-public class Scene implements Serializable {
+import static org.lwjgl.opengl.GL30.glBindBufferRange;
+import static org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER;
+import static org.lwjgl.opengl.GL31.glGetUniformBlockIndex;
+import static org.lwjgl.opengl.GL31C.glUniformBlockBinding;
+
+public class Scene {
     private final transient Camera _camera;
     private final transient IGamemodeBase _gameMode;
     private ArrayList<SceneComponent> _components;
+    private SceneStaticBuffer _sceneUbo;
 
     public Scene() {
         _components = new ArrayList<>();
         _gameMode = new DefaultGamemode(this);
         _camera = new Camera(this);
+        _sceneUbo = new SceneStaticBuffer();
+        _sceneUbo.load();
     }
 
     public void renderScene() {
         // Tick gameMode
         _gameMode.update(this);
+        //Update static buffer
+        _sceneUbo.use(this);
+
         // Draw attached components
         for (SceneComponent component : _components) {
             component.drawInternal(this);

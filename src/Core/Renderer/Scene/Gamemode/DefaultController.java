@@ -39,8 +39,8 @@ public class DefaultController extends IGameController {
     public void cursorPosCallback(double x, double y) {
         super.cursorPosCallback(x, y);
         if (!Window.GetPrimaryWindow().captureMouse()) return;
-        getScene().getCamera().addYawInput((float) getCursorDeltaX() * (float) Window.GetPrimaryWindow().getDeltaTime() * 50);
-        getScene().getCamera().addPitchInput((float) getCursorDeltaY() * (float) Window.GetPrimaryWindow().getDeltaTime() * 50);
+        getScene().getCamera().addYawInput((float) getCursorDeltaX() * 0.5f);
+        getScene().getCamera().addPitchInput((float) getCursorDeltaY() * 0.5f);
     }
 
 

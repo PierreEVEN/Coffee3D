@@ -12,7 +12,7 @@ import java.nio.IntBuffer;
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL.createCapabilities;
-import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_MULTISAMPLE;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
@@ -23,6 +23,14 @@ public class RenderUtils {
         createCapabilities();
 
         glEnable(GL_MULTISAMPLE);
+    }
+
+    public static void CheckGLErrors() {
+        int errCode;
+        while((errCode = glGetError()) != GL_NO_ERROR)
+        {
+            Log.Error("GL error : " + Integer.toHexString(errCode));
+        }
     }
 
     public static long InitializeGlfw(int width, int height, String title) {
@@ -38,6 +46,20 @@ public class RenderUtils {
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
         glfwWindowHint(GLFW_SAMPLES, 4);
+
+
+        GLFWVidMode.Buffer windowMode = glfwGetVideoModes(glfwGetPrimaryMonitor());
+        int maxWidth = 0;
+        int maxHeight = 0;
+        for (int i = 0; i < windowMode.capacity(); i++)
+        {
+            if (windowMode.get(i).width() > maxWidth)
+                maxWidth = windowMode.get(i).width();
+            if (windowMode.get(i).height() > maxHeight)
+                maxHeight = windowMode.get(i).height();
+        }
+        if (width < 0) width = maxWidth;
+        if (height < 0) height = maxHeight;
 
         // Create glfw windows
         _windowContext = glfwCreateWindow(width, height, title, 0, 0);

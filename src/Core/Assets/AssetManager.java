@@ -50,6 +50,12 @@ public class AssetManager {
         return null;
     }
 
+    public static boolean CanCreateAssetWithName(String name) {
+        if (name.equals("")) return false;
+        if (AssetManager.FindAsset(name) != null) return false;
+        if (!name.matches("^[a-zA-Z0-9]*$")) return false;
+        return true;
+    }
 
 
 }

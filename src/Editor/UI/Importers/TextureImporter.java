@@ -25,22 +25,28 @@ public class TextureImporter extends SubWindow {
 
     @Override
     protected void draw() {
+        ImGui.text("source file : ");
+        ImGui.sameLine();
         if (ImGui.button(_selectedFile == null ? "pick file" : _selectedFile.getPath())) {
-            new FileBrowser("Select texture file", new String[] {"png"}, _selectedFile, (file) -> _selectedFile = file);
+            new FileBrowser("Select texture file", new String[] {"png"}, _selectedFile, (file) -> {
+                _selectedFile = file;
+                if (_fileName.get().equals("")) {
+                    _fileName.set(_selectedFile.getName().replaceFirst("[.][^.]+$", ""));
+                }
+            });
         }
 
-        boolean bAlreadyExist = false;
-        if (AssetManager.FindAsset(_fileName.get()) != null || _fileName.get().equals("")) {
-            bAlreadyExist = true;
+        boolean bIsValidName = AssetManager.CanCreateAssetWithName(_fileName.get());
+        if (!bIsValidName) {
             ImGui.pushStyleColor(ImGuiCol.FrameBg, 1.f, .2f, .2f, .5f);
             ImGui.pushStyleColor(ImGuiCol.Text, 1.f, .4f, .4f, .8f);
         }
 
-        ImGui.text("file name : ");
+        ImGui.text("asset name : ");
         ImGui.sameLine();
         ImGui.inputText("##file name", _fileName);
 
-        if (bAlreadyExist) {
+        if (!bIsValidName) {
             ImGui.sameLine();
             ImGui.text("invalid file name");
             ImGui.popStyleColor();
@@ -50,7 +56,7 @@ public class TextureImporter extends SubWindow {
         ImGui.dummy(0, ImGui.getContentRegionAvailY() - 50);
         ImGui.dummy(ImGui.getContentRegionAvailX() - 250, 0);
         ImGui.sameLine();
-        if (!bAlreadyExist && _selectedFile != null) {
+        if (bIsValidName && _selectedFile != null) {
             if (ImGui.button("Create", ImGui.getContentRegionAvailX(), 0)) {
                 new Texture2D(_fileName.get(), _selectedFile.getPath());
                 close();

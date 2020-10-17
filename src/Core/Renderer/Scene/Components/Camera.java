@@ -8,6 +8,7 @@ import org.joml.Vector3f;
 
 public class Camera extends SceneComponent {
 
+    private static final long serialVersionUID = 3287874597857486658L;
     private float _pitch, _yaw, _fov, _zmin, _zmax;
     private static final Vector3f CAMERA_UP = new Vector3f(0, 1, 0);
     private boolean _bUsePerspective = true;

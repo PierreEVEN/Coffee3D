@@ -43,7 +43,7 @@ public class MaterialFactory {
             return FromData(resourceName, vertexData, fragmentData, textures);
         }
         catch (Exception e) {
-            Log.Fail("failed to load shader file : " + e.getMessage());
+            Log.Warning("failed to load shader file : " + e.getMessage());
         }
         return null;
     }
@@ -65,6 +65,11 @@ public class MaterialFactory {
     public static MaterialResource FromData(String resourceName, String vertexData, String fragmentData, TextureResource[] textures) {
         MaterialResource mat = new MaterialResource(resourceName, vertexData, fragmentData, textures);
         mat.load();
-        return mat;
+        if (!mat.hasErrors()) {
+            return mat;
+        }
+        else {
+            return null;
+        }
     }
 }

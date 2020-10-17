@@ -49,12 +49,14 @@ public class MeshFactory {
         }
         return result;
     }
+
     private static Vertex[] processVertices(AIMesh aiMesh) {
 
         Vertex[] vertices = new Vertex[aiMesh.mNumVertices()];
 
         AIVector3D.Buffer aiVertices = aiMesh.mVertices();
         AIVector3D.Buffer texCoords = aiMesh.mTextureCoords(0);
+        AIVector3D.Buffer normals = aiMesh.mNormals();
 
         int numTextCoords = texCoords != null ? texCoords.remaining() : 0;
 
@@ -62,9 +64,11 @@ public class MeshFactory {
         while (aiVertices.remaining() > 0) {
             AIVector3D aiVertex = aiVertices.get();
             AIVector3D texCoord = texCoords.get();
+            AIVector3D normal = normals.get();
             vertices[cnt] = new Vertex(
                     new Vector3f(aiVertex.x(), aiVertex.y(), aiVertex.z()),
-                    numTextCoords == vertices.length ? new Vector2f(texCoord.x(), texCoord.y()) : new Vector2f()
+                    numTextCoords == vertices.length ? new Vector2f(texCoord.x(), texCoord.y()) : new Vector2f(0, 0),
+                    new Vector3f(normal.x(), normal.y(), normal.z())
             );
             cnt++;
         }

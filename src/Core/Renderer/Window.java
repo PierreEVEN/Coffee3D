@@ -11,6 +11,7 @@ import imgui.ImGuiIO;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWFramebufferSizeCallback;
+import org.lwjgl.glfw.GLFWVidMode;
 
 import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
@@ -28,6 +29,7 @@ public class Window {
     private double _lastFrameTime;
     private boolean _bDisplayCursor;
     private IEngineModule _engineModule;
+    private int _drawMode;
 
     /**
      * Singleton used to reference the primary window
@@ -39,9 +41,10 @@ public class Window {
     }
 
     private Window() {
-        _bfrWidth = 800;
-        _bfrHeight = 600;
+        _bfrWidth = -1;
+        _bfrHeight = -1;
         _windowTitle = "Coffee3D";
+        _drawMode = GL_FILL;
     }
 
     /**
@@ -111,7 +114,9 @@ public class Window {
 
             glViewport(0, 0, getPixelWidth(), getPixelHeight());
 
+            glPolygonMode( GL_FRONT_AND_BACK, _drawMode);
             _engineModule.DrawScene();
+            glPolygonMode( GL_FRONT_AND_BACK, GL_FILL);
             initUI();
             _engineModule.DrawUI();
             SubWindow.DrawWindows();
@@ -121,7 +126,7 @@ public class Window {
             glfwSwapBuffers(_glfwWindowHandle);
 
             // Flush gc to avoid garbage accumulation.
-            System.gc();
+            //System.gc();
         }
     }
 
@@ -182,7 +187,7 @@ public class Window {
     public boolean captureMouse() { return !_bDisplayCursor; }
 
     public void setDrawMode(int drawMode) {
-        glPolygonMode( GL_FRONT_AND_BACK, drawMode );
+        _drawMode = drawMode;
     }
 
     public void showCursor(boolean bshow) {

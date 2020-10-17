@@ -12,7 +12,7 @@ import static org.lwjgl.opengl.GL30.glBindFramebuffer;
 public class RenderScene extends Scene {
 
     private final Framebuffer _sceneBuffer;
-    private Vector4f backgroundColor;
+    public Vector4f backgroundColor;
 
     public RenderScene(int bfrSizeX, int bfrSizeY) {
         super();

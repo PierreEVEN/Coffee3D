@@ -23,6 +23,10 @@ public class ResourceManager {
         _resources.put(resource.toString(), resource);
     }
 
+    public static void UnRegisterResource(GraphicResource resource) {
+        if (resource != null) _resources.remove(resource.toString(), resource);
+    }
+
     /**
      * Free all resources
      */

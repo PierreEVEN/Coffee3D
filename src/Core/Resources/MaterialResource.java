@@ -29,6 +29,10 @@ public class MaterialResource extends GraphicResource {
      */
     private final String _fragmentData;
 
+    private boolean _bSuccessfullyCompiled = true;
+
+    public boolean hasErrors() { return !_bSuccessfullyCompiled; }
+
     /**
      * linked textures
      */
@@ -55,10 +59,12 @@ public class MaterialResource extends GraphicResource {
         glCompileShader(fragmentShaderId);
 
         if (glGetShaderi(vertexShaderId, GL_COMPILE_STATUS) == 0) {
-            Log.Fail("Error compiling vertex Shader code: " + glGetShaderInfoLog(vertexShaderId, 1024));
+            Log.Warning("Error compiling vertex Shader code: " + glGetShaderInfoLog(vertexShaderId, 1024));
+            _bSuccessfullyCompiled = false;
         }
         if (glGetShaderi(fragmentShaderId, GL_COMPILE_STATUS) == 0) {
-            Log.Fail("Error compiling fragment Shader code: " + glGetShaderInfoLog(fragmentShaderId, 1024));
+            Log.Warning("Error compiling fragment Shader code: " + glGetShaderInfoLog(fragmentShaderId, 1024));
+            _bSuccessfullyCompiled = false;
         }
 
         _materialHandle = glCreateProgram();
@@ -75,7 +81,13 @@ public class MaterialResource extends GraphicResource {
 
         int uniformBlockIndexRed = glGetUniformBlockIndex(_materialHandle, "shader_data");
         glUniformBlockBinding(_materialHandle, uniformBlockIndexRed, 0);
+
+        if (hasErrors()) {
+            ResourceManager.UnRegisterResource(this);
+        }
     }
+
+    public int getProgramHandle() { return _materialHandle; }
 
     @Override
     public void unload() { glDeleteProgram(_materialHandle); }

@@ -4,7 +4,7 @@ import Core.IO.LogOutput.Log;
 import Core.Resources.Texture2DResource;
 
 import javax.imageio.ImageIO;
-import java.awt.image.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 
 /**
@@ -43,7 +43,7 @@ public class TextureFactory {
             return T2dFromData(resourceName, result, bfr.getWidth(), bfr.getHeight());
         }
         catch(Exception e) {
-            Log.Error("failed to open texture : " + e.getMessage());
+            Log.Error("failed to open texture " + filePath + " : " + e.getMessage());
         }
         return null;
     }

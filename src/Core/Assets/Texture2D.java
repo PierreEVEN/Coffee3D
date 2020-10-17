@@ -7,6 +7,7 @@ import imgui.ImGui;
 
 public class Texture2D extends Asset {
 
+    private static final long serialVersionUID = -868665333590764448L;
     private transient Texture2DResource _texture;
 
     public Texture2D(String name, String filePath) {

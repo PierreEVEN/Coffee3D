@@ -1,48 +1,72 @@
 package Core.Types;
 
+import Core.IO.LogOutput.Log;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 
 import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 
 public class SceneBufferData {
+
+    private FloatBuffer _bufferByteData;
 
     public SceneBufferData() {
         viewMatrix = new Matrix4f().identity();
         worldProjection = new Matrix4f().identity();
         cameraPosition = new Vector3f().zero();
+        cameraDirection = new Vector3f(1, 0,0);
+        _bufferByteData = BufferUtils.createFloatBuffer(GetFloatSize());
     }
 
     public Matrix4f viewMatrix;
     public Matrix4f worldProjection;
     public Vector3f cameraPosition;
+    public Vector3f cameraDirection;
+    public float time;
 
     public static int GetByteSize() { return GetFloatSize() * 4; }
 
     public static int GetFloatSize() {
         return 16 + //view
         16 + // world
-        3; // cam pos
+        3 + // cam pos
+        3 + // cam dir
+        1; // time
     }
 
-    public ByteBuffer serializeData() {
+    public FloatBuffer serializeData() {
         float[] matrixData = new float[16];
+        _bufferByteData.clear();
+
+        // View patrix
         viewMatrix.get(matrixData);
-        ByteBuffer result = BufferUtils.createByteBuffer(GetByteSize());
         for (int i = 0; i < 16; ++i) {
-            result.putFloat(i * 4, matrixData[0]);
+            _bufferByteData.put(matrixData[i]);
         }
+
+        // Proj matrix
         worldProjection.get(matrixData);
         for (int i = 0; i < 16; ++i) {
-            result.putFloat((i + 16) * 4, matrixData[0]);
+            _bufferByteData.put(matrixData[i]);
         }
-        result.putFloat(32 * 4, cameraPosition.x);
-        result.putFloat(33 * 4, cameraPosition.y);
-        result.putFloat(34 * 4, cameraPosition.z);
 
-        result.flip();
+        // Cam pos
+        _bufferByteData.put(cameraPosition.x);
+        _bufferByteData.put(cameraPosition.y);
+        _bufferByteData.put(cameraPosition.z);
 
-        return result;
+        // Cam dir
+        _bufferByteData.put(cameraDirection.x);
+        _bufferByteData.put(cameraDirection.y);
+        _bufferByteData.put(cameraDirection.z);
+
+        // Time
+        _bufferByteData.put(time);
+
+
+        _bufferByteData.flip();
+        return _bufferByteData;
     }
 }

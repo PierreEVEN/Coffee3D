@@ -1,9 +1,13 @@
 package Core.Renderer.Scene;
 
+import Core.IO.LogOutput.Log;
+import Core.Renderer.RenderUtils;
 import Core.Resources.GraphicResource;
 import Core.Types.SceneBufferData;
-import org.joml.Matrix4f;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
+
+import java.nio.FloatBuffer;
 
 import static org.lwjgl.opengl.GL46.*;
 
@@ -11,21 +15,25 @@ public class SceneStaticBuffer extends GraphicResource {
 
     private int _uboHandle;
 
-    public SceneBufferData bufferData;
+    private SceneBufferData bufferData;
 
     public SceneStaticBuffer() {
         super("World static buffer");
         bufferData = new SceneBufferData();
     }
 
+
     @Override
     public void load() {
         _uboHandle = glGenBuffers();
         glBindBuffer(GL_UNIFORM_BUFFER, _uboHandle);
-        float[] test = new float[] {4.f};
-        glBufferData(GL_UNIFORM_BUFFER, test, GL_DYNAMIC_DRAW);
+        glBufferData(GL_UNIFORM_BUFFER, bufferData.GetByteSize(), GL_STATIC_DRAW);
         glBindBuffer(GL_UNIFORM_BUFFER, 0);
-        glBindBufferRange(GL_UNIFORM_BUFFER, 0, _uboHandle, 0, 4);
+        glBindBufferRange(GL_UNIFORM_BUFFER, 0, _uboHandle, 0, bufferData.GetByteSize());
+    }
+
+    public int getBufferHandle() {
+        return _uboHandle;
     }
 
     @Override
@@ -35,17 +43,14 @@ public class SceneStaticBuffer extends GraphicResource {
 
     @Override
     public void use(Scene context) {
-        bufferData.viewMatrix = new Matrix4f().identity();//context.getCamera().getViewMatrix();
-        bufferData.worldProjection = new Matrix4f().identity();//context.getProjection();
+        bufferData.viewMatrix = context.getCamera().getViewMatrix();
+        bufferData.worldProjection = context.getProjection();
         bufferData.cameraPosition = context.getCamera().getRelativePosition();
-
-        float[] data = new float[1];
-        data[0] = (float)GLFW.glfwGetTime();
-
-
+        bufferData.cameraDirection = context.getCamera().getUpVector();
+        bufferData.time = (float)GLFW.glfwGetTime();
 
         glBindBuffer(GL_UNIFORM_BUFFER, _uboHandle);
-        glBufferData(GL_UNIFORM_BUFFER, data, GL_WRITE_ONLY);
+        glBufferSubData(GL_UNIFORM_BUFFER, 0, bufferData.serializeData());
         glBindBuffer(GL_UNIFORM_BUFFER, 0);
     }
 }

@@ -1,6 +1,7 @@
 package Core.UI.PropertyHelper.Writers;
 
 import Core.Assets.Asset;
+import Core.Assets.AssetManager;
 import Core.Assets.AssetReference;
 import Core.IO.LogOutput.Log;
 import Core.UI.PropertyHelper.FieldWriter;
@@ -16,20 +17,8 @@ public class AssetWriter extends FieldWriter {
 
     @Override
     protected boolean draw(Field field, Object object) throws IllegalAccessException {
-
-        Asset foundAsset = null;
-
         AssetReference ref = (AssetReference)field.get(object);
-
-        if (ref != null) {
-            foundAsset = (Asset) ref.get();
-        };
-
-        ImGui.text(field.getName());
-        ImGui.sameLine();
-        if (ImGui.button(foundAsset == null ? "none" : foundAsset.getName(), ImGui.getContentRegionAvailX(), 0.f)) {
-            new AssetPicker("Pick asset for " + field.getName(), ref);
-        }
+        AssetButton.Draw(field.getName(), ref);
         return false;
     }
 }

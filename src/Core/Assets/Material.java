@@ -1,8 +1,11 @@
 package Core.Assets;
 
 import Core.Factories.MaterialFactory;
+import Core.IO.LogOutput.Log;
 import Core.Renderer.Scene.Scene;
 import Core.Resources.MaterialResource;
+import Core.Resources.ResourceManager;
+import imgui.ImGui;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +14,7 @@ import static org.lwjgl.opengl.GL46.*;
 
 public class Material extends Asset {
 
+    private static final long serialVersionUID = -2932087609993578842L;
     private transient MaterialResource _mat;
     private final String[] _textureNames;
 
@@ -32,6 +36,26 @@ public class Material extends Asset {
         _mat = MaterialFactory.FromFiles(getName(), fileCleanName + ".vert", fileCleanName + ".frag");
     }
 
+    public void recompile() {
+        String fileCleanName = getFilepath().replaceFirst("[.][^.]+$", "");
+        ResourceManager.UnRegisterResource(_mat);
+        MaterialResource newMat = null;
+
+        try {
+            newMat = MaterialFactory.FromFiles(getName(), fileCleanName + ".vert", fileCleanName + ".frag");
+        }
+        catch (Exception e) {
+            Log.Warning("failed to load or compile shaders : " + e.getMessage());
+        }
+
+        if (newMat != null) {
+            _mat = newMat;
+        }
+        else {
+            ResourceManager.RegisterResource(_mat);
+        }
+    }
+
     public List<Texture2D> getTextures() {
         List<Texture2D> res = new ArrayList<>();
         if (_textureNames == null) return res;
@@ -42,8 +66,15 @@ public class Material extends Asset {
         return res;
     }
 
+    protected void drawThumbnailImage() {
+        if (ImGui.button(("#" + getName()), 64, 64)) {
+            recompile();
+        }
+    }
+
     @Override
     public void use(Scene context) {
+        if (_mat == null) return;
         _mat.use(context);
         List<Texture2D> textures = getTextures();
         if (_textureNames != null) {
