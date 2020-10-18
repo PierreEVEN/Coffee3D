@@ -3,15 +3,18 @@ package Core.Renderer;
 import Core.IEngineModule;
 import Core.IO.LogOutput.Log;
 import Core.Resources.ResourceManager;
+import Core.UI.HUD.HudUtils;
 import Core.UI.ImGuiImpl.ImGuiImplementation;
 import Core.UI.PropertyHelper.FieldWriter;
 import Core.UI.SubWindows.SubWindow;
 import imgui.ImGui;
 import imgui.ImGuiIO;
+import imgui.flag.ImGuiDockNodeFlags;
+import imgui.flag.ImGuiWindowFlags;
+import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWFramebufferSizeCallback;
-import org.lwjgl.glfw.GLFWVidMode;
 
 import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
@@ -30,6 +33,7 @@ public class Window {
     private boolean _bDisplayCursor;
     private IEngineModule _engineModule;
     private int _drawMode;
+    private Vector4f _backgroundColor;
 
     /**
      * Singleton used to reference the primary window
@@ -45,6 +49,7 @@ public class Window {
         _bfrHeight = -1;
         _windowTitle = "Coffee3D";
         _drawMode = GL_FILL;
+        _backgroundColor = new Vector4f(0,0,0,0);
     }
 
     /**
@@ -61,12 +66,15 @@ public class Window {
         _glfwWindowHandle = RenderUtils.InitializeGlfw(_bfrWidth, _bfrHeight, _windowTitle);
         Log.Display("initialize openGL");
         RenderUtils.InitializeOpenGL();
-        Log.Display("initialize imGui");
-        ImGuiImplementation.Get().init(_glfwWindowHandle);
         showCursor(true);
+        Log.Display("pre-initialize imGui");
+        ImGuiImplementation.Get().preInit(_glfwWindowHandle);
 
         Log.Display("load resources");
         _engineModule.LoadResources();
+
+        Log.Display("initialize imGui");
+        ImGuiImplementation.Get().init(_glfwWindowHandle);
 
         Log.Display("build level");
         _engineModule.PreInitialize();
@@ -95,6 +103,14 @@ public class Window {
         Log.Display("done");
     }
 
+    public void setWindowTitle(String title) {
+        glfwSetWindowTitle(_glfwWindowHandle, title);
+    }
+
+    public void setBackgroundColor(Vector4f color) {
+        _backgroundColor = color;
+    }
+
     /**
      * Poll glfw events,
      * then draw window content
@@ -109,8 +125,8 @@ public class Window {
             glfwPollEvents();
 
             // Clear background buffer
-            glClearColor(0,0,0,1);
-            glClear(GL_COLOR_BUFFER_BIT);
+            glClearColor(_backgroundColor.x,_backgroundColor.y,_backgroundColor.z,_backgroundColor.w);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
             glViewport(0, 0, getPixelWidth(), getPixelHeight());
 
@@ -118,6 +134,16 @@ public class Window {
             _engineModule.DrawScene();
             glPolygonMode( GL_FRONT_AND_BACK, GL_FILL);
             initUI();
+
+            HudUtils.ResetCounters();
+
+            ImGui.setNextWindowPos(0, 0);
+            ImGui.setNextWindowSize(Window.GetPrimaryWindow().getPixelWidth(), Window.GetPrimaryWindow().getPixelHeight());
+            if (ImGui.begin("HUD Window", ImGuiWindowFlags.NoNav | ImGuiWindowFlags.NoInputs | ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoBackground)) {
+                _engineModule.DrawHUD();
+            }
+            ImGui.end();
+
             _engineModule.DrawUI();
             SubWindow.DrawWindows();
             ImGui.render();

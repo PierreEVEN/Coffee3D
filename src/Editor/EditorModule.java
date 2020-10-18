@@ -12,6 +12,8 @@ import Core.Renderer.Scene.RenderScene;
 import Core.Renderer.Scene.Scene;
 import Core.Renderer.Scene.SceneComponent;
 import Core.Renderer.Window;
+import Core.UI.HUD.*;
+import Core.UI.ImGuiImpl.ImGuiImplementation;
 import Core.UI.SubWindows.DemoWindow;
 import Editor.UI.Browsers.ContentBrowser;
 import Editor.UI.Browsers.FileBrowser;
@@ -22,14 +24,19 @@ import Editor.UI.LevelEditor.LevelEditorViewport;
 import Editor.UI.SceneViewport;
 import Editor.UI.Browsers.ResourcesViewer;
 import Editor.UI.Tools.StyleEditor;
+import imgui.ImColor;
+import imgui.ImDrawList;
 import imgui.ImGui;
 import imgui.ImVec2;
 import imgui.flag.ImGuiDockNodeFlags;
 import imgui.flag.ImGuiWindowFlags;
+import imgui.type.ImBoolean;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.openvr.Texture;
+import org.w3c.dom.Text;
 
 import java.util.Random;
 
@@ -41,7 +48,19 @@ public class EditorModule implements IEngineModule {
 
     @Override
     public void LoadResources() {
+
+        ImGuiImplementation.Get().addFont("resources/fonts/roboto/Roboto-Medium.ttf", 20);
+        ImGuiImplementation.Get().addFont("resources/fonts/roboto/Roboto-Medium.ttf", 10);
+        ImGuiImplementation.Get().addFont("resources/fonts/roboto/Roboto-Medium.ttf", 40);
+        ImGuiImplementation.Get().addFont("resources/fonts/roboto/Roboto-Medium.ttf", 60);
+        ImGuiImplementation.Get().addFont("resources/fonts/roboto/Roboto-Medium.ttf", 80);
+        ImGuiImplementation.Get().addFont("resources/fonts/roboto/Roboto-Medium.ttf", 100);
+
+
         new Texture2D("plaster", "resources/textures/plaster.png");
+        new Texture2D("grass", "resources/textures/grassSeamless.png");
+        new Texture2D("mud", "resources/textures/mud.png");
+        new Texture2D("grid", "resources/textures/defaultGrid.png");
         new Material("Concrete1", "resources/shaders/Concrete2", new String[] {"plaster"});
         new Material("Concrete2", "resources/shaders/Concrete2", new String[] {"plaster"});
         new Material("concrete", "resources/shaders/concrete", new String[] {"plaster"});
@@ -55,10 +74,9 @@ public class EditorModule implements IEngineModule {
     @Override
     public void PreInitialize() {
         _rootScene = new RenderScene(800, 600);
-        ((RenderScene)_rootScene).backgroundColor = new Vector4f(0,0,0,0);
 
-        new LevelEditorViewport((RenderScene) _rootScene, "viewport");
-        new ContentBrowser("Content browser");
+        //new LevelEditorViewport((RenderScene) _rootScene, "viewport");
+        //new ContentBrowser("Content browser");
 
         new StaticMeshComponent(
                 AssetManager.FindAsset("test"),
@@ -87,6 +105,9 @@ public class EditorModule implements IEngineModule {
 
     @Override
     public void DrawUI() {
+
+
+
         ImGui.setNextWindowPos(0, 25);
         ImGui.setNextWindowSize(Window.GetPrimaryWindow().getPixelWidth(), Window.GetPrimaryWindow().getPixelHeight() - 25);
         if (ImGui.begin("Master Window", ImGuiWindowFlags.NoNav | ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoInputs | ImGuiWindowFlags.NoBringToFrontOnFocus)) {
@@ -119,6 +140,7 @@ public class EditorModule implements IEngineModule {
                     if (ImGui.menuItem("Points")) Window.GetPrimaryWindow().setDrawMode(GL_POINT);
                     ImGui.endMenu();
                 }
+                ImGui.checkbox("draw debug boxes", HudUtils.bDrawDebugBoxes);
                 ImGui.endMenu();
             }
             if (ImGui.beginMenu("Import")) {
@@ -135,5 +157,40 @@ public class EditorModule implements IEngineModule {
             ImGui.text(fpsText);
         }
         ImGui.endMainMenuBar();
+
+    }
+
+    @Override
+    public void DrawHUD() {
+
+        int gridTexture = AssetManager.<Texture2D>FindAsset("grid").getTextureID();
+
+        if (HudUtils.BeginContainer(NodeAnchor.Get(.05f, .1f, .95f, .95f), PixelOffset.DEFAULT)) {
+
+            HudUtils.ImageButton(
+                    NodeAnchor.TOP_LEFT,
+                    PixelOffset.Get(100, 20, 500, 400),
+                    ButtonBehavior.Get(2.5f),
+                    ImageParams.Get(gridTexture, 30.f),
+                    TextParams.Get("Button 1", 5, ImColor.intToColor(255, 128, 128))
+            );
+
+            HudUtils.ImageButton(
+                    NodeAnchor.BOTTOM_FILL,
+                    PixelOffset.Get(40, -400, -40, -100),
+                    ButtonBehavior.Get(2.5f),
+                    ImageParams.Get(gridTexture, 10.f),
+                    TextParams.Get("Button 2", 2, ImColor.intToColor(128, 255, 128))
+            );
+
+            HudUtils.ImageButton(
+                    NodeAnchor.Get(0.5f, 0, 1, 0.3f),
+                    PixelOffset.Get(40, 40, -40, -20),
+                    ButtonBehavior.Get(2.5f),
+                    ImageParams.Get(gridTexture, 60.f, ImColor.intToColor(255, 255, 128)),
+                    TextParams.Get("Button 3", 3.5f, ImColor.intToColor(128, 128, 255))
+            );
+        }
+        HudUtils.EndContainer();
     }
 }

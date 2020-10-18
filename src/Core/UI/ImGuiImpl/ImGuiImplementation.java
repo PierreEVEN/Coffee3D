@@ -1,6 +1,7 @@
 package Core.UI.ImGuiImpl;
 
 import Core.IO.Inputs.GlfwInputHandler;
+import Core.IO.LogOutput.Log;
 import imgui.*;
 import imgui.flag.ImGuiBackendFlags;
 import imgui.flag.ImGuiConfigFlags;
@@ -8,14 +9,33 @@ import imgui.flag.ImGuiKey;
 import imgui.flag.ImGuiMouseCursor;
 import imgui.gl3.ImGuiImplGl3;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import static org.lwjgl.glfw.GLFW.*;
 
+final class FontSet {
+    int fontSize;
+    String fontPath;
+}
+
 public class ImGuiImplementation {
+
+    private ArrayList<FontSet> fonts;
 
     private static ImGuiImplementation _instance;
     public static ImGuiImplementation Get() {
         if (_instance == null) _instance = new ImGuiImplementation();
         return _instance;
+    }
+
+    public void addFont(String fontPath, int size) {
+        if (fonts == null) fonts = new ArrayList<>();
+        FontSet newFont = new FontSet();
+        newFont.fontPath = fontPath;
+        newFont.fontSize = size;
+        fonts.add(newFont);
     }
 
     private static final ImGuiImplGl3 imGuiGl3 = new ImGuiImplGl3();
@@ -25,7 +45,7 @@ public class ImGuiImplementation {
         imGuiGl3.renderDrawData(ImGui.getDrawData());
     }
 
-    public void init(long glfwWindowHandle) {
+    public void preInit(long glfwWindowHandle) {
 // IMPORTANT!!
         // This line is critical for Dear ImGui to work.
         ImGui.createContext();
@@ -93,6 +113,11 @@ public class ImGuiImplementation {
         mouseCursors[ImGuiMouseCursor.ResizeNWSE] = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
         mouseCursors[ImGuiMouseCursor.Hand] = glfwCreateStandardCursor(GLFW_HAND_CURSOR);
         mouseCursors[ImGuiMouseCursor.NotAllowed] = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
+    }
+    
+    public void init(long glfwWindowHandle) {
+
+        final ImGuiIO io = ImGui.getIO();
 
         // ------------------------------------------------------------
         // Fonts configuration
@@ -121,10 +146,14 @@ public class ImGuiImplementation {
 
         fontConfig.setRasterizerMultiply(1.2f); // This will make fonts a bit more readable
 
-        // We can add new fonts directly from file
-        fontAtlas.addFontFromFileTTF("resources/fonts/roboto/Roboto-Medium.ttf", 20, fontConfig);
-        fontAtlas.addFontFromFileTTF("resources/fonts/roboto/Roboto-Medium.ttf", 10, fontConfig);
-        fontAtlas.addFontFromFileTTF("resources/fonts/roboto/Roboto-Medium.ttf", 30, fontConfig);
+        if (fonts != null) {
+
+            String defaultFont = null;
+
+            for(FontSet font : fonts) {
+                fontAtlas.addFontFromFileTTF(font.fontPath, font.fontSize, fontConfig);
+            }
+        }
 
         fontConfig.destroy(); // After all fonts were added we don't need this config more
 
@@ -133,7 +162,6 @@ public class ImGuiImplementation {
         // This method SHOULD be called after you've initialized your ImGui configuration (fonts and so on).
         // ImGui context should be created as well.
         imGuiGl3.init();
-
         GlfwInputHandler.AddListener(new ImGuiInputListener(glfwWindowHandle));
     }
 

@@ -5,4 +5,5 @@ public interface IEngineModule {
     void PreInitialize();
     void DrawScene();
     void DrawUI();
+    void DrawHUD();
 }

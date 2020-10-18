@@ -1,6 +1,5 @@
 package Core.Renderer.Scene;
 
-import Core.Renderer.Window;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
 
@@ -12,19 +11,23 @@ import static org.lwjgl.opengl.GL30.glBindFramebuffer;
 public class RenderScene extends Scene {
 
     private final Framebuffer _sceneBuffer;
-    public Vector4f backgroundColor;
+    private Vector4f _backgroundColor;
 
     public RenderScene(int bfrSizeX, int bfrSizeY) {
         super();
         _sceneBuffer = new Framebuffer(bfrSizeX, bfrSizeY);
-        backgroundColor = new Vector4f(0.5f, 0.7f, 0.9f, 1.f);
+        _backgroundColor = new Vector4f().zero();
+    }
+
+    public void setBackgroundColor(Vector4f color) {
+        _backgroundColor = color;
     }
 
     @Override
     public void renderScene() {
         // Bind and reset scene frame buffer
         glBindFramebuffer(GL_FRAMEBUFFER, _sceneBuffer.getBufferId());
-        glClearColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, backgroundColor.w);
+        glClearColor(_backgroundColor.x, _backgroundColor.y, _backgroundColor.z, _backgroundColor.w);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_STENCIL_TEST);
