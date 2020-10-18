@@ -9,8 +9,8 @@ import Core.UI.PropertyHelper.FieldWriter;
 import Core.UI.SubWindows.SubWindow;
 import imgui.ImGui;
 import imgui.ImGuiIO;
-import imgui.flag.ImGuiDockNodeFlags;
 import imgui.flag.ImGuiWindowFlags;
+import org.joml.Vector2i;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
@@ -24,10 +24,8 @@ import static org.lwjgl.opengl.GL46.*;
 
 public class Window {
 
-    private int _bfrWidth;
-    private int _bfrHeight;
+    private Vector2i _bfrSize;
     private long _glfwWindowHandle;
-    private String _windowTitle;
     private double _deltaTime;
     private double _lastFrameTime;
     private boolean _bDisplayCursor;
@@ -45,9 +43,7 @@ public class Window {
     }
 
     private Window() {
-        _bfrWidth = -1;
-        _bfrHeight = -1;
-        _windowTitle = "Coffee3D";
+        _bfrSize = new Vector2i(-1, -1);
         _drawMode = GL_FILL;
         _backgroundColor = new Vector4f(0,0,0,0);
     }
@@ -55,7 +51,7 @@ public class Window {
     /**
      * Initialize opengl context, and start render loop
      * (cleanup resource after execution)
-     * @param engineModule
+     * @param engineModule source module
      */
     public void run(IEngineModule engineModule) {
         _engineModule = engineModule;
@@ -63,7 +59,7 @@ public class Window {
         FieldWriter.RegisterPrimitiveWriters();
 
         Log.Display("initialize glfw");
-        _glfwWindowHandle = RenderUtils.InitializeGlfw(_bfrWidth, _bfrHeight, _windowTitle);
+        _glfwWindowHandle = RenderUtils.InitializeGlfw(_bfrSize, "Coffee3D");
         Log.Display("initialize openGL");
         RenderUtils.InitializeOpenGL();
         showCursor(true);
@@ -82,8 +78,8 @@ public class Window {
         glfwSetFramebufferSizeCallback(_glfwWindowHandle, new GLFWFramebufferSizeCallback() {
             @Override
             public void invoke(long window, int width, int height) {
-                _bfrWidth = width;
-                _bfrHeight = height;
+                _bfrSize.x = width;
+                _bfrSize.y = height;
                 glViewport(0, 0, width, height);
             }
         });
@@ -187,13 +183,13 @@ public class Window {
      * Frame buffer width
      * @return pixels
      */
-    public int getPixelWidth() { return _bfrWidth; }
+    public int getPixelWidth() { return _bfrSize.x; }
 
     /**
      * Frame buffer height
      * @return pixels
      */
-    public int getPixelHeight() { return _bfrHeight; }
+    public int getPixelHeight() { return _bfrSize.y; }
 
     /**
      * close window
@@ -216,9 +212,9 @@ public class Window {
         _drawMode = drawMode;
     }
 
-    public void showCursor(boolean bshow) {
-        _bDisplayCursor = bshow;
-        if (bshow) {
+    public void showCursor(boolean bShow) {
+        _bDisplayCursor = bShow;
+        if (bShow) {
             glfwSetInputMode(_glfwWindowHandle, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         }
         else {

@@ -16,29 +16,19 @@ import Core.UI.HUD.*;
 import Core.UI.ImGuiImpl.ImGuiImplementation;
 import Core.UI.SubWindows.DemoWindow;
 import Editor.UI.Browsers.ContentBrowser;
-import Editor.UI.Browsers.FileBrowser;
 import Editor.UI.Importers.MaterialImporter;
 import Editor.UI.Importers.MeshImporter;
 import Editor.UI.Importers.TextureImporter;
 import Editor.UI.LevelEditor.LevelEditorViewport;
-import Editor.UI.SceneViewport;
 import Editor.UI.Browsers.ResourcesViewer;
 import Editor.UI.Tools.StyleEditor;
-import imgui.ImColor;
-import imgui.ImDrawList;
-import imgui.ImGui;
-import imgui.ImVec2;
+import imgui.*;
 import imgui.flag.ImGuiDockNodeFlags;
 import imgui.flag.ImGuiWindowFlags;
-import imgui.type.ImBoolean;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.openvr.Texture;
-import org.w3c.dom.Text;
-
-import java.util.Random;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -49,13 +39,11 @@ public class EditorModule implements IEngineModule {
     @Override
     public void LoadResources() {
 
-        ImGuiImplementation.Get().addFont("resources/fonts/roboto/Roboto-Medium.ttf", 20);
-        ImGuiImplementation.Get().addFont("resources/fonts/roboto/Roboto-Medium.ttf", 10);
-        ImGuiImplementation.Get().addFont("resources/fonts/roboto/Roboto-Medium.ttf", 40);
-        ImGuiImplementation.Get().addFont("resources/fonts/roboto/Roboto-Medium.ttf", 60);
-        ImGuiImplementation.Get().addFont("resources/fonts/roboto/Roboto-Medium.ttf", 80);
-        ImGuiImplementation.Get().addFont("resources/fonts/roboto/Roboto-Medium.ttf", 100);
+        Window.GetPrimaryWindow().setBackgroundColor(new Vector4f(0,0,0,0));
 
+        ImGuiImplementation.Get().addFont("resources/fonts/roboto/Roboto-Medium.ttf", 60);
+        ImGuiIO io = ImGui.getIO();
+        io.setFontGlobalScale(0.4f);
 
         new Texture2D("plaster", "resources/textures/plaster.png");
         new Texture2D("grass", "resources/textures/grassSeamless.png");
@@ -69,14 +57,16 @@ public class EditorModule implements IEngineModule {
         new StaticMesh("test", "resources/models/Building.fbx", new String[] { "Concrete2", "concrete", "glass", "pillars" });
         new StaticMesh("cube", "resources/models/cube.fbx", new String[] { "Concrete1" });
         RenderUtils.CheckGLErrors();
+
+
     }
 
     @Override
     public void PreInitialize() {
         _rootScene = new RenderScene(800, 600);
 
-        //new LevelEditorViewport((RenderScene) _rootScene, "viewport");
-        //new ContentBrowser("Content browser");
+        new LevelEditorViewport((RenderScene) _rootScene, "viewport");
+        new ContentBrowser("Content browser");
 
         new StaticMeshComponent(
                 AssetManager.FindAsset("test"),
@@ -85,12 +75,19 @@ public class EditorModule implements IEngineModule {
                 new Vector3f(1, 1, 1)
         ).attachToScene(_rootScene);
 
+        SceneComponent parent = new StaticMeshComponent(
+                AssetManager.FindAsset("cube"),
+                new Vector3f(0, -13, 0),
+                new Quaternionf().identity().rotateXYZ(0, 0, 0),
+                new Vector3f(100, 0.5f, 100)
+        );
+        parent.attachToScene(_rootScene);
         new StaticMeshComponent(
                 AssetManager.FindAsset("cube"),
                 new Vector3f(0, -13, 0),
                 new Quaternionf().identity().rotateXYZ(0, 0, 0),
                 new Vector3f(100, 0.5f, 100)
-        ).attachToScene(_rootScene);
+        ).attachToComponent(parent);
 
         String vendor = glGetString(GL_VENDOR);
         String renderer = glGetString(GL_RENDERER);
@@ -106,8 +103,6 @@ public class EditorModule implements IEngineModule {
     @Override
     public void DrawUI() {
 
-
-
         ImGui.setNextWindowPos(0, 25);
         ImGui.setNextWindowSize(Window.GetPrimaryWindow().getPixelWidth(), Window.GetPrimaryWindow().getPixelHeight() - 25);
         if (ImGui.begin("Master Window", ImGuiWindowFlags.NoNav | ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoInputs | ImGuiWindowFlags.NoBringToFrontOnFocus)) {
@@ -117,7 +112,7 @@ public class EditorModule implements IEngineModule {
 
         if (ImGui.beginMainMenuBar()) {
             if (ImGui.beginMenu("Files")) {
-                if (ImGui.menuItem("save all")) { }
+                if (ImGui.menuItem("save all")) { Log.Display("No implementer yet");}
                 if (ImGui.menuItem("quit")) {
                     Window.GetPrimaryWindow().close();
                 }
@@ -162,8 +157,9 @@ public class EditorModule implements IEngineModule {
 
     @Override
     public void DrawHUD() {
-
+/*
         int gridTexture = AssetManager.<Texture2D>FindAsset("grid").getTextureID();
+        int grassTexture = AssetManager.<Texture2D>FindAsset("grass").getTextureID();
 
         if (HudUtils.BeginContainer(NodeAnchor.Get(.05f, .1f, .95f, .95f), PixelOffset.DEFAULT)) {
 
@@ -190,7 +186,18 @@ public class EditorModule implements IEngineModule {
                     ImageParams.Get(gridTexture, 60.f, ImColor.intToColor(255, 255, 128)),
                     TextParams.Get("Button 3", 3.5f, ImColor.intToColor(128, 128, 255))
             );
+
+            HudUtils.ProgressBar(
+                    NodeAnchor.FILL_LEFT,
+                    PixelOffset.Get(5, 10, 100, -10),
+                    ImageParams.Get(grassTexture, 20, ImColor.intToColor(255,0,0)),
+                    ImageParams.Get(gridTexture, 20, ImColor.intToColor(0, 255, 0)),
+                    ((float)Math.sin(GLFW.glfwGetTime()) + 1) / 2,
+                    true
+            );
         }
         HudUtils.EndContainer();
+
+ */
     }
 }

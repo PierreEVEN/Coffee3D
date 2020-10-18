@@ -44,8 +44,7 @@ class Logger {
 
     private void printToLog(String text) {
         try {
-            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd HH:mm:ss");
-            _logWriter.write(dtf.format(LocalDateTime.now()) + " - " + text + "\n");
+            _logWriter.write(text + "\n");
             _logWriter.flush();
         }
         catch (Exception e) {

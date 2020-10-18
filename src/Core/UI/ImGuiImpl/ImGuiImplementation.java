@@ -71,6 +71,7 @@ public class ImGuiImplementation {
         final ImGuiIO io = ImGui.getIO();
 
         io.setConfigFlags(ImGuiConfigFlags.NavEnableKeyboard); // Navigation with keyboard
+        io.setConfigFlags(ImGuiConfigFlags.NavEnableGamepad); // Navigation with keyboard
         io.setBackendFlags(ImGuiBackendFlags.HasMouseCursors); // Mouse cursors to display while resizing windows etc.
         io.setBackendPlatformName("imgui_java_impl_glfw"); // For clarity reasons
         io.setBackendRendererName("imgui_java_impl_lwjgl"); // For clarity reasons

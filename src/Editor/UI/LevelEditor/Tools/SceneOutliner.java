@@ -1,14 +1,11 @@
 package Editor.UI.LevelEditor.Tools;
 
-import Core.Renderer.Scene.Components.StaticMeshComponent;
 import Core.Renderer.Scene.Scene;
 import Core.Renderer.Scene.SceneComponent;
 import Core.UI.SubWindows.SubWindow;
 import Editor.UI.LevelEditor.LevelEditorViewport;
-import imgui.ImColor;
 import imgui.ImGui;
-import imgui.ImVec4;
-import imgui.flag.ImGuiCol;
+import imgui.flag.ImGuiDragDropFlags;
 import imgui.flag.ImGuiTreeNodeFlags;
 
 public class SceneOutliner extends SubWindow {
@@ -24,6 +21,15 @@ public class SceneOutliner extends SubWindow {
 
     int nodeIndex = 0;
 
+
+    private static byte[] SerializeHierarchy(SceneComponent component) {
+        return null;
+    }
+
+    private static SceneComponent DeserializeHierarchy(byte[] data) {
+        return null;
+    }
+
     private void drawNode(SceneComponent comp) {
         nodeIndex ++;
 
@@ -34,6 +40,27 @@ public class SceneOutliner extends SubWindow {
         if (comp == _parentViewport.getEditedComponent()) flags |= ImGuiTreeNodeFlags.Selected;
 
         boolean bExpand = ImGui.treeNodeEx(componentName + "##" + nodeIndex, flags);
+
+        if (ImGui.beginDragDropSource(ImGuiDragDropFlags.None)) {
+            byte[] data = SerializeHierarchy(comp);
+            if (data != null) {
+                ImGui.setDragDropPayload("DDOP_SCENE_HIERARCHY", new byte[5]);
+                ImGui.text("drag component");
+            }
+            ImGui.endDragDropSource();
+        }
+        if (ImGui.beginDragDropTarget())
+        {
+            byte[] data = ImGui.acceptDragDropPayload ("DDOP_SCENE_HIERARCHY");
+            if (data != null)
+            {
+                SceneComponent deserializedComponent = DeserializeHierarchy(data);
+                if (deserializedComponent != null) {
+                    deserializedComponent.attachToComponent(comp);
+                }
+            }
+        }
+
         if (ImGui.isItemClicked()) _parentViewport.editComponent(comp);
         if (bExpand) {
             //ImGui.sameLine();

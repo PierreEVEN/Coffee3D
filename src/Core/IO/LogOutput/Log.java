@@ -1,5 +1,8 @@
 package Core.IO.LogOutput;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 /**
  * Receive log events
  */
@@ -30,7 +33,8 @@ public class Log {
             case ERROR -> color = ANSI_RED;
             case FAIL -> color = ANSI_PURPLE;
         }
-        Logger.Get().print(message, color);
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yy:HH:mm:ss");
+        Logger.Get().print("[" + dtf.format(LocalDateTime.now()) + "] " + message, color);
     }
 
     /**

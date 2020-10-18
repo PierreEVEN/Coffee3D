@@ -49,6 +49,7 @@ public final class HudUtils {
 
     public static void EndContainer() {
         ImGui.endChild();
+        ImageParams.ResetParamCount();
     }
 
 
@@ -57,13 +58,10 @@ public final class HudUtils {
     }
 
     public static boolean ImageButton(NodeAnchor anchor, PixelOffset offset, ButtonBehavior behavior, ImageParams image, TextParams text) {
-
         boolean bHasBeenPressed = false;
-
         HudNodePosition pos = HudNodePosition.Get(anchor, offset);
 
         if (HudUtils.BeginContainer(anchor, offset)) {
-
             if (textSize == null) textSize = new ImVec2();
 
             bHasBeenPressed = ImGui.invisibleButton(text._text + _containerCount++, ImGui.getContentRegionAvailX(), ImGui.getContentRegionAvailY());
@@ -81,7 +79,12 @@ public final class HudUtils {
                 pos.posY += behavior._sensitivity * 1.5f;
             }
 
-            ImGui.getWindowDrawList().addImageRounded(image._textureId, pos.posX, pos.posY, pos.posX + pos.sizeX, pos.posY + pos.sizeY, 0, 1, 1, 0, image._color, image._rounding);
+            if (image._textureId >= 0) {
+                ImGui.getWindowDrawList().addImageRounded(image._textureId, pos.posX, pos.posY, pos.posX + pos.sizeX, pos.posY + pos.sizeY, 0, 1, 1, 0, image._color, image._rounding);
+            }
+            else {
+                ImGui.getWindowDrawList().addRectFilled(pos.posX, pos.posY, pos.posX + pos.sizeX, pos.posY + pos.sizeY, image._color);
+            }
             text._font.setScale(text._size);
             ImGui.pushFont(text._font);
             ImGui.calcTextSize(textSize, text._text);
@@ -95,4 +98,25 @@ public final class HudUtils {
         return bHasBeenPressed;
     }
 
+    public static void ProgressBar(NodeAnchor anchor, PixelOffset offset, ImageParams backgroundImage, ImageParams foregroundImage, float progress, boolean bVertical) {
+        HudNodePosition pos = HudNodePosition.Get(anchor, offset);
+        if (HudUtils.BeginContainer(anchor, offset)) {
+
+            if (backgroundImage._textureId >= 0) {
+                ImGui.getWindowDrawList().addImageRounded(backgroundImage._textureId, pos.posX, pos.posY, pos.posX + pos.sizeX, pos.posY + pos.sizeY, 0, 1, 1, 0, backgroundImage._color, backgroundImage._rounding);
+            } else {
+                ImGui.getWindowDrawList().addRectFilled(pos.posX, pos.posY, pos.posX + pos.sizeX, pos.posY + pos.sizeY, backgroundImage._color);
+            }
+
+            float realPosY = bVertical ? pos.posY + pos.sizeY * (1 - progress) : pos.posY;
+            float realSizeX = bVertical ? pos.sizeX : pos.sizeX * progress;
+
+            if (foregroundImage._textureId >= 0) {
+                ImGui.getWindowDrawList().addImageRounded(foregroundImage._textureId, pos.posX, realPosY, pos.posX + realSizeX, pos.posY + pos.sizeY, 0, bVertical ? progress : 1, bVertical ? 1 : progress, 0, foregroundImage._color, foregroundImage._rounding);
+            } else {
+                ImGui.getWindowDrawList().addRectFilled(pos.posX, pos.posY, pos.posX + pos.sizeX, pos.posY + pos.sizeY, foregroundImage._color);
+            }
+        }
+        HudUtils.EndContainer();
+    }
 }

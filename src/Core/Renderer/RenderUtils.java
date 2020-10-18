@@ -2,6 +2,7 @@ package Core.Renderer;
 
 import Core.IO.Inputs.GlfwInputHandler;
 import Core.IO.LogOutput.Log;
+import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
@@ -33,7 +34,7 @@ public class RenderUtils {
         }
     }
 
-    public static long InitializeGlfw(int width, int height, String title) {
+    public static long InitializeGlfw(Vector2i bfrSize, String title) {
         long _windowContext = -1;
 
         GLFWErrorCallback.createPrint(System.err).set();
@@ -45,7 +46,9 @@ public class RenderUtils {
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
-        glfwWindowHint(GLFW_SAMPLES, 4);
+        glfwWindowHint(GLFW_SAMPLES, 8);
+        glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
+        //glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
 
 
         GLFWVidMode.Buffer windowMode = glfwGetVideoModes(glfwGetPrimaryMonitor());
@@ -58,13 +61,22 @@ public class RenderUtils {
             if (windowMode.get(i).height() > maxHeight)
                 maxHeight = windowMode.get(i).height();
         }
-        if (width < 0) width = maxWidth;
-        if (height < 0) height = maxHeight;
+        boolean bFullScreen = false;
+        if (bfrSize.x < 0 || bfrSize.y < 0) {
+            bfrSize.x = maxWidth;
+            bfrSize.y = maxHeight;
+            bFullScreen = true;
+        }
 
         // Create glfw windows
-        _windowContext = glfwCreateWindow(width, height, title, 0, 0);
+        _windowContext = glfwCreateWindow(bfrSize.x, bfrSize.y, title, 0, 0);
         if ( _windowContext == 0 ) Log.Fail("Failed to create the GLFW window");
         glfwMakeContextCurrent(_windowContext);
+
+        if (bFullScreen) {
+            glfwSetWindowMonitor(_windowContext, 0, 0, 0, maxWidth, maxHeight, GLFW_DONT_CARE);
+            glfwSetWindowPos(_windowContext, 0, 0);
+        }
 
         try ( MemoryStack stack = stackPush() ) {
             IntBuffer pWidth = stack.mallocInt(1); // int*
