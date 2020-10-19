@@ -11,11 +11,14 @@ public class StringWriter extends FieldWriter {
     }
 
     @Override
-    protected boolean draw(Field field, Object object) throws IllegalAccessException {
+    protected boolean draw(String fieldName, Object object) throws IllegalAccessException {
+        /*
         String value = (String)field.get(object);
         if  (value != null) {
             ImGui.text(value);
         }
+
+         */
         return false;
     }
 }

@@ -8,13 +8,16 @@ import java.lang.reflect.Field;
 
 public class AssetWriter extends FieldWriter {
     public AssetWriter() {
-        super(Asset.class);
+        super(AssetReference.class);
     }
 
     @Override
-    protected boolean draw(Field field, Object object) throws IllegalAccessException {
+    protected boolean draw(String fieldName, Object object) throws IllegalAccessException {
+        /*
         AssetReference ref = (AssetReference)field.get(object);
         AssetButton.Draw(field.getName(), ref);
+
+         */
         return false;
     }
 }

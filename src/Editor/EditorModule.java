@@ -161,7 +161,7 @@ public class EditorModule implements IEngineModule {
 
     @Override
     public void DrawHUD() {
-
+/*
         int gridTexture = AssetManager.<Texture2D>FindAsset("grid").getTextureID();
         int grassTexture = AssetManager.<Texture2D>FindAsset("grass").getTextureID();
 
@@ -199,8 +199,10 @@ public class EditorModule implements IEngineModule {
                     ((float)Math.sin(GLFW.glfwGetTime()) + 1) / 2,
                     true
             );
+
         }
         HudUtils.EndContainer();
+ */
 
 
     }

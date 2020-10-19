@@ -11,11 +11,14 @@ public class IntWriter extends FieldWriter {
     }
 
     @Override
-    protected boolean draw(Field field, Object object) throws IllegalAccessException {
-        int[] values = {field.getInt(object)};
-        ImGui.dragInt(field.getName() + "##", values);
-        if (values[0] != field.getInt(object)) {
-            field.setInt(object, values[0]);
+    protected boolean draw(String fieldName, Object object) throws IllegalAccessException {
+
+        Integer obj = (Integer)object;
+
+        int[] values = {obj};
+        ImGui.dragInt(fieldName + "##", values);
+        if (values[0] != obj) {
+            obj = values[0];
         }
         return false;
     }

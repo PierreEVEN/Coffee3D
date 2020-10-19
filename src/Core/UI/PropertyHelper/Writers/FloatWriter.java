@@ -4,6 +4,7 @@ import Core.UI.PropertyHelper.FieldWriter;
 import imgui.ImGui;
 
 import java.lang.reflect.Field;
+import java.nio.FloatBuffer;
 
 public class FloatWriter extends FieldWriter {
     public FloatWriter() {
@@ -11,12 +12,16 @@ public class FloatWriter extends FieldWriter {
     }
 
     @Override
-    protected boolean draw(Field field, Object object) throws IllegalAccessException {
-        float[] values = {field.getFloat(object)};
-        ImGui.dragFloat(field.getName() + "##", values);
-        if (values[0] != field.getFloat(object)) {
-            field.setFloat(object, values[0]);
-            return false;
+    protected boolean draw(String fieldName, Object object) throws IllegalAccessException {
+
+        ((Float)object) = Float.valueOf(10);
+
+        Float obj = (Float)object;
+
+        float[] values = {obj};
+        ImGui.dragFloat(fieldName + "##", values);
+        if (values[0] != (Float)object) {
+            obj = values[0];
         }
         return false;
     }

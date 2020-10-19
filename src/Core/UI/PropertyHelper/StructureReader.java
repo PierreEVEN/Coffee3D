@@ -18,7 +18,7 @@ public class StructureReader {
         FieldWriter foundWriter = FieldWriter.Find(field.getType());
         if (foundWriter != null) {
             // Draw editor if found
-            if (foundWriter.draw(field, obj)) {
+            if (foundWriter.draw(field.getName(), field.get(obj))) {
 
             }
         } else {
@@ -46,11 +46,6 @@ public class StructureReader {
         try {
             if (field.getType().isArray()) // Array case
             {
-                Class arrayClass = field.getType().getComponentType();
-                Object[] data = (Object[])field.get(obj);
-                for (Object elem : data) {
-                    //DrawElement();
-                }
 
             }
             else {
