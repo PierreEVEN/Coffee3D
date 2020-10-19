@@ -32,7 +32,5 @@ public class SceneViewport extends SubWindow {
                 _sceneContext.getFramebuffer().getWidth(),
                 _sceneContext.getFramebuffer().getHeight(),
                 0, 1, 1, 0);
-
-
     }
 }

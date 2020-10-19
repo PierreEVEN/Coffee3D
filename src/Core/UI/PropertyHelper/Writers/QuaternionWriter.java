@@ -11,8 +11,8 @@ import java.lang.reflect.Field;
 public class QuaternionWriter extends FieldWriter {
     private Vector3f _euler;
 
-    public QuaternionWriter(Class cl) {
-        super(cl);
+    public QuaternionWriter() {
+        super(Quaternionf.class);
     }
 
     @Override

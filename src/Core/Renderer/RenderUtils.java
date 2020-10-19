@@ -2,6 +2,7 @@ package Core.Renderer;
 
 import Core.IO.Inputs.GlfwInputHandler;
 import Core.IO.LogOutput.Log;
+import Core.IO.Settings.EngineSettings;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -46,9 +47,9 @@ public class RenderUtils {
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
-        glfwWindowHint(GLFW_SAMPLES, 8);
+        glfwWindowHint(GLFW_SAMPLES, EngineSettings.MSAA_SAMPLES);
         glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
-        //glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+        glfwWindowHint(GLFW_DECORATED, EngineSettings.FULLSCREEN_MODE ? GLFW_FALSE : GLFW_TRUE);
 
 
         GLFWVidMode.Buffer windowMode = glfwGetVideoModes(glfwGetPrimaryMonitor());

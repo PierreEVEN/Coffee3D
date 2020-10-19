@@ -8,8 +8,8 @@ import org.joml.Vector3f;
 import java.lang.reflect.Field;
 
 public class Vector3Writer extends FieldWriter {
-    public Vector3Writer(Class cl) {
-        super(cl);
+    public Vector3Writer() {
+        super(Vector3f.class);
     }
 
     @Override

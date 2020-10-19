@@ -13,6 +13,29 @@ public class StructureReader {
 
     public static int debugIndex = 0;
 
+    private static void DrawElement(Field field, Object obj, String nodeName) throws IllegalAccessException {
+
+        FieldWriter foundWriter = FieldWriter.Find(field.getType());
+        if (foundWriter != null) {
+            // Draw editor if found
+            if (foundWriter.draw(field, obj)) {
+
+            }
+        } else {
+            // Case no editor were found
+            if (ImGui.treeNode(nodeName)) {
+                Object subObj = field.get(obj);
+                if (subObj != null) {
+                    for (Field subField : subObj.getClass().getDeclaredFields()) {
+                        DrawStructView(subField, subObj);
+                    }
+                }
+                ImGui.treePop();
+            }
+        }
+    }
+
+
     public static void DrawStructView(Field field, Object obj) {
         if (Modifier.isStatic(field.getModifiers()) || Modifier.isFinal(field.getModifiers()) || Modifier.isTransient(field.getModifiers())) return;
         field.setAccessible(true);
@@ -21,25 +44,17 @@ public class StructureReader {
         String nodeName = field.getName() + " (" + field.getType().getSimpleName() + ")" + "##" + debugIndex;
 
         try {
-            FieldWriter foundWriter = FieldWriter.Find(field.getType());
-            if (foundWriter != null)
+            if (field.getType().isArray()) // Array case
             {
-                // Draw editor if found
-                if (foundWriter.draw(field, obj)) {
-
+                Class arrayClass = field.getType().getComponentType();
+                Object[] data = (Object[])field.get(obj);
+                for (Object elem : data) {
+                    //DrawElement();
                 }
+
             }
             else {
-                // Case no editor were found
-                if (ImGui.treeNode(nodeName)) {
-                    Object subObj = field.get(obj);
-                    if (subObj != null) {
-                        for (Field subField : subObj.getClass().getDeclaredFields()) {
-                            DrawStructView(subField, subObj);
-                        }
-                    }
-                    ImGui.treePop();
-                }
+                DrawElement(field, obj, nodeName);
             }
         }
         catch (Exception e) {

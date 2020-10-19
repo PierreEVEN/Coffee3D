@@ -74,10 +74,17 @@ public abstract class Asset implements Serializable {
 
     protected void drawThumbnailImage() {
         if (ImGui.button(("#" + getName() + (bIsAssetDirty ? "*" : "")), 64, 64)) {
-            //On asset clicked
+            if (_assetEditFunction != null) _assetEditFunction.applyAsset(this);
         }
     }
 
     @Override
     public String toString() { return getName(); }
+
+    protected static IEditAsset _assetEditFunction;
+
+    public static void SetAssetEditWidget(IEditAsset assetEditFunction) {
+        _assetEditFunction = assetEditFunction;
+    }
+
 }

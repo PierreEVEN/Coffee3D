@@ -21,7 +21,6 @@ public abstract class FieldWriter {
     }
     public static FieldWriter Find(Class cl) {
         if (_writers == null) return null;
-
         for (FieldWriter writer : _writers) {
             if (writer.getType().isAssignableFrom(cl)) {
                 return writer;
@@ -39,11 +38,13 @@ public abstract class FieldWriter {
     protected abstract boolean draw(Field field, Object object) throws IllegalAccessException;
 
     public static void RegisterPrimitiveWriters() {
-        RegisterWriter(new FloatWriter(Float.TYPE));
-        RegisterWriter(new IntWriter(Integer.TYPE));
-        RegisterWriter(new BooleanWriter(Boolean.TYPE));
-        RegisterWriter(new Vector3Writer(Vector3f.class));
-        RegisterWriter(new QuaternionWriter(Quaternionf.class));
-        RegisterWriter(new AssetWriter(AssetReference.class));
+        RegisterWriter(new FloatWriter());
+        RegisterWriter(new IntWriter());
+        RegisterWriter(new BooleanWriter());
+        RegisterWriter(new StringWriter());
+        RegisterWriter(new Vector3Writer());
+        RegisterWriter(new QuaternionWriter());
+        RegisterWriter(new AssetWriter());
+        RegisterWriter(new ArrayListWriter());
     }
 }

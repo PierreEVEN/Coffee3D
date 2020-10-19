@@ -1,5 +1,6 @@
 package Editor.UI.LevelEditor.Tools;
 
+import Core.IO.LogOutput.Log;
 import Core.Renderer.Scene.Scene;
 import Core.Renderer.Scene.SceneComponent;
 import Core.UI.SubWindows.SubWindow;
@@ -7,6 +8,9 @@ import Editor.UI.LevelEditor.LevelEditorViewport;
 import imgui.ImGui;
 import imgui.flag.ImGuiDragDropFlags;
 import imgui.flag.ImGuiTreeNodeFlags;
+
+import java.io.*;
+import java.util.ArrayList;
 
 public class SceneOutliner extends SubWindow {
     Scene _parentScene;
@@ -23,10 +27,34 @@ public class SceneOutliner extends SubWindow {
 
 
     private static byte[] SerializeHierarchy(SceneComponent component) {
+        try {
+            ByteArrayOutputStream fos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(component);
+            oos.flush();
+            byte[] data = fos.toByteArray();
+            oos.close();
+            fos.close();
+            return data;
+        }
+        catch (Exception e) {
+            Log.Warning(e.getMessage());
+        }
         return null;
     }
 
     private static SceneComponent DeserializeHierarchy(byte[] data) {
+        try {
+            ByteArrayInputStream bis = new ByteArrayInputStream(data);
+            ObjectInputStream ois = new ObjectInputStream(bis);
+            SceneComponent output = (SceneComponent) ois.readObject();
+            ois.close();
+            bis.close();
+            return output;
+        }
+        catch (Exception e) {
+            Log.Warning(e.getMessage());
+        }
         return null;
     }
 
@@ -44,7 +72,7 @@ public class SceneOutliner extends SubWindow {
         if (ImGui.beginDragDropSource(ImGuiDragDropFlags.None)) {
             byte[] data = SerializeHierarchy(comp);
             if (data != null) {
-                ImGui.setDragDropPayload("DDOP_SCENE_HIERARCHY", new byte[5]);
+                ImGui.setDragDropPayload("DDOP_SCENE_HIERARCHY", data);
                 ImGui.text("drag component");
             }
             ImGui.endDragDropSource();

@@ -32,7 +32,7 @@ public class Texture2D extends Asset {
     protected void drawThumbnailImage() {
         if (_texture != null) {
             if (ImGui.imageButton(_texture.getTextureHandle(), 64, 64, 0, 1, 1, 0)) {
-                // On clicked
+                if (_assetEditFunction != null) _assetEditFunction.applyAsset(this);
             }
         }
         else {

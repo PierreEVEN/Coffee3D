@@ -16,7 +16,7 @@ public class Material extends Asset {
 
     private static final long serialVersionUID = -2932087609993578842L;
     private transient MaterialResource _mat;
-    private final String[] _textureNames;
+    private String[] _textureNames;
 
     public Material(String name, String filePath) {
         super(name, filePath);
@@ -68,7 +68,7 @@ public class Material extends Asset {
 
     protected void drawThumbnailImage() {
         if (ImGui.button(("#" + getName()), 64, 64)) {
-            recompile();
+            if (_assetEditFunction != null) _assetEditFunction.applyAsset(this);
         }
     }
 

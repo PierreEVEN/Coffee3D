@@ -6,8 +6,8 @@ import imgui.ImGui;
 import java.lang.reflect.Field;
 
 public class FloatWriter extends FieldWriter {
-    public FloatWriter(Class cl) {
-        super(cl);
+    public FloatWriter() {
+        super(Float.TYPE);
     }
 
     @Override

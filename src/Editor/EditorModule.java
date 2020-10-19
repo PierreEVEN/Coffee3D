@@ -1,9 +1,6 @@
 package Editor;
 
-import Core.Assets.AssetManager;
-import Core.Assets.Material;
-import Core.Assets.StaticMesh;
-import Core.Assets.Texture2D;
+import Core.Assets.*;
 import Core.IEngineModule;
 import Core.IO.LogOutput.Log;
 import Core.Renderer.RenderUtils;
@@ -21,6 +18,7 @@ import Editor.UI.Importers.MeshImporter;
 import Editor.UI.Importers.TextureImporter;
 import Editor.UI.LevelEditor.LevelEditorViewport;
 import Editor.UI.Browsers.ResourcesViewer;
+import Editor.UI.Tools.AssetWindow;
 import Editor.UI.Tools.StyleEditor;
 import imgui.*;
 import imgui.flag.ImGuiDockNodeFlags;
@@ -49,16 +47,22 @@ public class EditorModule implements IEngineModule {
         new Texture2D("grass", "resources/textures/grassSeamless.png");
         new Texture2D("mud", "resources/textures/mud.png");
         new Texture2D("grid", "resources/textures/defaultGrid.png");
+        new Material("default", "resources/shaders/default", new String[] {"grid"});
         new Material("Concrete1", "resources/shaders/Concrete2", new String[] {"plaster"});
         new Material("Concrete2", "resources/shaders/Concrete2", new String[] {"plaster"});
         new Material("concrete", "resources/shaders/concrete", new String[] {"plaster"});
         new Material("glass", "resources/shaders/glass", new String[] {"plaster"});
         new Material("pillars", "resources/shaders/pillars", new String[] {"plaster"});
         new StaticMesh("test", "resources/models/Building.fbx", new String[] { "Concrete2", "concrete", "glass", "pillars" });
-        new StaticMesh("cube", "resources/models/cube.fbx", new String[] { "Concrete1" });
+        new StaticMesh("cube", "resources/models/cube.fbx", new String[] { "default" });
         RenderUtils.CheckGLErrors();
 
-
+        Asset.SetAssetEditWidget(new IEditAsset() {
+            @Override
+            public void applyAsset(Asset asset) {
+                new AssetWindow(asset, asset.getName());
+            }
+        });
     }
 
     @Override
@@ -69,7 +73,7 @@ public class EditorModule implements IEngineModule {
         new ContentBrowser("Content browser");
 
         new StaticMeshComponent(
-                AssetManager.FindAsset("test"),
+                AssetManager.FindAsset("cube"),
                 new Vector3f(0, 0, 0),
                 new Quaternionf().identity().rotationXYZ((float)Math.toRadians(-90), 0, 0),
                 new Vector3f(1, 1, 1)
@@ -157,7 +161,7 @@ public class EditorModule implements IEngineModule {
 
     @Override
     public void DrawHUD() {
-/*
+
         int gridTexture = AssetManager.<Texture2D>FindAsset("grid").getTextureID();
         int grassTexture = AssetManager.<Texture2D>FindAsset("grass").getTextureID();
 
@@ -198,6 +202,6 @@ public class EditorModule implements IEngineModule {
         }
         HudUtils.EndContainer();
 
- */
+
     }
 }

@@ -9,8 +9,8 @@ import java.lang.reflect.Field;
 public class BooleanWriter extends FieldWriter {
     private ImBoolean _values;
 
-    public BooleanWriter(Class cl) {
-        super(cl);
+    public BooleanWriter() {
+        super(Boolean.TYPE);
     }
 
     @Override
