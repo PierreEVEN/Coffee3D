@@ -11,6 +11,10 @@ import java.util.List;
 public class SceneComponent implements Serializable {
     private static final long serialVersionUID = 744620683032598971L;
 
+    public ArrayList<Float> test = new ArrayList<>();
+    public Float[] test2 = new Float[] { 5.f, 8.f,9.f, 12f };
+
+
     /**
      * constructor
      * @param position relative position
@@ -21,6 +25,10 @@ public class SceneComponent implements Serializable {
         this._position = position;
         this._rotation = rotation;
         this._scale = scale;
+
+        test.add(1f);
+        test.add(5f);
+
     }
 
 

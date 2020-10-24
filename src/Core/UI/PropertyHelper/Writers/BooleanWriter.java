@@ -6,24 +6,22 @@ import imgui.type.ImBoolean;
 
 import java.lang.reflect.Field;
 
-public class BooleanWriter extends FieldWriter {
+public class BooleanWriter extends FieldWriter
+{
     private ImBoolean _values;
 
     public BooleanWriter() {
-        super(Boolean.TYPE);
+        super(Boolean.class);
     }
 
     @Override
-    protected boolean draw(String fieldName, Object object) throws IllegalAccessException {
-        /*
+    protected Object draw(String field, Object object) throws IllegalAccessException {
         if (_values == null) _values = new ImBoolean();
-        _values.set(field.getBoolean(object));
-        ImGui.checkbox(field.getName() + "##", _values);
-        if (_values.get() != field.getBoolean(object)) {
-            field.setBoolean(object, _values.get());
+        _values.set((Boolean)object);
+        ImGui.checkbox(field + "##", _values);
+        if (_values.get() != (Boolean)object) {
+            return _values.get();
         }
-
-         */
-        return false;
+        return null;
     }
 }

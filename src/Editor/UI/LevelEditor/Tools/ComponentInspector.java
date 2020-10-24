@@ -42,7 +42,7 @@ public class ComponentInspector extends SubWindow {
         ImGui.indent();
         for (Field field : inClass.getDeclaredFields()) {
             StructureReader.debugIndex = 0;
-            StructureReader.DrawStructView(field, _editedComponent);
+            StructureReader.WriteField(field, _editedComponent);
         }
         ImGui.unindent();
         ImGui.dummy(0,15.f);;

@@ -12,12 +12,13 @@ public class AssetWriter extends FieldWriter {
     }
 
     @Override
-    protected boolean draw(String fieldName, Object object) throws IllegalAccessException {
-        /*
-        AssetReference ref = (AssetReference)field.get(object);
-        AssetButton.Draw(field.getName(), ref);
+    protected Object draw(String field, Object object) throws IllegalAccessException {
 
-         */
-        return false;
+        AssetReference ref = (AssetReference)object;
+        AssetButton.Draw(field, ref);
+        if (ref != object) {
+            return ref;
+        }
+        return null;
     }
 }

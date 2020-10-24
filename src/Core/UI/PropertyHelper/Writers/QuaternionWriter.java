@@ -8,7 +8,8 @@ import org.joml.Vector3f;
 
 import java.lang.reflect.Field;
 
-public class QuaternionWriter extends FieldWriter {
+public class QuaternionWriter extends FieldWriter
+{
     private Vector3f _euler;
 
     public QuaternionWriter() {
@@ -16,9 +17,9 @@ public class QuaternionWriter extends FieldWriter {
     }
 
     @Override
-    protected boolean draw(String fieldName, Object object) throws IllegalAccessException {
-        /*
-        Quaternionf vec = (Quaternionf) field.get(object);
+    protected Object draw(String field, Object object) throws IllegalAccessException {
+
+        Quaternionf vec = (Quaternionf) object;
         if (_euler == null) _euler = new Vector3f();
         vec.getEulerAnglesXYZ(_euler);
 
@@ -27,15 +28,15 @@ public class QuaternionWriter extends FieldWriter {
         _euler.z = (float)Math.toDegrees(_euler.z);
 
         float[] values = {_euler.x, _euler.y, _euler.z};
-        ImGui.text(field.getName() + " : ");
+        ImGui.text(field + " : ");
         ImGui.sameLine();
-        ImGui.dragFloat3("##" + field.getName(), values);
+        ImGui.dragFloat3("##" + field, values);
 
         if (values[0] != _euler.x || values[1] != _euler.y || values[2] != _euler.z) {
-            vec.identity().rotateXYZ((float)Math.toRadians(values[0]), (float)Math.toRadians(values[1]), (float)Math.toRadians(values[2]));
+            return vec.identity().rotateXYZ((float)Math.toRadians(values[0]), (float)Math.toRadians(values[1]), (float)Math.toRadians(values[2]));
         }
 
-         */
-        return false;
+
+        return null;
     }
 }

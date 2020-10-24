@@ -5,21 +5,19 @@ import imgui.ImGui;
 
 import java.lang.reflect.Field;
 
-public class IntWriter extends FieldWriter {
+public class IntWriter extends FieldWriter
+{
     public IntWriter() {
-        super(Integer.TYPE);
+        super(Integer.class);
     }
 
     @Override
-    protected boolean draw(String fieldName, Object object) throws IllegalAccessException {
-
-        Integer obj = (Integer)object;
-
-        int[] values = {obj};
-        ImGui.dragInt(fieldName + "##", values);
-        if (values[0] != obj) {
-            obj = values[0];
+    protected Object draw(String field, Object object) throws IllegalAccessException {
+        int[] values = {(Integer)object};
+        ImGui.dragInt(field + "##", values);
+        if (values[0] != (Integer)object) {
+            return values[0];
         }
-        return false;
+        return null;
     }
 }

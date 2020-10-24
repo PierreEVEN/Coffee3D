@@ -53,8 +53,9 @@ public class EditorModule implements IEngineModule {
         new Material("concrete", "resources/shaders/concrete", new String[] {"plaster"});
         new Material("glass", "resources/shaders/glass", new String[] {"plaster"});
         new Material("pillars", "resources/shaders/pillars", new String[] {"plaster"});
-        new StaticMesh("test", "resources/models/Building.fbx", new String[] { "Concrete2", "concrete", "glass", "pillars" });
+        new StaticMesh("building", "resources/models/Building.fbx", new String[] { "Concrete2", "concrete", "glass", "pillars" });
         new StaticMesh("cube", "resources/models/cube.fbx", new String[] { "default" });
+        new StaticMesh("test", "resources/models/test.fbx", new String[] { "default" });
         RenderUtils.CheckGLErrors();
 
         Asset.SetAssetEditWidget(new IEditAsset() {

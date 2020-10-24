@@ -19,7 +19,7 @@ public class AssetWindow extends SubWindow {
     protected void draw() {
         for (Field field : _editedAsset.getClass().getDeclaredFields()) {
             StructureReader.debugIndex = 0;
-            StructureReader.DrawStructView(field, _editedAsset);
+            StructureReader.WriteField(field, _editedAsset);
         }
     }
 }

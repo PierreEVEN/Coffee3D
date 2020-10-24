@@ -8,21 +8,20 @@ import java.nio.FloatBuffer;
 
 public class FloatWriter extends FieldWriter {
     public FloatWriter() {
-        super(Float.TYPE);
+        super(Float.class);
     }
 
     @Override
-    protected boolean draw(String fieldName, Object object) throws IllegalAccessException {
+    protected Object draw(String field, Object object) throws IllegalAccessException {
 
-        ((Float)object) = Float.valueOf(10);
+        float[] values = {(Float)object};
 
-        Float obj = (Float)object;
+        ImGui.dragFloat(field + "##", values);
 
-        float[] values = {obj};
-        ImGui.dragFloat(fieldName + "##", values);
         if (values[0] != (Float)object) {
-            obj = values[0];
+            return values[0];
         }
-        return false;
+
+        return null;
     }
 }

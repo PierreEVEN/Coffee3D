@@ -5,20 +5,21 @@ import imgui.ImGui;
 
 import java.lang.reflect.Field;
 
-public class StringWriter extends FieldWriter {
+public class StringWriter extends FieldWriter
+{
     public StringWriter() {
         super(String.class);
     }
 
     @Override
-    protected boolean draw(String fieldName, Object object) throws IllegalAccessException {
-        /*
-        String value = (String)field.get(object);
+    protected Object draw(String field, Object object) throws IllegalAccessException {
+
+        String value = (String)object;
         if  (value != null) {
             ImGui.text(value);
         }
 
-         */
-        return false;
+
+        return null;
     }
 }
