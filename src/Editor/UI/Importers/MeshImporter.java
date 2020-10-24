@@ -59,7 +59,7 @@ public class MeshImporter extends SubWindow {
         ImGui.text("materials");
         ImGui.sameLine();
         if (ImGui.button("add material")) {
-            AssetReference ref = new AssetReference<Material>(Material.class, null);
+            AssetReference ref = new AssetReference<Material>(Material.class);
             new AssetPicker("Choose material", ref);
             _materials.add(ref);
         }

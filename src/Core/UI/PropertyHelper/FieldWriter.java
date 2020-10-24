@@ -1,15 +1,8 @@
 package Core.UI.PropertyHelper;
 
-import Core.Assets.Asset;
-import Core.Assets.AssetReference;
-import Core.IO.LogOutput.Log;
 import Core.UI.PropertyHelper.Writers.*;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public abstract class FieldWriter {
 
@@ -45,6 +38,6 @@ public abstract class FieldWriter {
         RegisterWriter(new Vector3Writer());
         RegisterWriter(new QuaternionWriter());
         RegisterWriter(new AssetWriter());
-        RegisterWriter(new ArrayListWriter());
+        RegisterWriter(new ListWriter());
     }
 }

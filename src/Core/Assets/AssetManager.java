@@ -44,7 +44,7 @@ public class AssetManager {
      */
     public static <T> T FindAsset(String assetName) {
         Asset asset = _assets.get(assetName);
-        if (asset != null) {
+        if (asset != null && (T)asset != null) {
             return (T)asset;
         }
         return null;

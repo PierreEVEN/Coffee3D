@@ -16,6 +16,16 @@ public class AssetReference <T> implements Serializable {
         set(asset);
     }
 
+    public AssetReference(Class assetClass) {
+        _assetClass = assetClass;
+        set(null);
+    }
+
+    public AssetReference(Class assetClass, String asset) {
+        _assetClass = assetClass;
+        set(AssetManager.FindAsset(asset));
+    }
+
     public Class getGenericClass() {
         return _assetClass;
     }
@@ -29,6 +39,8 @@ public class AssetReference <T> implements Serializable {
         if (_asset == null) _asset = AssetManager.FindAsset(_assetName);
         return _asset;
     }
+
+    public String getName() { return _assetName; }
 
     public void set(T asset) {
         if (asset != null && (!_assetClass.isAssignableFrom(asset.getClass()))) return;

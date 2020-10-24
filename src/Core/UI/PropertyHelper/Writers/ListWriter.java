@@ -6,11 +6,10 @@ import Core.UI.PropertyHelper.StructureReader;
 import imgui.ImGui;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 
-public class ArrayListWriter<T>  extends FieldWriter {
-    public ArrayListWriter() { super(ArrayList.class); }
+public class ListWriter<T>  extends FieldWriter {
+    public ListWriter() { super(ArrayList.class); }
 
     @Override
     protected Object draw(String field, Object object) throws IllegalAccessException {
@@ -19,6 +18,13 @@ public class ArrayListWriter<T>  extends FieldWriter {
             ArrayList<T> array = (ArrayList) object;
             int removedItem = -1;
             for (int i = 0; i < array.size(); ++i) {
+                if (array.size() > 0) {
+                    if (ImGui.button("-##" + field + i)) {
+                        removedItem = i;
+                        continue;
+                    }
+                    ImGui.sameLine();
+                }
                 if (array.get(i) != null) {
                     Object result = StructureReader.WriteObj(array.get(i), "[" + i + "]");
                     if (result != null) {
@@ -28,16 +34,11 @@ public class ArrayListWriter<T>  extends FieldWriter {
                 else {
                     ImGui.text("none");
                 }
-                if (array.size() > 0) {
-                    ImGui.sameLine();
-                    if (ImGui.button("-##" + field + i)) {
-                        removedItem = i;
-                    }
-                }
             }
             if (removedItem >= 0) {
                 array.remove(removedItem);
             }
+            /*
             if (ImGui.button("+##" + field)) {
 
                 if (array.getClass().getComponentType() == null) {
@@ -63,6 +64,8 @@ public class ArrayListWriter<T>  extends FieldWriter {
                     Log.Warning("failed to instantiate object : " + e.getMessage());
                 }
             }
+            
+             */
             ImGui.treePop();
         }
 

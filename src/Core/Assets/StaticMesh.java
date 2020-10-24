@@ -11,14 +11,18 @@ import java.util.ArrayList;
 public class StaticMesh extends Asset {
     private static final long serialVersionUID = -3309672296934490500L;
     private transient MeshResource[] _sections;
-    private String[] _materialNames;
-    private transient Material[] materialRefs;
+    private ArrayList<AssetReference<Material>> _materials;
+    private transient Material[] materialRefs = new Material[0];
     private Matrix4f _modelMatrix;
 
     public StaticMesh(String name, String filePath, String[] materials) {
         super(name, filePath);
-        _materialNames = materials;
-        materialRefs = new Material[_materialNames.length];
+
+        _materials = new ArrayList<>();
+        for (String mat : materials) {
+            _materials.add(new AssetReference<>(Material.class, mat));
+        }
+
         _modelMatrix = new Matrix4f().identity();
     }
 
@@ -32,10 +36,10 @@ public class StaticMesh extends Asset {
     }
 
     public Material[] getMaterials() {
-        if (materialRefs.length != _materialNames.length) materialRefs = new Material[_materialNames.length];
+        if (materialRefs.length != _materials.size()) materialRefs = new Material[_materials.size()];
 
-        for (int i = 0; i < _materialNames.length; ++i) {
-            Material foundMat = AssetManager.FindAsset(_materialNames[i]);
+        for (int i = 0; i < _materials.size(); ++i) {
+            Material foundMat = _materials.get(i).get();
             if (foundMat != null) {
                 materialRefs[i] = foundMat;
             }
@@ -51,12 +55,12 @@ public class StaticMesh extends Asset {
         Material[] materials = getMaterials();
         if (_sections != null) {
             for (int i = 0; i < _sections.length; ++i) {
-                if (_sections[i] != null) {
-                    _sections[i].use(context);
-                }
                 if (materials.length > i && materials[i] != null && materials[i].getShader() != null) {
                     materials[i].getShader().setMatrixParameter("model", _modelMatrix);
                     materials[i].use(context);
+                }
+                if (_sections[i] != null) {
+                    _sections[i].use(context);
                 }
             }
         }

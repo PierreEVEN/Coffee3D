@@ -84,7 +84,7 @@ public class MaterialImporter extends SubWindow {
         ImGui.text("textures");
         ImGui.sameLine();
         if (ImGui.button("add texture")) {
-            AssetReference ref = new AssetReference<Texture2D>(Texture2D.class, null);
+            AssetReference ref = new AssetReference<Texture2D>(Texture2D.class);
             new AssetPicker("Choose texture", ref);
             _textures.add(ref);
         }

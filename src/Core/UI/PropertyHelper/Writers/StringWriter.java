@@ -2,11 +2,15 @@ package Core.UI.PropertyHelper.Writers;
 
 import Core.UI.PropertyHelper.FieldWriter;
 import imgui.ImGui;
+import imgui.type.ImString;
 
 import java.lang.reflect.Field;
 
 public class StringWriter extends FieldWriter
 {
+
+    ImString text = new ImString();
+
     public StringWriter() {
         super(String.class);
     }
@@ -14,9 +18,12 @@ public class StringWriter extends FieldWriter
     @Override
     protected Object draw(String field, Object object) throws IllegalAccessException {
 
-        String value = (String)object;
-        if  (value != null) {
-            ImGui.text(value);
+        text.set((String)object);
+        if  (text != null) {
+            ImGui.inputText(field, text);
+            if (!text.get().equals(object)) {
+                return text.get();
+            }
         }
 
 

@@ -16,16 +16,17 @@ public class Material extends Asset {
 
     private static final long serialVersionUID = -2932087609993578842L;
     private transient MaterialResource _mat;
-    private String[] _textureNames;
+    private ArrayList<AssetReference<Texture2D>> _textures = new ArrayList<>();
 
     public Material(String name, String filePath) {
         super(name, filePath);
-        _textureNames = null;
     }
 
     public Material(String name, String filePath, String[] textureNames) {
         super(name, filePath);
-        _textureNames = textureNames;
+        for (String texture : textureNames) {
+            _textures.add(new AssetReference<>(Texture2D.class, texture));
+        }
     }
 
     public MaterialResource getShader() { return _mat; }
@@ -56,15 +57,6 @@ public class Material extends Asset {
         }
     }
 
-    public List<Texture2D> getTextures() {
-        List<Texture2D> res = new ArrayList<>();
-        if (_textureNames == null) return res;
-        for (String texture : _textureNames) {
-            Texture2D foundTexture = AssetManager.FindAsset(texture);
-            if (foundTexture != null) res.add(foundTexture);
-        }
-        return res;
-    }
 
     protected void drawThumbnailImage() {
         if (ImGui.button(("#" + getName()), 64, 64)) {
@@ -76,12 +68,13 @@ public class Material extends Asset {
     public void use(Scene context) {
         if (_mat == null) return;
         _mat.use(context);
-        List<Texture2D> textures = getTextures();
-        if (_textureNames != null) {
-            for (int i = 0; i < textures.size(); ++i) {
-                _mat.setIntParameter("texture" + i, i);
-                glActiveTexture(GL_TEXTURE0 + i);
-                glBindTexture(GL_TEXTURE_2D, textures.get(i).getTextureID());
+        if (_textures != null) {
+            for (int i = 0; i < _textures.size(); ++i) {
+                if (_textures.get(i).get() != null) {
+                    _mat.setIntParameter("texture" + i, i);
+                    glActiveTexture(GL_TEXTURE0 + i);
+                    glBindTexture(GL_TEXTURE_2D, _textures.get(i).get().getTextureID());
+                }
             }
         }
     }

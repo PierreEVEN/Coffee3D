@@ -40,7 +40,7 @@ public class Camera extends SceneComponent {
         super(new Vector3f().zero(), new Quaternionf().identity(), new Vector3f(1,1,1));
         attachToScene(parentScene);
         _fov = 45.f;
-        _zmin = 0.001f;
+        _zmin = 0.1f;
         _zmax = 500.f;
     }
 
