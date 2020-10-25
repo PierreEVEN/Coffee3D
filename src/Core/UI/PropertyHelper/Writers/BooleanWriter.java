@@ -18,7 +18,7 @@ public class BooleanWriter extends FieldWriter
     protected Object draw(String field, Object object) throws IllegalAccessException {
         if (_values == null) _values = new ImBoolean();
         _values.set((Boolean)object);
-        ImGui.checkbox(field + "##", _values);
+        ImGui.checkbox("##" + field, _values);
         if (_values.get() != (Boolean)object) {
             return _values.get();
         }

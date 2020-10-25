@@ -4,6 +4,7 @@ import Core.IO.LogOutput.Log;
 import Core.UI.PropertyHelper.FieldWriter;
 import Core.UI.PropertyHelper.StructureReader;
 import imgui.ImGui;
+import imgui.flag.ImGuiWindowFlags;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -16,28 +17,28 @@ public class ListWriter<T>  extends FieldWriter {
 
         if (ImGui.treeNode(field)) {
             ArrayList<T> array = (ArrayList) object;
-            int removedItem = -1;
-            for (int i = 0; i < array.size(); ++i) {
-                if (array.size() > 0) {
-                    if (ImGui.button("-##" + field + i)) {
-                        removedItem = i;
-                        continue;
+            if (ImGui.beginChild("child_" + field, ImGui.getContentRegionAvailX(), 100)) {
+                int removedItem = -1;
+                for (int i = 0; i < array.size(); ++i) {
+                    if (array.size() > 0) {
+                        if (ImGui.button("-##" + field + i)) {
+                            removedItem = i;
+                            continue;
+                        }
+                        ImGui.sameLine();
                     }
-                    ImGui.sameLine();
-                }
-                if (array.get(i) != null) {
-                    Object result = StructureReader.WriteObj(array.get(i), "[" + i + "]");
-                    if (result != null) {
-                        array.set(i, (T)result);
+                    if (array.get(i) != null) {
+                        Object result = StructureReader.WriteObj(array.get(i), "##" + field + "[" + i + "]");
+                        if (result != null) {
+                            array.set(i, (T) result);
+                        }
+                    } else {
+                        ImGui.text("none");
                     }
                 }
-                else {
-                    ImGui.text("none");
+                if (removedItem >= 0) {
+                    array.remove(removedItem);
                 }
-            }
-            if (removedItem >= 0) {
-                array.remove(removedItem);
-            }
             /*
             if (ImGui.button("+##" + field)) {
 
@@ -66,6 +67,8 @@ public class ListWriter<T>  extends FieldWriter {
             }
             
              */
+                ImGui.endChild();
+            }
             ImGui.treePop();
         }
 

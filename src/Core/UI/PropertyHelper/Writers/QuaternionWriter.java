@@ -28,8 +28,6 @@ public class QuaternionWriter extends FieldWriter
         _euler.z = (float)Math.toDegrees(_euler.z);
 
         float[] values = {_euler.x, _euler.y, _euler.z};
-        ImGui.text(field + " : ");
-        ImGui.sameLine();
         ImGui.dragFloat3("##" + field, values);
 
         if (values[0] != _euler.x || values[1] != _euler.y || values[2] != _euler.z) {

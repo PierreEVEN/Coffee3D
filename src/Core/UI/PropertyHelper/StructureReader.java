@@ -15,7 +15,15 @@ public class StructureReader {
             FieldWriter foundWriter = FieldWriter.Find(obj.getClass());
             if (foundWriter != null) {
                 // use adapted writer
-                return foundWriter.draw(nodeName, obj);
+
+                ImGui.columns(2);
+                if (nodeName.charAt(0) != '#') {
+                    ImGui.text(nodeName);
+                }
+                ImGui.nextColumn();
+                Object result = foundWriter.draw(nodeName, obj);
+                ImGui.columns(1);
+                return result;
             }
             else {
                 // Case no writer were found
@@ -31,7 +39,7 @@ public class StructureReader {
     }
 
     public static void WriteField(Field field, Object obj) {
-        if (Modifier.isStatic(field.getModifiers()) || Modifier.isFinal(field.getModifiers()) || Modifier.isTransient(field.getModifiers())) return;
+        if (Modifier.isStatic(field.getModifiers()) || Modifier.isFinal(field.getModifiers()) || Modifier.isTransient(field.getModifiers())|| Modifier.isPrivate(field.getModifiers())) return;
         field.setAccessible(true);
         debugIndex++;
 
@@ -44,7 +52,7 @@ public class StructureReader {
                 Object[] tab = (Object[]) field.get(obj);
                 if (ImGui.treeNode(nodeName)) {
                     for (int i = 0; i < tab.length; ++i) {
-                        Object result = WriteObj(tab[i], "[" + i + "]##" + nodeName);
+                        Object result = WriteObj(tab[i], "##[" + i + "]" + nodeName);
                         if (result != null) {
                             tab[i] = result;
                         }

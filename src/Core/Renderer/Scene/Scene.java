@@ -26,7 +26,7 @@ public class Scene {
     public Scene() {
         _components = new ArrayList<>();
         _gameMode = new DefaultGamemode(this);
-        _camera = new Camera(this);
+        _camera = new Camera();
         _sceneUbo = new SceneStaticBuffer();
         _sceneUbo.load();
     }

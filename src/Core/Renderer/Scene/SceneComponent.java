@@ -11,9 +11,18 @@ import java.util.List;
 public class SceneComponent implements Serializable {
     private static final long serialVersionUID = 744620683032598971L;
 
-    public ArrayList<Float> test = new ArrayList<>();
-    public Float[] test2 = new Float[] { 5.f, 8.f,9.f, 12f };
+    protected ArrayList<Float> testList = new ArrayList<>();
+    protected Float[] testTab = new Float[] { 5.f, 8.f,9.f, 12f };
 
+    protected String _componentName;
+
+    public String getComponentName() {
+        return _componentName;
+    }
+
+    public void setComponentName(String componentName) {
+        _componentName = componentName;
+    }
 
     /**
      * constructor
@@ -26,9 +35,9 @@ public class SceneComponent implements Serializable {
         this._rotation = rotation;
         this._scale = scale;
 
-        test.add(1f);
-        test.add(5f);
-
+        testList.add(1f);
+        testList.add(5f);
+        _componentName = getClass().getSimpleName();
     }
 
 
@@ -61,17 +70,17 @@ public class SceneComponent implements Serializable {
     /**
      * relative position
      */
-    private Vector3f _position;
+    protected Vector3f _position;
 
     /**
      * relative rotation
      */
-    private Quaternionf _rotation;
+    protected Quaternionf _rotation;
 
     /**
      * relative scale
      */
-    private Vector3f _scale;
+    protected Vector3f _scale;
 
     /**
      * get component position relative to it's parent

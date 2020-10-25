@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class StaticMesh extends Asset {
     private static final long serialVersionUID = -3309672296934490500L;
     private transient MeshResource[] _sections;
-    private ArrayList<AssetReference<Material>> _materials;
+    protected ArrayList<AssetReference<Material>> _materials;
     private transient Material[] materialRefs = new Material[0];
     private Matrix4f _modelMatrix;
 

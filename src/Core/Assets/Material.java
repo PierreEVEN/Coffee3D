@@ -16,7 +16,7 @@ public class Material extends Asset {
 
     private static final long serialVersionUID = -2932087609993578842L;
     private transient MaterialResource _mat;
-    private ArrayList<AssetReference<Texture2D>> _textures = new ArrayList<>();
+    protected ArrayList<AssetReference<Texture2D>> _textures = new ArrayList<>();
 
     public Material(String name, String filePath) {
         super(name, filePath);

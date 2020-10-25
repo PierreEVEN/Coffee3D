@@ -14,7 +14,7 @@ public class IntWriter extends FieldWriter
     @Override
     protected Object draw(String field, Object object) throws IllegalAccessException {
         int[] values = {(Integer)object};
-        ImGui.dragInt(field + "##", values);
+        ImGui.dragInt("##" + field, values);
         if (values[0] != (Integer)object) {
             return values[0];
         }

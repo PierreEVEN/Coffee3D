@@ -61,7 +61,7 @@ public class SceneOutliner extends SubWindow {
     private void drawNode(SceneComponent comp) {
         nodeIndex ++;
 
-        String componentName = comp.getClass().getSimpleName();
+        String componentName = comp.getComponentName();
 
         int flags = ImGuiTreeNodeFlags.OpenOnDoubleClick;
         if (comp.getChildren() == null || comp.getChildren().size() == 0) flags |= ImGuiTreeNodeFlags.Leaf;
@@ -91,7 +91,6 @@ public class SceneOutliner extends SubWindow {
 
         if (ImGui.isItemClicked()) _parentViewport.editComponent(comp);
         if (bExpand) {
-            //ImGui.sameLine();
             if (comp.getChildren() != null) {
                 for (SceneComponent child : comp.getChildren()) {
                     drawNode(child);

@@ -17,8 +17,6 @@ public class AssetButton {
             foundAsset = (Asset) assetRef.get();
         }
         ImGui.beginGroup();
-        ImGui.text(fieldName);
-        ImGui.sameLine();
         if (ImGui.button(foundAsset == null ? "none" : foundAsset.getName(), ImGui.getContentRegionAvailX(), 0.f)) {
             new AssetPicker("Pick asset for " + fieldName, assetRef);
         }

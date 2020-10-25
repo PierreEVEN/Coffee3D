@@ -14,14 +14,14 @@ public class FloatWriter extends FieldWriter {
     @Override
     protected Object draw(String field, Object object) throws IllegalAccessException {
 
+
         float[] values = {(Float)object};
 
-        ImGui.dragFloat(field + "##", values);
+        ImGui.dragFloat("##" + field, values);
 
         if (values[0] != (Float)object) {
             return values[0];
         }
-
         return null;
     }
 }

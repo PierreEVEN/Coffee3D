@@ -9,13 +9,8 @@ import org.joml.Vector3f;
 public class Camera extends SceneComponent {
 
     private static final long serialVersionUID = 3287874597857486658L;
-    private float _pitch, _yaw, _fov, _zmin, _zmax;
-    private static final Vector3f CAMERA_UP = new Vector3f(0, 1, 0);
-    private boolean _bUsePerspective = true;
-
-
-    private static final float MAX_PITCH = 80;
-    private static final float MIN_PITCH = -80;
+    protected float _pitch, _yaw, _fov, _zMin, _zMax;
+    protected boolean _bUsePerspective = true;
 
     public void addPitchInput(float delta) {
         _pitch += delta;
@@ -36,12 +31,11 @@ public class Camera extends SceneComponent {
         setRelativeRotation(rot);
     }
 
-    public Camera(Scene parentScene) {
+    public Camera() {
         super(new Vector3f().zero(), new Quaternionf().identity(), new Vector3f(1,1,1));
-        attachToScene(parentScene);
         _fov = 45.f;
-        _zmin = 0.1f;
-        _zmax = 500.f;
+        _zMin = 0.1f;
+        _zMax = 500.f;
     }
 
     public Matrix4f getViewMatrix() {
@@ -62,11 +56,11 @@ public class Camera extends SceneComponent {
     }
 
     public float getNearClipPlane() {
-        return _zmin;
+        return _zMin;
     }
 
     public float getFarClipPlane() {
-        return _zmax;
+        return _zMax;
     }
 
     public void setPerspective(boolean bEnablePerspective) { _bUsePerspective = bEnablePerspective; }

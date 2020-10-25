@@ -13,7 +13,7 @@ import org.joml.Vector3f;
 public class StaticMeshComponent extends SceneComponent {
 
     private static final long serialVersionUID = 4648435994317397619L;
-    private AssetReference<StaticMesh> _mesh;
+    protected AssetReference<StaticMesh> _mesh;
 
     public StaticMeshComponent(StaticMesh mesh, Vector3f position, Quaternionf rotation, Vector3f scale) {
         super(position, rotation, scale);
