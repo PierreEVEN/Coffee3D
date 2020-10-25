@@ -29,7 +29,7 @@ public class StructureReader {
 
                 ImGui.columns(2);
                 if (nodeName.charAt(0) != '#') {
-                    ImGui.text(nodeName);
+                    ImGui.text(nodeName.charAt(0) == '_' ? nodeName.substring(1) : nodeName);
                 }
                 ImGui.nextColumn();
                 Object result = foundWriter.draw(nodeName, obj);
