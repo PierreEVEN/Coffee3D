@@ -1,5 +1,9 @@
 package Core.Renderer.Scene;
 
+import Core.Renderer.DebugRendering.DebugRenderer;
+import Core.Renderer.RenderUtils;
+import Core.Types.Color;
+import Core.Types.TypeHelper;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -47,6 +51,10 @@ public class SceneComponent implements Serializable {
                 comp.drawInternal(context);
             }
         }
+
+        DebugRenderer.DrawDebugLine(context, getRelativePosition(), TypeHelper.getVector(0, 0, 0), Color.RED);
+        DebugRenderer.DrawDebugBox(context, getRelativePosition(), TypeHelper.getVector(0, 0, 0), Color.GREEN);
+        DebugRenderer.DrawDebugSphere(context, getRelativePosition(), 3, 20, Color.BLUE);
     }
 
     /**

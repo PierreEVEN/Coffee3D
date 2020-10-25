@@ -17,9 +17,12 @@ public class Material extends Asset {
 
     private static final long serialVersionUID = -2932087609993578842L;
     private transient MaterialResource _mat;
-    protected Color color = new Color(1f, 1f, 1f, 1f);
+    protected Color _materialColor = new Color(1f, 1f, 1f, 1f);
     protected ArrayList<AssetReference<Texture2D>> _textures = new ArrayList<>();
-    private static final Color matColor = new Color(0f, .5f, 0f, 1);
+    private static final Color _matAssetColor = new Color(0f, .5f, 0f, 1);
+
+    public Color getColor() { return _materialColor; }
+    public void setColor(Color color) { _materialColor = color; }
 
     public Material(String name, String filePath, File assetPath) {
         super(name, filePath, assetPath);
@@ -34,7 +37,7 @@ public class Material extends Asset {
 
     @Override
     public Color getAssetColor() {
-        return matColor;
+        return _matAssetColor;
     }
 
     public MaterialResource getShader() { return _mat; }
@@ -84,7 +87,7 @@ public class Material extends Asset {
     public void use(Scene context) {
         if (_mat == null) return;
         _mat.use(context);
-        _mat.setColorParameter("color", color);
+        _mat.setColorParameter("color", _materialColor);
         if (_textures != null) {
             for (int i = 0; i < _textures.size(); ++i) {
                 if (_textures.get(i).get() != null) {

@@ -2,6 +2,7 @@ package Core.Assets;
 
 import Core.Factories.MeshFactory;
 import Core.IO.LogOutput.Log;
+import Core.Renderer.DebugRendering.DebugRenderer;
 import Core.Renderer.Scene.Scene;
 import Core.Resources.MeshResource;
 import Core.Types.Color;

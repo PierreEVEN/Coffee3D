@@ -1,8 +1,10 @@
 package Core.Renderer;
 
+import Core.Assets.Material;
 import Core.IO.Inputs.GlfwInputHandler;
 import Core.IO.LogOutput.Log;
 import Core.IO.Settings.EngineSettings;
+import org.joml.Matrix4f;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -15,11 +17,22 @@ import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL.createCapabilities;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL13.GL_MULTISAMPLE;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
 
 public class RenderUtils {
+
+
+    private static Material debugMaterial;
+    public static Material getDebugMaterial() {
+        if (debugMaterial == null) {
+            debugMaterial = new Material("DebugMaterial", EngineSettings.DEBUG_MATERIAL_PATH, null);
+            if (debugMaterial == null) {
+                Log.Fail("failed to load debug material from : ");
+            }
+        }
+        return debugMaterial;
+    }
 
     public static void InitializeOpenGL() {
         createCapabilities();

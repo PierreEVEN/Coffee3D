@@ -5,6 +5,7 @@ import Core.IEngineModule;
 import Core.IO.LogOutput.Log;
 import Core.IO.Settings.EngineSettings;
 import Core.Resources.ResourceManager;
+import Core.Types.TypeHelper;
 import Core.UI.HUD.HudUtils;
 import Core.UI.ImGuiImpl.ImGuiImplementation;
 import Core.UI.PropertyHelper.FieldWriter;
@@ -130,6 +131,8 @@ public class Window {
 
 
     private void drawFrame() {
+
+        TypeHelper.nextFrame();
 
         // Update delta time
         updateDeltaTime();

@@ -84,7 +84,7 @@ public class ContentBrowser extends SubWindow {
 
             int currentElemIndex = 0;
             for (Asset elem : assets) {
-                if (_bShowAllContent.get() || elem.getSavePath().getParentFile().equals(_selectedFile)) {
+                if (elem.getSavePath() != null && (_bShowAllContent.get() || elem.getSavePath().getParentFile().equals(_selectedFile))) {
                     elem.drawThumbnail();
                     ImGui.nextColumn();
                 }

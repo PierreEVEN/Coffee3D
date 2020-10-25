@@ -20,7 +20,7 @@ public abstract class Asset extends SerializableData {
     private final String _name;
     private final String _sourcePath;
     private transient File _assetPath;
-    private static final Color defaultColor = new Color(.5f, .5f, .5f, .5f);
+    private static final Color _defaultColor = new Color(.5f, .5f, .5f, .5f);
 
 
     protected Asset(String name, String sourcePath, File assetPath) {
@@ -33,7 +33,7 @@ public abstract class Asset extends SerializableData {
     }
 
     public Color getAssetColor() {
-        return defaultColor;
+        return _defaultColor;
     }
 
     public void setSavePath(String path) {
