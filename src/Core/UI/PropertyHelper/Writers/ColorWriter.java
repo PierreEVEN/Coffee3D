@@ -19,10 +19,14 @@ public class ColorWriter extends FieldWriter
         Color col = (Color) object;
 
         final float[] colVec = {col.getVector().x, col.getVector().y, col.getVector().z, col.getVector().w};
+        final float[] colPower = {col.getPower()};
 
         ImGui.colorButton("##" + field, colVec, ImGuiColorEditFlags.PickerHueWheel);
         ImGui.sameLine();
         if (ImGui.treeNode("##treeNode " + field)) {
+            FloatWriter wr = (FloatWriter)FieldWriter.Find(Float.class);
+
+            ImGui.dragFloat("##power" + field, colPower);
 
             ImGui.colorPicker4("##picker" + field, colVec);
             ImGui.treePop();
@@ -32,9 +36,10 @@ public class ColorWriter extends FieldWriter
         if (colVec[0] != col.getVector().x ||
                         colVec[1] != col.getVector().y ||
                         colVec[2] != col.getVector().z ||
-                        colVec[3] != col.getVector().w
+                        colVec[3] != col.getVector().w ||
+                colPower[0] != col.getPower()
         ) {
-            return new Color(colVec[0], colVec[1], colVec[2], colVec[3]);
+            return new Color(colVec[0], colVec[1], colVec[2], colVec[3], colPower[0]);
         }
 
 

@@ -144,7 +144,11 @@ public class MaterialResource extends GraphicResource {
     }
 
     public void setColorParameter(String parameterName, Color color) {
-        setVec4Parameter(parameterName, color.getVector());
+        glUniform4f(glGetUniformLocation(_materialHandle, parameterName),
+                color.getVector().x * color.getPower(),
+                color.getVector().y * color.getPower(),
+                color.getVector().z * color.getPower(),
+                color.getVector().w * color.getPower());
     }
 
     public void setVec4Parameter(String parameterName, Vector4f value) {

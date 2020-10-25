@@ -43,6 +43,6 @@ public class Texture2D extends Asset {
     @Override
     public void drawDetailedContent() {
         super.drawDetailedContent();
-        ImGui.image(getTextureID(), 400, 400);
+        ImGui.image(getTextureID(), 400, 400, 0, 1, 1, 0);
     }
 }
