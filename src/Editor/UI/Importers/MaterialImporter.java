@@ -17,67 +17,36 @@ import imgui.type.ImString;
 import java.io.File;
 import java.util.ArrayList;
 
-public class MaterialImporter extends SubWindow {
+public class MaterialImporter extends AssetImporter {
 
-    private File _selectedShader;
-    private ImString _fileName;
     private ArrayList<AssetReference<Texture2D>> _textures;
 
     public MaterialImporter(String windowName) {
         super(windowName);
-        _fileName = new ImString();
         _textures = new ArrayList<>();
+        _extensionFilter = new String[] {"vert"};
+    }
+
+    @Override
+    public boolean canImport() {
+        if (!super.canImport()) return false;
+        String fileCleanName = getSelectedSource().getPath().replaceFirst("[.][^.]+$", "");
+        File vertexFile = new File(fileCleanName + ".vert");
+        File fragmentFile = new File(fileCleanName + ".frag");
+        if (!vertexFile.exists()) {
+            return false;
+        }
+        if (!fragmentFile.exists()) {
+            return false;
+        }
+        return true;
     }
 
     @Override
     protected void draw() {
-        ImGui.text("source file : ");
-        ImGui.sameLine();
-        if (ImGui.button(_selectedShader == null ? "pick file" : _selectedShader.getPath())) {
-            new FileBrowser("Select texture file", new String[] {"vert", "frag"}, _selectedShader, (file) -> {
-                _selectedShader = file;
-                if (_fileName.get().equals("")) {
-                    _fileName.set(_selectedShader.getName().replaceFirst("[.][^.]+$", ""));
-                }
-            });
-        }
+        super.draw();
 
-        boolean bIsValidName = AssetManager.CanCreateAssetWithName(_fileName.get());
-
-        if (!bIsValidName) {
-            ImGui.pushStyleColor(ImGuiCol.FrameBg, 1.f, .2f, .2f, .5f);
-            ImGui.pushStyleColor(ImGuiCol.Text, 1.f, .4f, .4f, .8f);
-        }
-
-        ImGui.text("asset name : ");
-        ImGui.sameLine();
-        ImGui.inputText("##file name", _fileName);
-
-        if (!bIsValidName) {
-            ImGui.sameLine();
-            ImGui.text("invalid file name");
-            ImGui.popStyleColor();
-            ImGui.popStyleColor();
-        }
-
-
-        if (_selectedShader != null) {
-            String fileCleanName = _selectedShader.getPath().replaceFirst("[.][^.]+$", "");
-            File vertexFile = new File(fileCleanName + ".vert");
-            File fragmentFile = new File(fileCleanName + ".frag");
-            if (!vertexFile.exists()) {
-                ImGui.pushStyleColor(ImGuiCol.Text, 1.f, .4f, .4f, .8f);
-                ImGui.text("failed to find vertex shader file named " + fileCleanName + ".vert");
-                ImGui.popStyleColor();
-                return;
-            }
-            if (!fragmentFile.exists()) {
-                ImGui.pushStyleColor(ImGuiCol.Text, 1.f, .4f, .4f, .8f);
-                ImGui.text("failed to find fragment shader file named " + fileCleanName + ".frag");
-                ImGui.popStyleColor();
-                return;
-            }
-        }
+        if (!super.canImport()) return;
 
 
         ImGui.separator();
@@ -112,13 +81,14 @@ public class MaterialImporter extends SubWindow {
         ImGui.dummy(0, ImGui.getContentRegionAvailY() - 50);
         ImGui.dummy(ImGui.getContentRegionAvailX() - 250, 0);
         ImGui.sameLine();
-        if (bIsValidName && _selectedShader != null) {
+        if (canImport()) {
             if (ImGui.button("Create", ImGui.getContentRegionAvailX(), 0)) {
                 String[] textureNames = new String[_textures.size()];
                 for (int i = 0; i < _textures.size(); ++i) {
                     textureNames[i] = _textures.get(i) == null ? "" : _textures.get(i).get().getName();
                 }
-                new Material(_fileName.get(), _selectedShader.getPath(), textureNames);
+                Material mat = new Material(getTargetFileName(), getSelectedSource().getPath(), getTargetFilePath(), textureNames);
+                mat.save();
                 close();
             }
         }

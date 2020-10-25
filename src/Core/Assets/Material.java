@@ -22,12 +22,12 @@ public class Material extends Asset {
     protected Color color = new Color(1f, 1f, 1f, 1f);
     protected ArrayList<AssetReference<Texture2D>> _textures = new ArrayList<>();
 
-    public Material(String name, String filePath) {
-        super(name, filePath);
+    public Material(String name, String filePath, String assetPath) {
+        super(name, filePath, assetPath);
     }
 
-    public Material(String name, String filePath, String[] textureNames) {
-        super(name, filePath);
+    public Material(String name, String filePath, String assetPath, String[] textureNames) {
+        super(name, filePath, assetPath);
         for (String texture : textureNames) {
             _textures.add(new AssetReference<>(Texture2D.class, texture));
         }

@@ -42,7 +42,7 @@ public class EditorModule implements IEngineModule {
         ImGuiImplementation.Get().addFont("resources/fonts/roboto/Roboto-Medium.ttf", 60);
         ImGuiIO io = ImGui.getIO();
         io.setFontGlobalScale(0.4f);
-
+        /*
         new Texture2D("plaster", "resources/textures/plaster.png");
         new Texture2D("grass", "resources/textures/grassSeamless.png");
         new Texture2D("mud", "resources/textures/mud.png");
@@ -56,8 +56,7 @@ public class EditorModule implements IEngineModule {
         new StaticMesh("building", "resources/models/Building.fbx", new String[] { "Concrete2", "concrete", "glass", "pillars" });
         new StaticMesh("cube", "resources/models/cube.fbx", new String[] { "default" });
         new StaticMesh("test", "resources/models/test.fbx", new String[] { "default" });
-        RenderUtils.CheckGLErrors();
-
+        */
         Asset.SetAssetEditWidget(new IEditAsset() {
             @Override
             public void applyAsset(Asset asset) {
@@ -73,6 +72,7 @@ public class EditorModule implements IEngineModule {
         new LevelEditorViewport((RenderScene) _rootScene, "viewport");
         new ContentBrowser("Content browser");
 
+        /*
         new StaticMeshComponent(
                 AssetManager.FindAsset("building"),
                 new Vector3f(0, 0, 0),
@@ -87,6 +87,8 @@ public class EditorModule implements IEngineModule {
                 new Vector3f(100, 0.5f, 100)
         );
         parent.attachToScene(_rootScene);
+
+         */
 
         String vendor = glGetString(GL_VENDOR);
         String renderer = glGetString(GL_RENDERER);

@@ -12,48 +12,21 @@ import imgui.type.ImString;
 import java.io.File;
 import java.util.ArrayList;
 
-public class MeshImporter extends SubWindow {
+public class MeshImporter extends AssetImporter {
 
-    private File _selectedObject;
-    private ImString _fileName;
     private ArrayList<AssetReference<Material>> _materials;
 
     public MeshImporter(String windowName) {
         super(windowName);
-        _fileName = new ImString();
         _materials = new ArrayList<>();
+        _extensionFilter = new String[] {"fbx", "obj"};
     }
 
     @Override
     protected void draw() {
-        ImGui.text("source file : ");
-        ImGui.sameLine();
-        if (ImGui.button(_selectedObject == null ? "pick file" : _selectedObject.getPath())) {
-            new FileBrowser("Select object file", new String[] {"obj", "fbx"}, _selectedObject, (file) -> {
-                _selectedObject = file;
-                if (_fileName.get().equals("")) {
-                    _fileName.set(_selectedObject.getName().replaceFirst("[.][^.]+$", ""));
-                }
-            });
-        }
+        super.draw();
+        if (!canImport()) return;
 
-        boolean bIsValidName = AssetManager.CanCreateAssetWithName(_fileName.get());
-
-        if (!bIsValidName) {
-            ImGui.pushStyleColor(ImGuiCol.FrameBg, 1.f, .2f, .2f, .5f);
-            ImGui.pushStyleColor(ImGuiCol.Text, 1.f, .4f, .4f, .8f);
-        }
-
-        ImGui.text("asset name : ");
-        ImGui.sameLine();
-        ImGui.inputText("##file name", _fileName);
-
-        if (!bIsValidName) {
-            ImGui.sameLine();
-            ImGui.text("invalid file name");
-            ImGui.popStyleColor();
-            ImGui.popStyleColor();
-        }
 
         ImGui.separator();
         ImGui.text("materials");
@@ -87,15 +60,14 @@ public class MeshImporter extends SubWindow {
         ImGui.dummy(0, ImGui.getContentRegionAvailY() - 50);
         ImGui.dummy(ImGui.getContentRegionAvailX() - 250, 0);
         ImGui.sameLine();
-        if (bIsValidName && _selectedObject != null) {
-            if (ImGui.button("Create", ImGui.getContentRegionAvailX(), 0)) {
-                String[] materialNames = new String[_materials.size()];
-                for (int i = 0; i < _materials.size(); ++i) {
-                    materialNames[i] = _materials.get(i) == null ? "" : _materials.get(i).get().getName();
-                }
-                new StaticMesh(_fileName.get(), _selectedObject.getPath(), materialNames);
-                close();
+        if (ImGui.button("Create", ImGui.getContentRegionAvailX(), 0)) {
+            String[] materialNames = new String[_materials.size()];
+            for (int i = 0; i < _materials.size(); ++i) {
+                materialNames[i] = _materials.get(i) == null ? "" : _materials.get(i).get().getName();
             }
+            StaticMesh mesh = new StaticMesh(getTargetFileName(), getSelectedSource().getPath(), getTargetFilePath(), materialNames);
+            mesh.save();
+            close();
         }
     }
 }

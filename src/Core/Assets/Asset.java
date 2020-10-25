@@ -1,14 +1,15 @@
 package Core.Assets;
 
+import Core.IO.LogOutput.Log;
 import Core.Renderer.Scene.Scene;
-import imgui.ImColor;
 import imgui.ImGui;
-import imgui.ImVec4;
 import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiDragDropFlags;
 import imgui.flag.ImGuiStyleVar;
 import org.joml.Vector4f;
 
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 /**
@@ -18,15 +19,18 @@ public abstract class Asset implements Serializable {
     private static final long serialVersionUID = -5394125677306125615L;
 
     private final String _name;
-    private final String _filePath;
-    private Vector4f assetColor;
+    private final String _sourcePath;
+    private final String _assetPath;
+    private final Vector4f assetColor;
 
-    protected Asset(String name, String filePath) {
-        _filePath = filePath;
+    protected Asset(String name, String sourcePath, String assetPath) {
+        _sourcePath = sourcePath;
         _name = name;
+        _assetPath = assetPath;
         AssetManager.RegisterAsset(this);
         load();
         assetColor = new Vector4f(.5f, .5f, .5f, .5f);
+        Log.Display("import " + name + " (" + getClass().getSimpleName() + ") from " + sourcePath + " to " + assetPath);
     }
 
     /**
@@ -50,7 +54,7 @@ public abstract class Asset implements Serializable {
      * get asset file path
      * @return relative path
      */
-    public String getFilepath() { return _filePath; }
+    public String getFilepath() { return _sourcePath; }
 
     private boolean bIsAssetDirty = false;
     /**
@@ -89,4 +93,23 @@ public abstract class Asset implements Serializable {
         _assetEditFunction = assetEditFunction;
     }
 
+    public static void serializeAsset(Asset sourceAsset) {
+        try {
+            FileOutputStream fos = new FileOutputStream(sourceAsset._assetPath);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(sourceAsset);
+            oos.close();
+            fos.close();
+        } catch (Exception e) {
+            Log.Warning("failed to serialise scene : " + e.getMessage());
+        }
+    }
+
+    public static Asset deserializeAsset() {
+        return null;
+    }
+
+    public void save() {
+        serializeAsset(this);
+    }
 }

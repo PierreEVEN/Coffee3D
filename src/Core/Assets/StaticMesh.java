@@ -16,8 +16,8 @@ public class StaticMesh extends Asset {
     private transient Material[] materialRefs = new Material[0];
     private Matrix4f _modelMatrix;
 
-    public StaticMesh(String name, String filePath, String[] materials) {
-        super(name, filePath);
+    public StaticMesh(String name, String filePath, String assetPath, String[] materials) {
+        super(name, filePath, assetPath);
 
         _materials = new ArrayList<>();
         for (String mat : materials) {

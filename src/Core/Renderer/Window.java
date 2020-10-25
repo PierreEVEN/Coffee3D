@@ -75,6 +75,8 @@ public class Window {
         Log.Display("build level");
         _engineModule.PreInitialize();
 
+        RenderUtils.CheckGLErrors();
+
         glfwSetFramebufferSizeCallback(_glfwWindowHandle, new GLFWFramebufferSizeCallback() {
             @Override
             public void invoke(long window, int width, int height) {
@@ -85,7 +87,6 @@ public class Window {
                 drawFrame();
             }
         });
-
 
         Log.Display("Start render loop");
         renderLoop();
@@ -155,6 +156,7 @@ public class Window {
         ImGuiImplementation.Get().render();
 
         glfwSwapBuffers(_glfwWindowHandle);
+        RenderUtils.CheckGLErrors();
     }
 
     private void initUI() {
