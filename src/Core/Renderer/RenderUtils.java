@@ -23,8 +23,6 @@ public class RenderUtils {
 
     public static void InitializeOpenGL() {
         createCapabilities();
-
-        glEnable(GL_MULTISAMPLE);
     }
 
     public static void CheckGLErrors() {

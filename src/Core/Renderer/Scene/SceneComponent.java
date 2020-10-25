@@ -11,9 +11,6 @@ import java.util.List;
 public class SceneComponent implements Serializable {
     private static final long serialVersionUID = 744620683032598971L;
 
-    protected ArrayList<Float> testList = new ArrayList<>();
-    protected Float[] testTab = new Float[] { 5.f, 8.f,9.f, 12f };
-
     protected String _componentName;
 
     public String getComponentName() {
@@ -35,8 +32,6 @@ public class SceneComponent implements Serializable {
         this._rotation = rotation;
         this._scale = scale;
 
-        testList.add(1f);
-        testList.add(5f);
         _componentName = getClass().getSimpleName();
     }
 

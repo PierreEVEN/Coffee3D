@@ -1,5 +1,6 @@
 package Editor.UI.LevelEditor.Tools;
 
+import Core.IO.LogOutput.Log;
 import Core.Renderer.Scene.SceneComponent;
 import Core.UI.SubWindows.SubWindow;
 import Core.UI.PropertyHelper.StructureReader;
@@ -27,24 +28,10 @@ public class ComponentInspector extends SubWindow {
 
     private void drawComponentProperties() {
         if (_editedComponent == null) return;
-        Class componentClass = _editedComponent.getClass();
-        drawClassProperties(componentClass);
+        StructureReader.WriteObj(_editedComponent, "SceneComponent");
     }
 
     private void drawClassProperties(Class inClass) {
-        if (inClass.getSuperclass() != null && inClass.getSuperclass() != Object.class) {
-            drawClassProperties(inClass.getSuperclass());
-        }
 
-        ImGui.separator();
-        ImGui.text(inClass.getSimpleName());
-        ImGui.separator();
-        ImGui.indent();
-        for (Field field : inClass.getDeclaredFields()) {
-            StructureReader.debugIndex = 0;
-            StructureReader.WriteField(field, _editedComponent);
-        }
-        ImGui.unindent();
-        ImGui.dummy(0,15.f);;
     }
 }

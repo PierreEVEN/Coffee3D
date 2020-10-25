@@ -1,5 +1,6 @@
 package Core.Resources;
 
+import Core.IO.LogOutput.Log;
 import Core.Renderer.Scene.Scene;
 import Core.Types.Vertex;
 import org.lwjgl.BufferUtils;

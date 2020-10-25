@@ -57,8 +57,8 @@ public class StaticMesh extends Asset {
         if (_sections != null) {
             for (int i = 0; i < _sections.length; ++i) {
                 if (materials.length > i && materials[i] != null && materials[i].getShader() != null) {
-                    materials[i].getShader().setMatrixParameter("model", _modelMatrix);
                     materials[i].use(context);
+                    materials[i].getShader().setMatrixParameter("model", _modelMatrix);
                 }
                 if (_sections[i] != null) {
                     _sections[i].use(context);

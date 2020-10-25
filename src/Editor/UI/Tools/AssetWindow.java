@@ -1,6 +1,7 @@
 package Editor.UI.Tools;
 
 import Core.Assets.Asset;
+import Core.IO.LogOutput.Log;
 import Core.UI.PropertyHelper.StructureReader;
 import Core.UI.SubWindows.SubWindow;
 
@@ -18,9 +19,6 @@ public class AssetWindow extends SubWindow {
     @Override
     protected void draw() {
         _editedAsset.drawDetailedContent();
-        for (Field field : _editedAsset.getClass().getDeclaredFields()) {
-            StructureReader.debugIndex = 0;
-            StructureReader.WriteField(field, _editedAsset);
-        }
+        StructureReader.WriteObj(_editedAsset, _editedAsset.getName());
     }
 }

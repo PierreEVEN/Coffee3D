@@ -19,7 +19,7 @@ public abstract class Asset implements Serializable {
 
     private final String _name;
     private final String _filePath;
-    protected Vector4f assetColor;
+    private Vector4f assetColor;
 
     protected Asset(String name, String filePath) {
         _filePath = filePath;

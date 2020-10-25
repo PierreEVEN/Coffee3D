@@ -27,5 +27,5 @@ void main()
     texCoord = vec2(aTexCoord.x, aTexCoord.y);
     pos = (model * vec4(aPos, 1.0f)).xyz;
     normal = aNormal;
-    worldNormal = mat3(transpose(inverse(model))) * aNormal;;
+    worldNormal = normalize(mat3(transpose(inverse(model))) * aNormal);
 }

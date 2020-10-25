@@ -23,12 +23,16 @@ public class Scene {
     private ArrayList<SceneComponent> _components;
     private SceneStaticBuffer _sceneUbo;
 
+    protected SceneProperty _sceneProperties;
+
+
     public Scene() {
         _components = new ArrayList<>();
         _gameMode = new DefaultGamemode(this);
         _camera = new Camera();
         _sceneUbo = new SceneStaticBuffer();
         _sceneUbo.load();
+        _sceneProperties = new SceneProperty();
     }
 
     public void renderScene() {

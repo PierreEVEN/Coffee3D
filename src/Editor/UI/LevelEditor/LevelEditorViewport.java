@@ -4,6 +4,7 @@ import Core.IO.LogOutput.Log;
 import Core.Renderer.Scene.RenderScene;
 import Core.Renderer.Scene.SceneComponent;
 import Editor.UI.LevelEditor.Tools.ComponentInspector;
+import Editor.UI.LevelEditor.Tools.LevelProperties;
 import Editor.UI.LevelEditor.Tools.SceneOutliner;
 import Editor.UI.SceneViewport;
 import imgui.ImGui;
@@ -16,6 +17,7 @@ public class LevelEditorViewport extends SceneViewport {
         super(scene, windowName);
         bHasMenuBar = true;
         new SceneOutliner(this, "Scene outliner");
+        new LevelProperties(getScene(), "Level properties");
     }
 
     @Override

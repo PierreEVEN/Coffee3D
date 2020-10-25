@@ -25,8 +25,6 @@ layout (std140) uniform shader_data
 
 void main()
 {
-    vec3 lightPos = cameraPos;//vec3(0,0,0);
-
     vec3 lightDir = normalize(vec3(1, 1, 1));
 
     vec4 finalColor = texture(texture0, texCoord) * color;
