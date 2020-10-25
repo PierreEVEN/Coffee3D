@@ -33,7 +33,7 @@ public class MeshImporter extends AssetImporter {
         ImGui.sameLine();
         if (ImGui.button("add material")) {
             AssetReference ref = new AssetReference<Material>(Material.class);
-            new AssetPicker("Choose material", ref);
+            new AssetPicker("Choose material", ref, null);
             _materials.add(ref);
         }
         ImGui.indent();

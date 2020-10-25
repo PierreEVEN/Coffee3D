@@ -10,15 +10,16 @@ import java.lang.reflect.Field;
 
 public class AssetButton {
 
-    public static <T> void Draw(String fieldName, AssetReference<T> assetRef) {
+    public static <T> boolean Draw(String fieldName, AssetReference<T> assetRef) {
         Asset foundAsset = null;
+
 
         if (assetRef != null) {
             foundAsset = (Asset) assetRef.get();
         }
         ImGui.beginGroup();
         if (ImGui.button(foundAsset == null ? "none" : foundAsset.getName(), ImGui.getContentRegionAvailX(), 0.f)) {
-            new AssetPicker("Pick asset for " + fieldName, assetRef);
+            new AssetPicker("Pick asset for " + fieldName, assetRef, null);
         }
         ImGui.endGroup();
 
@@ -31,9 +32,11 @@ public class AssetButton {
                 Asset droppedAsset = AssetManager.FindAsset(assetName);
                 if (droppedAsset != null) {
                     assetRef.set((T)droppedAsset);
+                    return true;
                 }
             }
         }
+        return false;
     }
 
 }

@@ -1,6 +1,7 @@
 package Core.UI.Tools;
 
 import Core.Assets.*;
+import Core.UI.PropertyHelper.Writers.OnAssetEdited;
 import Core.UI.SubWindows.SubWindow;
 import imgui.ImGui;
 import imgui.type.ImInt;
@@ -15,9 +16,12 @@ public class AssetPicker extends SubWindow {
     private String[] _assetNames;
     private List<Asset> _availableAssets;
     private ImInt _selectedItem;
+    private OnAssetEdited _execEvent;
 
-    public AssetPicker(String windowName, AssetReference assetPtr) {
+
+    public AssetPicker(String windowName, AssetReference assetPtr, OnAssetEdited execEvent) {
         super(windowName);
+        _execEvent = execEvent;
         _assetPtr = assetPtr;
         if (_currentPicker != null) {
             _currentPicker.close();

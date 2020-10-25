@@ -4,6 +4,7 @@ import Core.IO.LogOutput.Log;
 import Core.Renderer.Scene.Scene;
 import Core.Renderer.Scene.SceneComponent;
 import Core.Renderer.Scene.SceneProperty;
+import Core.Types.Color;
 import Core.UI.PropertyHelper.SerializableData;
 import imgui.ImGui;
 import imgui.flag.ImGuiCol;
@@ -23,7 +24,8 @@ public abstract class Asset extends SerializableData {
     private final String _name;
     private final String _sourcePath;
     private transient String _assetPath;
-    private final Vector4f assetColor;
+    private static final Color defaultColor = new Color(.5f, .5f, .5f, .5f);;
+
 
     protected Asset(String name, String sourcePath, String assetPath) {
         _sourcePath = sourcePath;
@@ -31,8 +33,11 @@ public abstract class Asset extends SerializableData {
         _assetPath = assetPath;
         AssetManager.RegisterAsset(this);
         load();
-        assetColor = new Vector4f(.5f, .5f, .5f, .5f);
         Log.Display("import " + name + " (" + getClass().getSimpleName() + ") from " + sourcePath + " to " + assetPath);
+    }
+
+    public Color getAssetColor() {
+        return defaultColor;
     }
 
     public void setSavePath(String path) {
@@ -67,7 +72,7 @@ public abstract class Asset extends SerializableData {
      */
     public final void drawThumbnail() {
         ImGui.beginGroup();
-        ImGui.pushStyleColor(ImGuiCol.Button, assetColor.x, assetColor.y, assetColor.z, assetColor.w);
+        ImGui.pushStyleColor(ImGuiCol.Button, getAssetColor().getVector().x, getAssetColor().getVector().y, getAssetColor().getVector().z, getAssetColor().getVector().w);
         ImGui.pushStyleVar(ImGuiStyleVar.FramePadding, 3, 3);
         drawThumbnailImage();
         ImGui.popStyleColor();

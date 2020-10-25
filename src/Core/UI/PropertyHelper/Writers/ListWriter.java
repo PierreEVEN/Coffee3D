@@ -23,6 +23,7 @@ public class ListWriter<T>  extends FieldWriter {
                     if (array.size() > 0) {
                         if (ImGui.button("-##" + field + i)) {
                             removedItem = i;
+                            ImGui.endChild();
                             continue;
                         }
                         ImGui.sameLine();
@@ -67,8 +68,8 @@ public class ListWriter<T>  extends FieldWriter {
             }
             
              */
-                ImGui.endChild();
             }
+            ImGui.endChild();
             ImGui.treePop();
         }
 

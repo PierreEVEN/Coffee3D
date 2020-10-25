@@ -137,7 +137,13 @@ public class Window {
         // Clear background buffer
         glClearColor(_backgroundColor.x,_backgroundColor.y,_backgroundColor.z,_backgroundColor.w);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_MULTISAMPLE);
+        glEnable(GL_STENCIL_TEST);
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_FRONT);
+        glFrontFace(GL_CW);
         glViewport(0, 0, getPixelWidth(), getPixelHeight());
 
         glPolygonMode( GL_FRONT_AND_BACK, _drawMode);

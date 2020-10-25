@@ -54,7 +54,7 @@ public class MaterialImporter extends AssetImporter {
         ImGui.sameLine();
         if (ImGui.button("add texture")) {
             AssetReference ref = new AssetReference<Texture2D>(Texture2D.class);
-            new AssetPicker("Choose texture", ref);
+            new AssetPicker("Choose texture", ref, null);
             _textures.add(ref);
         }
         ImGui.indent();

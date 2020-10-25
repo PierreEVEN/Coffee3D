@@ -93,6 +93,7 @@ public class StructureReader {
                 if (result != null) {
                     field.set(obj, result);
 
+                    Log.Display(obj.getClass().getSimpleName());
                     if (obj instanceof SerializableData) {
                         ((SerializableData)obj).edit();
                     }

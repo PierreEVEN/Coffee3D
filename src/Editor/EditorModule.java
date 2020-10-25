@@ -42,21 +42,6 @@ public class EditorModule implements IEngineModule {
         ImGuiImplementation.Get().addFont("resources/fonts/roboto/Roboto-Medium.ttf", 60);
         ImGuiIO io = ImGui.getIO();
         io.setFontGlobalScale(0.4f);
-        /*
-        new Texture2D("plaster", "resources/textures/plaster.png");
-        new Texture2D("grass", "resources/textures/grassSeamless.png");
-        new Texture2D("mud", "resources/textures/mud.png");
-        new Texture2D("grid", "resources/textures/defaultGrid.png");
-        new Material("default", "resources/shaders/default", new String[] {"grid"});
-        new Material("Concrete1", "resources/shaders/default", new String[] {"grassSeamless"});
-        new Material("Concrete2", "resources/shaders/default", new String[] {"mud"});
-        new Material("concrete", "resources/shaders/default", new String[] {"plaster"});
-        new Material("glass", "resources/shaders/default", new String[] {"grassSeamless"});
-        new Material("pillars", "resources/shaders/default", new String[] {"plaster"});
-        new StaticMesh("building", "resources/models/Building.fbx", new String[] { "Concrete2", "concrete", "glass", "pillars" });
-        new StaticMesh("cube", "resources/models/cube.fbx", new String[] { "default" });
-        new StaticMesh("test", "resources/models/test.fbx", new String[] { "default" });
-        */
         Asset.SetAssetEditWidget(new IEditAsset() {
             @Override
             public void applyAsset(Asset asset) {
@@ -68,32 +53,14 @@ public class EditorModule implements IEngineModule {
     @Override
     public void PreInitialize() {
         _rootScene = new RenderScene(800, 600);
+        _rootScene.loadFromFile("truc.map");
 
         new LevelEditorViewport((RenderScene) _rootScene, "viewport");
         new ContentBrowser("Content browser");
 
-        /*
-        new StaticMeshComponent(
-                AssetManager.FindAsset("building"),
-                new Vector3f(0, 0, 0),
-                new Quaternionf().identity().rotationXYZ((float)Math.toRadians(-90), 0, 0),
-                new Vector3f(1, 1, 1)
-        ).attachToScene(_rootScene);
-
-        SceneComponent parent = new StaticMeshComponent(
-                AssetManager.FindAsset("cube"),
-                new Vector3f(0, -13, 0),
-                new Quaternionf().identity().rotateXYZ(0, 0, 0),
-                new Vector3f(100, 0.5f, 100)
-        );
-        parent.attachToScene(_rootScene);
-
-         */
-
         String vendor = glGetString(GL_VENDOR);
         String renderer = glGetString(GL_RENDERER);
         GLFW.glfwSetWindowTitle(Window.GetPrimaryWindow().getGlfwWindowHandle(), "Coffee3D Editor - " + vendor + " " + renderer);
-
     }
 
     @Override
@@ -104,16 +71,20 @@ public class EditorModule implements IEngineModule {
     @Override
     public void DrawUI() {
 
-        ImGui.setNextWindowPos(0, 25);
-        ImGui.setNextWindowSize(Window.GetPrimaryWindow().getPixelWidth(), Window.GetPrimaryWindow().getPixelHeight() - 25);
-        if (ImGui.begin("Master Window", ImGuiWindowFlags.NoNav | ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoInputs | ImGuiWindowFlags.NoBringToFrontOnFocus)) {
+        ImGui.setNextWindowPos(0, 30);
+        ImGui.setNextWindowSize(Window.GetPrimaryWindow().getPixelWidth(), Window.GetPrimaryWindow().getPixelHeight() - 30);
+        if (ImGui.begin("Master Window", ImGuiWindowFlags.NoNav | ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoInputs | ImGuiWindowFlags.NoBringToFrontOnFocus | ImGuiWindowFlags.NoBackground)) {
             ImGui.dockSpace(ImGui.getID("Master dockSpace"), 0.f, 0.f, ImGuiDockNodeFlags.PassthruCentralNode);
         }
         ImGui.end();
 
         if (ImGui.beginMainMenuBar()) {
             if (ImGui.beginMenu("Files")) {
-                if (ImGui.menuItem("save all")) { Log.Display("No implementer yet");}
+                if (ImGui.menuItem("save all")) {
+                    for (Asset as : AssetManager.GetAssets()) {
+                        as.save();
+                    }
+                }
                 if (ImGui.menuItem("quit")) {
                     Window.GetPrimaryWindow().close();
                 }

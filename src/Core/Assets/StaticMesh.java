@@ -4,8 +4,10 @@ import Core.Factories.MeshFactory;
 import Core.IO.LogOutput.Log;
 import Core.Renderer.Scene.Scene;
 import Core.Resources.MeshResource;
+import Core.Types.Color;
 import imgui.ImGui;
 import org.joml.Matrix4f;
+import org.joml.Vector4f;
 
 import java.util.ArrayList;
 
@@ -15,6 +17,7 @@ public class StaticMesh extends Asset {
     protected ArrayList<AssetReference<Material>> _materials;
     private transient Material[] materialRefs = new Material[0];
     private Matrix4f _modelMatrix;
+    private static final Color meshColor = new Color(.19f, .8f, .9f, 1);
 
     public StaticMesh(String name, String filePath, String assetPath, String[] materials) {
         super(name, filePath, assetPath);
@@ -25,6 +28,11 @@ public class StaticMesh extends Asset {
         }
 
         _modelMatrix = new Matrix4f().identity();
+    }
+
+    @Override
+    public Color getAssetColor() {
+        return meshColor;
     }
 
     @Override

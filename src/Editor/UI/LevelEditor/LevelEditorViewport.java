@@ -1,6 +1,10 @@
 package Editor.UI.LevelEditor;
 
+import Core.Assets.Asset;
+import Core.Assets.AssetManager;
+import Core.Assets.StaticMesh;
 import Core.IO.LogOutput.Log;
+import Core.Renderer.Scene.Components.StaticMeshComponent;
 import Core.Renderer.Scene.RenderScene;
 import Core.Renderer.Scene.SceneComponent;
 import Editor.UI.LevelEditor.Tools.ComponentInspector;
@@ -8,6 +12,9 @@ import Editor.UI.LevelEditor.Tools.LevelProperties;
 import Editor.UI.LevelEditor.Tools.SceneOutliner;
 import Editor.UI.SceneViewport;
 import imgui.ImGui;
+import org.joml.Quaterniond;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 public class LevelEditorViewport extends SceneViewport {
 
@@ -37,6 +44,23 @@ public class LevelEditorViewport extends SceneViewport {
         }
 
         super.draw();
+        if (ImGui.beginDragDropTarget())
+        {
+            byte[] data = ImGui.acceptDragDropPayload ("DDOP_ASSET");
+            if (data != null)
+            {
+                String assetName = new String(data);
+                Asset droppedAsset = AssetManager.FindAsset(assetName);
+                if (droppedAsset != null && droppedAsset instanceof StaticMesh) {
+                    new StaticMeshComponent(
+                            (StaticMesh)droppedAsset,
+                            new Vector3f(getScene().getCamera().getRelativePosition()),
+                            new Quaternionf().identity(),
+                            new Vector3f(1,1,1)).attachToScene(getScene());
+
+                }
+            }
+        }
     }
 
     public void editComponent(SceneComponent comp) {

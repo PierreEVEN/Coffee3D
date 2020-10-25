@@ -7,11 +7,8 @@ import Core.Resources.MaterialResource;
 import Core.Resources.ResourceManager;
 import Core.Types.Color;
 import imgui.ImGui;
-import org.joml.Vector4f;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
 
 import static org.lwjgl.opengl.GL46.*;
 
@@ -21,6 +18,7 @@ public class Material extends Asset {
     private transient MaterialResource _mat;
     protected Color color = new Color(1f, 1f, 1f, 1f);
     protected ArrayList<AssetReference<Texture2D>> _textures = new ArrayList<>();
+    private static final Color matColor = new Color(0f, .5f, 0f, 1);
 
     public Material(String name, String filePath, String assetPath) {
         super(name, filePath, assetPath);
@@ -31,6 +29,11 @@ public class Material extends Asset {
         for (String texture : textureNames) {
             _textures.add(new AssetReference<>(Texture2D.class, texture));
         }
+    }
+
+    @Override
+    public Color getAssetColor() {
+        return matColor;
     }
 
     public MaterialResource getShader() { return _mat; }
