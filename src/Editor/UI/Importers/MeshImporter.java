@@ -65,7 +65,7 @@ public class MeshImporter extends AssetImporter {
             for (int i = 0; i < _materials.size(); ++i) {
                 materialNames[i] = _materials.get(i) == null ? "" : _materials.get(i).get().getName();
             }
-            StaticMesh mesh = new StaticMesh(getTargetFileName(), getSelectedSource().getPath(), getTargetFilePath(), materialNames);
+            StaticMesh mesh = new StaticMesh(getTargetFileName(), getSelectedSource().getPath(), new File(getTargetFilePath()), materialNames);
             mesh.save();
             close();
         }

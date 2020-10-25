@@ -8,6 +8,7 @@ import Core.Resources.ResourceManager;
 import Core.Types.Color;
 import imgui.ImGui;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import static org.lwjgl.opengl.GL46.*;
@@ -20,11 +21,11 @@ public class Material extends Asset {
     protected ArrayList<AssetReference<Texture2D>> _textures = new ArrayList<>();
     private static final Color matColor = new Color(0f, .5f, 0f, 1);
 
-    public Material(String name, String filePath, String assetPath) {
+    public Material(String name, String filePath, File assetPath) {
         super(name, filePath, assetPath);
     }
 
-    public Material(String name, String filePath, String assetPath, String[] textureNames) {
+    public Material(String name, String filePath, File assetPath, String[] textureNames) {
         super(name, filePath, assetPath);
         for (String texture : textureNames) {
             _textures.add(new AssetReference<>(Texture2D.class, texture));

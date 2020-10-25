@@ -9,6 +9,7 @@ import imgui.ImGui;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class StaticMesh extends Asset {
@@ -19,7 +20,7 @@ public class StaticMesh extends Asset {
     private Matrix4f _modelMatrix;
     private static final Color meshColor = new Color(.19f, .8f, .9f, 1);
 
-    public StaticMesh(String name, String filePath, String assetPath, String[] materials) {
+    public StaticMesh(String name, String filePath, File assetPath, String[] materials) {
         super(name, filePath, assetPath);
 
         _materials = new ArrayList<>();

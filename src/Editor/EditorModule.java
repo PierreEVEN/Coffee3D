@@ -2,12 +2,8 @@ package Editor;
 
 import Core.Assets.*;
 import Core.IEngineModule;
-import Core.IO.LogOutput.Log;
-import Core.Renderer.RenderUtils;
-import Core.Renderer.Scene.Components.StaticMeshComponent;
 import Core.Renderer.Scene.RenderScene;
 import Core.Renderer.Scene.Scene;
-import Core.Renderer.Scene.SceneComponent;
 import Core.Renderer.Window;
 import Core.UI.HUD.*;
 import Core.UI.ImGuiImpl.ImGuiImplementation;
@@ -23,8 +19,6 @@ import Editor.UI.Tools.StyleEditor;
 import imgui.*;
 import imgui.flag.ImGuiDockNodeFlags;
 import imgui.flag.ImGuiWindowFlags;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFW;
 
@@ -42,12 +36,7 @@ public class EditorModule implements IEngineModule {
         ImGuiImplementation.Get().addFont("resources/fonts/roboto/Roboto-Medium.ttf", 60);
         ImGuiIO io = ImGui.getIO();
         io.setFontGlobalScale(0.4f);
-        Asset.SetAssetEditWidget(new IEditAsset() {
-            @Override
-            public void applyAsset(Asset asset) {
-                new AssetWindow(asset, asset.getName());
-            }
-        });
+        Asset.SetAssetEditWidget(asset -> new AssetWindow(asset, asset.getName()));
     }
 
     @Override

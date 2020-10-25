@@ -29,7 +29,7 @@ public class FileBrowser extends SubWindow {
     public FileBrowser(String windowName, String[] desiredExtension, File currentFile, IFileValidated validateEvent) {
         super(windowName);
         _desiredExtensions = desiredExtension;
-        _currentDirectory = new File(EngineSettings.DEFAULT_ASSET_PATH);
+        _currentDirectory = EngineSettings.DEFAULT_ASSET_PATH;
         _checkExtensions = new ImBoolean(true);
         _validateEvent = validateEvent;
         if (currentFile != null) {

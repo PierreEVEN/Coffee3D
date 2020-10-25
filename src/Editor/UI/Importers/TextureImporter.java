@@ -29,7 +29,7 @@ public class TextureImporter extends AssetImporter {
         ImGui.dummy(ImGui.getContentRegionAvailX() - 250, 0);
         ImGui.sameLine();
         if (ImGui.button("Create", ImGui.getContentRegionAvailX(), 0)) {
-            Texture2D tex = new Texture2D(getTargetFileName(), getSelectedSource().getPath(), getTargetFilePath());
+            Texture2D tex = new Texture2D(getTargetFileName(), getSelectedSource().getPath(), new File(getTargetFilePath()));
             tex.save();
             close();
         }

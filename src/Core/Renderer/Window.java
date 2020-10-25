@@ -70,7 +70,7 @@ public class Window {
         ImGuiImplementation.Get().preInit(_glfwWindowHandle);
 
         Log.Display("load resources");
-        AssetManager.LoadAssetLibrary(new File(EngineSettings.DEFAULT_ASSET_PATH));
+        AssetManager.LoadAssetLibrary(EngineSettings.DEFAULT_ASSET_PATH);
         _engineModule.LoadResources();
 
         Log.Display("initialize imGui");

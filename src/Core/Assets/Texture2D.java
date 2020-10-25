@@ -6,13 +6,15 @@ import Core.Resources.Texture2DResource;
 import Core.Types.Color;
 import imgui.ImGui;
 
+import java.io.File;
+
 public class Texture2D extends Asset {
 
     private static final long serialVersionUID = -868665333590764448L;
     private transient Texture2DResource _texture;
     private static final Color textureColor = new Color(.9f, .5f, .5f, 1);
 
-    public Texture2D(String name, String filePath, String assetPath) {
+    public Texture2D(String name, String filePath, File assetPath) {
         super(name, filePath, assetPath);
     }
 

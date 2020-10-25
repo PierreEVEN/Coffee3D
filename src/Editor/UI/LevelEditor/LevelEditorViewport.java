@@ -52,11 +52,13 @@ public class LevelEditorViewport extends SceneViewport {
                 String assetName = new String(data);
                 Asset droppedAsset = AssetManager.FindAsset(assetName);
                 if (droppedAsset != null && droppedAsset instanceof StaticMesh) {
-                    new StaticMeshComponent(
+                    StaticMeshComponent sm = new StaticMeshComponent(
                             (StaticMesh)droppedAsset,
                             new Vector3f(getScene().getCamera().getRelativePosition()),
                             new Quaternionf().identity(),
-                            new Vector3f(1,1,1)).attachToScene(getScene());
+                            new Vector3f(1,1,1));
+                    sm.attachToScene(getScene());
+                    sm.setComponentName("sm_" + droppedAsset.getName());
 
                 }
             }

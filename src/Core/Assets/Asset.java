@@ -2,18 +2,14 @@ package Core.Assets;
 
 import Core.IO.LogOutput.Log;
 import Core.Renderer.Scene.Scene;
-import Core.Renderer.Scene.SceneComponent;
-import Core.Renderer.Scene.SceneProperty;
 import Core.Types.Color;
 import Core.UI.PropertyHelper.SerializableData;
 import imgui.ImGui;
 import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiDragDropFlags;
 import imgui.flag.ImGuiStyleVar;
-import org.joml.Vector4f;
 
 import java.io.*;
-import java.util.ArrayList;
 
 /**
  * Asset base class
@@ -23,11 +19,11 @@ public abstract class Asset extends SerializableData {
 
     private final String _name;
     private final String _sourcePath;
-    private transient String _assetPath;
-    private static final Color defaultColor = new Color(.5f, .5f, .5f, .5f);;
+    private transient File _assetPath;
+    private static final Color defaultColor = new Color(.5f, .5f, .5f, .5f);
 
 
-    protected Asset(String name, String sourcePath, String assetPath) {
+    protected Asset(String name, String sourcePath, File assetPath) {
         _sourcePath = sourcePath;
         _name = name;
         _assetPath = assetPath;
@@ -41,7 +37,11 @@ public abstract class Asset extends SerializableData {
     }
 
     public void setSavePath(String path) {
-        _assetPath = path;
+        _assetPath = new File(path);
+    }
+
+    public File getSavePath() {
+        return _assetPath;
     }
 
     /**

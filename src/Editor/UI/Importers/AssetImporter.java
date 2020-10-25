@@ -21,7 +21,7 @@ public abstract class AssetImporter extends SubWindow {
     public AssetImporter(String windowName) {
         super(windowName);
         _targetFileName = new ImString();
-        _selectedTarget = new File(EngineSettings.DEFAULT_ASSET_PATH);
+        _selectedTarget = EngineSettings.DEFAULT_ASSET_PATH;
     }
 
     public File getSelectedSource() { return _selectedSource; }
