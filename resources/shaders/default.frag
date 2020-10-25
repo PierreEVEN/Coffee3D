@@ -10,6 +10,7 @@ in vec3 normal;
 in vec3 worldNormal;
 
 uniform sampler2D texture0;
+uniform vec4 color;
 
 layout (std140) uniform shader_data
 {
@@ -28,8 +29,8 @@ void main()
 
     vec3 lightDir = normalize(vec3(1, 1, 1));
 
-    vec4 color = texture(texture0, texCoord);
+    vec4 finalColor = texture(texture0, texCoord) * color;
 
     float val = pow(min(1, max(0, dot(lightDir, worldNormal))), 1);
-    outputColor = color * val + color * 0.1;
+    outputColor = finalColor * val + finalColor * 0.4;
 }

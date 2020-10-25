@@ -72,6 +72,8 @@ public abstract class Asset implements Serializable {
         ImGui.endGroup();
     }
 
+    public void drawDetailedContent() {}
+
     protected void drawThumbnailImage() {
         if (ImGui.button(("#" + getName() + (bIsAssetDirty ? "*" : "")), 64, 64)) {
             if (_assetEditFunction != null) _assetEditFunction.applyAsset(this);

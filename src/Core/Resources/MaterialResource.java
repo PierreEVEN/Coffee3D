@@ -2,7 +2,9 @@ package Core.Resources;
 
 import Core.IO.LogOutput.Log;
 import Core.Renderer.Scene.Scene;
+import Core.Types.Color;
 import org.joml.Matrix4f;
+import org.joml.Vector4f;
 
 import java.nio.FloatBuffer;
 
@@ -136,8 +138,16 @@ public class MaterialResource extends GraphicResource {
      * @param value         value
      */
     public void setMatrixParameter(String parameterName, Matrix4f value) {
-        FloatBuffer bfr = createFloatBuffer(16);
+        final FloatBuffer bfr = createFloatBuffer(16);
         value.get(bfr);
         glUniformMatrix4fv(glGetUniformLocation(_materialHandle, parameterName), false, bfr);
+    }
+
+    public void setColorParameter(String parameterName, Color color) {
+        setVec4Parameter(parameterName, color.getVector());
+    }
+
+    public void setVec4Parameter(String parameterName, Vector4f value) {
+        glUniform4f(glGetUniformLocation(_materialHandle, parameterName), value.x, value.y, value.z, value.w);
     }
 }

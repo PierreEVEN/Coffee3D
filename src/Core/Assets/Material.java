@@ -5,10 +5,13 @@ import Core.IO.LogOutput.Log;
 import Core.Renderer.Scene.Scene;
 import Core.Resources.MaterialResource;
 import Core.Resources.ResourceManager;
+import Core.Types.Color;
 import imgui.ImGui;
+import org.joml.Vector4f;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import static org.lwjgl.opengl.GL46.*;
 
@@ -16,6 +19,7 @@ public class Material extends Asset {
 
     private static final long serialVersionUID = -2932087609993578842L;
     private transient MaterialResource _mat;
+    protected Color color = new Color(1f, 1f, 1f, 1f);
     protected ArrayList<AssetReference<Texture2D>> _textures = new ArrayList<>();
 
     public Material(String name, String filePath) {
@@ -65,9 +69,18 @@ public class Material extends Asset {
     }
 
     @Override
+    public void drawDetailedContent() {
+        super.drawDetailedContent();
+        if (ImGui.button("recompile Shader")) {
+            recompile();
+        }
+    }
+
+    @Override
     public void use(Scene context) {
         if (_mat == null) return;
         _mat.use(context);
+        _mat.setColorParameter("color", color);
         if (_textures != null) {
             for (int i = 0; i < _textures.size(); ++i) {
                 if (_textures.get(i).get() != null) {

@@ -48,11 +48,11 @@ public class EditorModule implements IEngineModule {
         new Texture2D("mud", "resources/textures/mud.png");
         new Texture2D("grid", "resources/textures/defaultGrid.png");
         new Material("default", "resources/shaders/default", new String[] {"grid"});
-        new Material("Concrete1", "resources/shaders/Concrete2", new String[] {"plaster"});
-        new Material("Concrete2", "resources/shaders/Concrete2", new String[] {"plaster"});
-        new Material("concrete", "resources/shaders/concrete", new String[] {"plaster"});
-        new Material("glass", "resources/shaders/glass", new String[] {"plaster"});
-        new Material("pillars", "resources/shaders/pillars", new String[] {"plaster"});
+        new Material("Concrete1", "resources/shaders/default", new String[] {"grassSeamless"});
+        new Material("Concrete2", "resources/shaders/default", new String[] {"mud"});
+        new Material("concrete", "resources/shaders/default", new String[] {"plaster"});
+        new Material("glass", "resources/shaders/default", new String[] {"grassSeamless"});
+        new Material("pillars", "resources/shaders/default", new String[] {"plaster"});
         new StaticMesh("building", "resources/models/Building.fbx", new String[] { "Concrete2", "concrete", "glass", "pillars" });
         new StaticMesh("cube", "resources/models/cube.fbx", new String[] { "default" });
         new StaticMesh("test", "resources/models/test.fbx", new String[] { "default" });
@@ -74,7 +74,7 @@ public class EditorModule implements IEngineModule {
         new ContentBrowser("Content browser");
 
         new StaticMeshComponent(
-                AssetManager.FindAsset("cube"),
+                AssetManager.FindAsset("building"),
                 new Vector3f(0, 0, 0),
                 new Quaternionf().identity().rotationXYZ((float)Math.toRadians(-90), 0, 0),
                 new Vector3f(1, 1, 1)
@@ -87,12 +87,6 @@ public class EditorModule implements IEngineModule {
                 new Vector3f(100, 0.5f, 100)
         );
         parent.attachToScene(_rootScene);
-        new StaticMeshComponent(
-                AssetManager.FindAsset("cube"),
-                new Vector3f(0, -13, 0),
-                new Quaternionf().identity().rotateXYZ(0, 0, 0),
-                new Vector3f(100, 0.5f, 100)
-        ).attachToComponent(parent);
 
         String vendor = glGetString(GL_VENDOR);
         String renderer = glGetString(GL_RENDERER);

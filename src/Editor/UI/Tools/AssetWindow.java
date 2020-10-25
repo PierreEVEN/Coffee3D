@@ -17,6 +17,7 @@ public class AssetWindow extends SubWindow {
 
     @Override
     protected void draw() {
+        _editedAsset.drawDetailedContent();
         for (Field field : _editedAsset.getClass().getDeclaredFields()) {
             StructureReader.debugIndex = 0;
             StructureReader.WriteField(field, _editedAsset);

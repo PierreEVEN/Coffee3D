@@ -39,5 +39,6 @@ public abstract class FieldWriter {
         RegisterWriter(new QuaternionWriter());
         RegisterWriter(new AssetWriter());
         RegisterWriter(new ListWriter());
+        RegisterWriter(new ColorWriter());
     }
 }

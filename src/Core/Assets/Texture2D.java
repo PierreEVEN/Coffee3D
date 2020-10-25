@@ -39,4 +39,10 @@ public class Texture2D extends Asset {
             super.drawThumbnailImage();
         }
     }
+
+    @Override
+    public void drawDetailedContent() {
+        super.drawDetailedContent();
+        ImGui.image(getTextureID(), 400, 400);
+    }
 }

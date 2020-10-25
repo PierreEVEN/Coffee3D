@@ -4,6 +4,7 @@ import Core.Factories.MeshFactory;
 import Core.IO.LogOutput.Log;
 import Core.Renderer.Scene.Scene;
 import Core.Resources.MeshResource;
+import imgui.ImGui;
 import org.joml.Matrix4f;
 
 import java.util.ArrayList;
@@ -67,5 +68,11 @@ public class StaticMesh extends Asset {
         else {
             Log.Warning(toString() + " has empty sections");
         }
+    }
+
+    @Override
+    public void drawDetailedContent() {
+        super.drawDetailedContent();
+        ImGui.text("section count : " + _sections.length);
     }
 }
