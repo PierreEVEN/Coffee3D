@@ -20,6 +20,7 @@ public class StringWriter extends FieldWriter
 
         text.set((String)object);
         if  (text != null) {
+            ImGui.setNextItemWidth(ImGui.getContentRegionAvailX());
             ImGui.inputText("##" + field, text);
             if (!text.get().equals(object)) {
                 return text.get();

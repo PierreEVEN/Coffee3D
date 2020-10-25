@@ -17,6 +17,7 @@ public class FloatWriter extends FieldWriter {
 
         float[] values = {(Float)object};
 
+        ImGui.setNextItemWidth(ImGui.getContentRegionAvailX());
         ImGui.dragFloat("##" + field, values);
 
         if (values[0] != (Float)object) {

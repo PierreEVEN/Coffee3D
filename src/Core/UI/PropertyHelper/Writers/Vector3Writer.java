@@ -18,6 +18,7 @@ public class Vector3Writer extends FieldWriter
 
         Vector3f vec = (Vector3f) object;
         float[] values = {vec.x, vec.y, vec.z};
+        ImGui.setNextItemWidth(ImGui.getContentRegionAvailX());
         ImGui.dragFloat3("##" + field, values);
         if (values[0] != vec.x) {
             vec.x = values[0];
