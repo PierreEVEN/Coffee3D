@@ -2,7 +2,11 @@ package Core.Types;
 
 import org.joml.Vector4f;
 
-public class Color {
+import java.io.Serializable;
+
+public class Color implements Serializable {
+
+    private static final long serialVersionUID = -1497952084847816013L;
 
     public Color(float r, float g, float b, float a) {
         _color = new Vector4f(r,g,b,a);

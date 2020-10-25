@@ -95,6 +95,7 @@ public class Scene {
             FileOutputStream fos = new FileOutputStream(filePath);
             ObjectOutputStream oos = new ObjectOutputStream(fos);
             oos.writeObject(_components);
+            oos.writeObject(_sceneProperties);
         } catch (Exception e) {
             Log.Warning("failed to serialise scene : " + e.getMessage());
         }
@@ -105,6 +106,7 @@ public class Scene {
             FileInputStream fis = new FileInputStream(filePath);
             ObjectInputStream ois = new ObjectInputStream(fis);
             ArrayList<SceneComponent> comps = (ArrayList<SceneComponent>) ois.readObject();
+            _sceneProperties = (SceneProperty) ois.readObject();
             if (comps != null) _components = comps;
             ois.close();
             fis.close();

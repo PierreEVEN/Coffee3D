@@ -81,6 +81,8 @@ public class Window {
                 _bfrSize.x = width;
                 _bfrSize.y = height;
                 glViewport(0, 0, width, height);
+
+                drawFrame();
             }
         });
 
@@ -113,45 +115,47 @@ public class Window {
      */
     private void renderLoop() {
         while (!glfwWindowShouldClose(_glfwWindowHandle)) {
-
-            // Update delta time
-            updateDeltaTime();
-
             // Poll inputs
             glfwPollEvents();
 
-            // Clear background buffer
-            glClearColor(_backgroundColor.x,_backgroundColor.y,_backgroundColor.z,_backgroundColor.w);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-            glViewport(0, 0, getPixelWidth(), getPixelHeight());
-
-            glPolygonMode( GL_FRONT_AND_BACK, _drawMode);
-            _engineModule.DrawScene();
-            glPolygonMode( GL_FRONT_AND_BACK, GL_FILL);
-            initUI();
-
-            HudUtils.ResetCounters();
-
-            ImGui.setNextWindowPos(0, 0);
-            ImGui.setNextWindowSize(Window.GetPrimaryWindow().getPixelWidth(), Window.GetPrimaryWindow().getPixelHeight());
-            if (ImGui.begin("HUD Window", ImGuiWindowFlags.NoNav | ImGuiWindowFlags.NoInputs | ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoBackground)) {
-                _engineModule.DrawHUD();
-            }
-            ImGui.end();
-
-            _engineModule.DrawUI();
-            SubWindow.DrawWindows();
-            ImGui.render();
-            ImGuiImplementation.Get().render();
-
-            glfwSwapBuffers(_glfwWindowHandle);
-
-            // Flush gc to avoid garbage accumulation.
-            //System.gc();
+            // Draw frame
+            drawFrame();
         }
     }
 
+
+    private void drawFrame() {
+
+        // Update delta time
+        updateDeltaTime();
+
+        // Clear background buffer
+        glClearColor(_backgroundColor.x,_backgroundColor.y,_backgroundColor.z,_backgroundColor.w);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+        glViewport(0, 0, getPixelWidth(), getPixelHeight());
+
+        glPolygonMode( GL_FRONT_AND_BACK, _drawMode);
+        _engineModule.DrawScene();
+        glPolygonMode( GL_FRONT_AND_BACK, GL_FILL);
+        initUI();
+
+        HudUtils.ResetCounters();
+
+        ImGui.setNextWindowPos(0, 0);
+        ImGui.setNextWindowSize(Window.GetPrimaryWindow().getPixelWidth(), Window.GetPrimaryWindow().getPixelHeight());
+        if (ImGui.begin("HUD Window", ImGuiWindowFlags.NoNav | ImGuiWindowFlags.NoInputs | ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoBackground)) {
+            _engineModule.DrawHUD();
+        }
+        ImGui.end();
+
+        _engineModule.DrawUI();
+        SubWindow.DrawWindows();
+        ImGui.render();
+        ImGuiImplementation.Get().render();
+
+        glfwSwapBuffers(_glfwWindowHandle);
+    }
 
     private void initUI() {
         IntBuffer winWidth = BufferUtils.createIntBuffer(1);
