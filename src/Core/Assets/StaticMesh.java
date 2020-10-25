@@ -37,7 +37,7 @@ public class StaticMesh extends Asset {
     }
 
     public Material[] getMaterials() {
-        if (materialRefs.length != _materials.size()) materialRefs = new Material[_materials.size()];
+        if (materialRefs == null || materialRefs.length != _materials.size()) materialRefs = new Material[_materials.size()];
 
         for (int i = 0; i < _materials.size(); ++i) {
             Material foundMat = _materials.get(i).get();

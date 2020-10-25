@@ -1,7 +1,9 @@
 package Core.Renderer;
 
+import Core.Assets.AssetManager;
 import Core.IEngineModule;
 import Core.IO.LogOutput.Log;
+import Core.IO.Settings.EngineSettings;
 import Core.Resources.ResourceManager;
 import Core.UI.HUD.HudUtils;
 import Core.UI.ImGuiImpl.ImGuiImplementation;
@@ -16,6 +18,7 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWFramebufferSizeCallback;
 
+import java.io.File;
 import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
 
@@ -67,6 +70,7 @@ public class Window {
         ImGuiImplementation.Get().preInit(_glfwWindowHandle);
 
         Log.Display("load resources");
+        AssetManager.LoadAssetLibrary(new File(EngineSettings.DEFAULT_ASSET_PATH));
         _engineModule.LoadResources();
 
         Log.Display("initialize imGui");

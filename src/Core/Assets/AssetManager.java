@@ -2,10 +2,8 @@ package Core.Assets;
 
 import Core.IO.LogOutput.Log;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
+import java.io.File;
+import java.util.*;
 
 /**
  * Handle assets by names
@@ -30,7 +28,7 @@ public class AssetManager {
      */
     public static void RegisterAsset(Asset asset) {
         if (_assets.containsKey(asset.getName())) {
-            Log.Fail("Asset named " + asset.getName() + " already exist");
+            Log.Fail("Asset named " + asset.getName() + " already exist : " + asset.getFilepath());
             return;
         }
         _assets.put(asset.getName(), asset);
@@ -57,5 +55,38 @@ public class AssetManager {
         return true;
     }
 
+    public static void LoadAssetLibrary(File path) {
+        for (File asset : ScanAssets(path)) {
+            Asset newAsset = Asset.deserializeAsset(asset);
+            if (newAsset != null) {
+                newAsset.setSavePath(asset.getPath());
+                AssetManager.RegisterAsset(newAsset);
+                newAsset.load();
+            }
+            else {
+                Log.Warning("failed to load asset : " + asset);
+            }
+        }
+    }
 
+    public static ArrayList<File> ScanAssets(File path) {
+        ArrayList<File> assets = new ArrayList<>();
+
+        for (File subFile : path.listFiles()) {
+            if (subFile.isDirectory()) {
+                assets.addAll(ScanAssets(subFile));
+            }
+            else {
+                Optional<String> extension = Optional.ofNullable(subFile.getName())
+                        .filter(f -> f.contains("."))
+                        .map(f -> f.substring(subFile.getName().lastIndexOf(".") + 1));
+                if (extension.isEmpty()) continue;
+                if (extension.get().equals("asset")) {
+                    assets.add(subFile);
+                }
+            }
+        }
+
+        return assets;
+    }
 }

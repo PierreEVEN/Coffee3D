@@ -22,6 +22,7 @@ public class StructureReader {
 
     private static Object WriteObj(Object obj, String nodeName, boolean bIsChild) throws IllegalAccessException {
         if (obj != null) {
+
             FieldWriter foundWriter = FieldWriter.Find(obj.getClass());
             if (foundWriter != null) {
                 // use adapted writer
@@ -77,6 +78,10 @@ public class StructureReader {
                         Object result = WriteObj(tab[i], "##[" + i + "]" + nodeName, true);
                         if (result != null) {
                             tab[i] = result;
+
+                            if (obj instanceof SerializableData) {
+                                ((SerializableData)obj).edit();
+                            }
                         }
                     }
                     ImGui.treePop();
@@ -87,6 +92,10 @@ public class StructureReader {
                 Object result = WriteObj(field.get(obj), nodeName, true);
                 if (result != null) {
                     field.set(obj, result);
+
+                    if (obj instanceof SerializableData) {
+                        ((SerializableData)obj).edit();
+                    }
                 }
             }
         }

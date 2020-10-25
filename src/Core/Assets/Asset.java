@@ -2,25 +2,27 @@ package Core.Assets;
 
 import Core.IO.LogOutput.Log;
 import Core.Renderer.Scene.Scene;
+import Core.Renderer.Scene.SceneComponent;
+import Core.Renderer.Scene.SceneProperty;
+import Core.UI.PropertyHelper.SerializableData;
 import imgui.ImGui;
 import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiDragDropFlags;
 import imgui.flag.ImGuiStyleVar;
 import org.joml.Vector4f;
 
-import java.io.FileOutputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import java.io.*;
+import java.util.ArrayList;
 
 /**
  * Asset base class
  */
-public abstract class Asset implements Serializable {
+public abstract class Asset extends SerializableData {
     private static final long serialVersionUID = -5394125677306125615L;
 
     private final String _name;
     private final String _sourcePath;
-    private final String _assetPath;
+    private transient String _assetPath;
     private final Vector4f assetColor;
 
     protected Asset(String name, String sourcePath, String assetPath) {
@@ -31,6 +33,10 @@ public abstract class Asset implements Serializable {
         load();
         assetColor = new Vector4f(.5f, .5f, .5f, .5f);
         Log.Display("import " + name + " (" + getClass().getSimpleName() + ") from " + sourcePath + " to " + assetPath);
+    }
+
+    public void setSavePath(String path) {
+        _assetPath = path;
     }
 
     /**
@@ -56,7 +62,6 @@ public abstract class Asset implements Serializable {
      */
     public String getFilepath() { return _sourcePath; }
 
-    private boolean bIsAssetDirty = false;
     /**
      * Draw asset editor thumbnail
      */
@@ -72,14 +77,22 @@ public abstract class Asset implements Serializable {
             drawThumbnail();
             ImGui.endDragDropSource();
         }
-        ImGui.textWrapped((getName() + (bIsAssetDirty ? "*" : "")));
+        ImGui.textWrapped((getName() + (isDirty() ? "*" : "")));
         ImGui.endGroup();
     }
 
-    public void drawDetailedContent() {}
+    public void drawDetailedContent() {
+        if (ImGui.button("save##" + getName())) {
+            save();
+        }
+        if (isDirty()) {
+            ImGui.sameLine();
+            ImGui.text("edited");
+        }
+    }
 
     protected void drawThumbnailImage() {
-        if (ImGui.button(("#" + getName() + (bIsAssetDirty ? "*" : "")), 64, 64)) {
+        if (ImGui.button(("#" + getName() + (isDirty() ? "*" : "")), 64, 64)) {
             if (_assetEditFunction != null) _assetEditFunction.applyAsset(this);
         }
     }
@@ -105,11 +118,23 @@ public abstract class Asset implements Serializable {
         }
     }
 
-    public static Asset deserializeAsset() {
+    public static Asset deserializeAsset(File filePath) {
+        try {
+            FileInputStream fis = new FileInputStream(filePath);
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            Asset asset = (Asset) ois.readObject();
+            if (asset != null) return asset;
+            ois.close();
+            fis.close();
+        } catch (Exception e) {
+            Log.Warning("failed to deserialize scene : " + e.getMessage());
+        }
         return null;
     }
 
+    @Override
     public void save() {
+        super.save();
         serializeAsset(this);
     }
 }
