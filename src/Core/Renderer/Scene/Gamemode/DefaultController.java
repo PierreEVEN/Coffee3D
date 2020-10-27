@@ -1,7 +1,9 @@
 package Core.Renderer.Scene.Gamemode;
 
 import Core.IO.LogOutput.Log;
+import Core.Renderer.Scene.RenderScene;
 import Core.Renderer.Scene.Scene;
+import Core.Renderer.Scene.SceneComponent;
 import Core.Renderer.Window;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
@@ -12,7 +14,7 @@ public class DefaultController extends IGameController {
 
     float speed = 2.f;
 
-    public DefaultController(Scene scene) {
+    public DefaultController(RenderScene scene) {
         super(scene);
     }
 
@@ -69,6 +71,7 @@ public class DefaultController extends IGameController {
     public void mouseButtonCallback(int button, int action, int mods) {
         if (button == GLFW.GLFW_MOUSE_BUTTON_2 && action == GLFW.GLFW_PRESS) Window.GetPrimaryWindow().showCursor(false);
         if (button == GLFW.GLFW_MOUSE_BUTTON_2 && action == GLFW.GLFW_RELEASE) Window.GetPrimaryWindow().showCursor(true);
+        if (button == GLFW.GLFW_MOUSE_BUTTON_1 && action == GLFW.GLFW_PRESS) {}
     }
 
     @Override

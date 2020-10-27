@@ -29,7 +29,7 @@ public abstract class Asset extends SerializableData {
         _assetPath = assetPath;
         AssetManager.RegisterAsset(this);
         load();
-        Log.Display("import " + name + " (" + getClass().getSimpleName() + ") from " + sourcePath + " to " + assetPath);
+        if (assetPath != null) Log.Display("import " + name + " (" + getClass().getSimpleName() + ") from " + sourcePath + " to " + assetPath);
     }
 
     public Color getAssetColor() {

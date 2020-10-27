@@ -1,13 +1,15 @@
 package Core.Renderer.Scene.Gamemode;
 
 import Core.IO.Inputs.IInputListener;
+import Core.Renderer.RenderUtils;
+import Core.Renderer.Scene.RenderScene;
 import Core.Renderer.Scene.Scene;
 import Core.Renderer.Window;
 import org.lwjgl.glfw.*;
 
 public abstract class IGameController implements IInputListener {
 
-    private final Scene _scene;
+    private final RenderScene _scene;
 
     private double _cursorPosX = 0;
     private double _cursorPosY = 0;
@@ -15,7 +17,7 @@ public abstract class IGameController implements IInputListener {
     private double _cursorDeltaX = 0;
     private double _cursorDeltaY = 0;
 
-    protected IGameController(Scene scene) {
+    protected IGameController(RenderScene scene) {
         _scene = scene;
     }
 
@@ -35,5 +37,5 @@ public abstract class IGameController implements IInputListener {
     public double getCursorDeltaX() { return _cursorDeltaX; }
     public double getCursorDeltaY() { return _cursorDeltaY; }
 
-    protected Scene getScene() { return _scene; }
+    protected RenderScene getScene() { return _scene; }
 }

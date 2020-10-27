@@ -15,6 +15,7 @@ import java.nio.IntBuffer;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 import static org.lwjgl.opengl.GL.createCapabilities;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
@@ -24,14 +25,28 @@ public class RenderUtils {
 
 
     private static Material debugMaterial;
+    private static Material pickMaterial;
+
+    public static int RENDER_MODE = GL_SELECT;
+
     public static Material getDebugMaterial() {
         if (debugMaterial == null) {
             debugMaterial = new Material("DebugMaterial", EngineSettings.DEBUG_MATERIAL_PATH, null);
             if (debugMaterial == null) {
-                Log.Fail("failed to load debug material from : ");
+                Log.Fail("failed to load debug material from : " + EngineSettings.DEBUG_MATERIAL_PATH);
             }
         }
         return debugMaterial;
+    }
+
+    public static Material getPickMaterial() {
+        if (pickMaterial == null) {
+            pickMaterial = new Material("PickMaterial", EngineSettings.PICK_MATERIAL_PATH, null);
+            if (pickMaterial == null) {
+                Log.Fail("failed to load pick material from : " + EngineSettings.DEBUG_MATERIAL_PATH);
+            }
+        }
+        return pickMaterial;
     }
 
     public static void InitializeOpenGL() {
@@ -61,7 +76,7 @@ public class RenderUtils {
         glfwWindowHint(GLFW_SAMPLES, EngineSettings.MSAA_SAMPLES);
         glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
         glfwWindowHint(GLFW_DECORATED, EngineSettings.FULLSCREEN_MODE ? GLFW_FALSE : GLFW_TRUE);
-
+        glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, EngineSettings.TRANSPARENT_FRAMEBUFFER ? GLFW_TRUE : GLFW_FALSE);
 
         GLFWVidMode.Buffer windowMode = glfwGetVideoModes(glfwGetPrimaryMonitor());
         int maxWidth = 0;
@@ -106,7 +121,7 @@ public class RenderUtils {
         }
 
         // Enable double buffering
-        glfwSwapInterval(0);
+        glfwSwapInterval(EngineSettings.ENABLE_DOUBLE_BUFFERING ? 1 : 0);
         glfwShowWindow(_windowContext);
 
         // Create input handler

@@ -1,6 +1,7 @@
 package Editor;
 
 import Core.IEngineModule;
+import Core.Renderer.Scene.RenderScene;
 import Core.Renderer.Scene.Scene;
 import Core.Renderer.Window;
 import Core.UI.ImGuiImpl.ImGuiImplementation;
@@ -9,7 +10,7 @@ import imgui.ImGuiIO;
 import org.joml.Vector4f;
 
 public class TestGameModule implements IEngineModule {
-    Scene _rootScene;
+    RenderScene _rootScene;
 
     @Override
     public void LoadResources() {
@@ -24,7 +25,7 @@ public class TestGameModule implements IEngineModule {
     @Override
     public void PreInitialize() {
 
-        _rootScene = new Scene();
+        _rootScene = new RenderScene(true);
         _rootScene.loadFromFile("truc.map");
         Window.GetPrimaryWindow().showCursor(false);
 

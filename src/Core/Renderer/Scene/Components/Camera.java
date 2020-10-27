@@ -2,6 +2,7 @@ package Core.Renderer.Scene.Components;
 
 import Core.Renderer.Scene.Scene;
 import Core.Renderer.Scene.SceneComponent;
+import Core.Types.TypeHelper;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -39,7 +40,7 @@ public class Camera extends SceneComponent {
     }
 
     public Matrix4f getViewMatrix() {
-        return new Matrix4f().lookAt(getRelativePosition(), new Vector3f(getRelativePosition()).add(getForwardVector()), getUpVector());
+        return TypeHelper.getMat4().identity().lookAt(getRelativePosition(), TypeHelper.getVector3(getRelativePosition()).add(getForwardVector()), getUpVector());
     }
 
     @Override

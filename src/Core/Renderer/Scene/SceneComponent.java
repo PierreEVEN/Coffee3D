@@ -1,16 +1,22 @@
 package Core.Renderer.Scene;
 
-import Core.Renderer.DebugRendering.DebugRenderer;
+import Core.IO.LogOutput.Log;
+import Core.Maths.MathLibrary;
 import Core.Renderer.RenderUtils;
 import Core.Types.Color;
+import Core.Types.SphereBound;
 import Core.Types.TypeHelper;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+import org.lwjgl.openvr.RenderModel;
 
 import java.io.Serializable;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.lwjgl.opengl.GL11.GL_SELECT;
 
 public class SceneComponent implements Serializable {
     private static final long serialVersionUID = 744620683032598971L;
@@ -25,6 +31,8 @@ public class SceneComponent implements Serializable {
         _componentName = componentName;
     }
 
+    public SphereBound getBound() { return SphereBound.GetPoint(getWorldPosition()); }
+
     /**
      * constructor
      * @param position relative position
@@ -35,7 +43,6 @@ public class SceneComponent implements Serializable {
         this._position = position;
         this._rotation = rotation;
         this._scale = scale;
-
         _componentName = getClass().getSimpleName();
     }
 
@@ -51,10 +58,6 @@ public class SceneComponent implements Serializable {
                 comp.drawInternal(context);
             }
         }
-
-        DebugRenderer.DrawDebugLine(context, getRelativePosition(), TypeHelper.getVector(0, 0, 0), Color.RED);
-        DebugRenderer.DrawDebugBox(context, getRelativePosition(), TypeHelper.getVector(0, 0, 0), Color.GREEN);
-        DebugRenderer.DrawDebugSphere(context, getRelativePosition(), 3, 20, Color.BLUE);
     }
 
     /**
@@ -84,6 +87,12 @@ public class SceneComponent implements Serializable {
      * relative scale
      */
     protected Vector3f _scale;
+
+    /**
+     * get component position relative to it's parent
+     * @return local position
+     */
+    public Vector3f getWorldPosition() { return _parent == null ? getRelativePosition() : getWorldTransformationMatrix().transformPosition(TypeHelper.getVector3(getRelativePosition())); }
 
     /**
      * get component position relative to it's parent

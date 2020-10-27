@@ -6,7 +6,7 @@ public abstract class IGamemodeBase {
 
     private Scene _scene;
 
-    abstract IGameController getController();
+    public abstract IGameController getController();
 
     protected IGamemodeBase(Scene scene) {
         _scene = scene;

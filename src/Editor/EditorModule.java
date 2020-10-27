@@ -2,6 +2,7 @@ package Editor;
 
 import Core.Assets.*;
 import Core.IEngineModule;
+import Core.IO.Settings.EngineSettings;
 import Core.Renderer.Scene.RenderScene;
 import Core.Renderer.Scene.Scene;
 import Core.Renderer.Window;
@@ -26,7 +27,7 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class EditorModule implements IEngineModule {
 
-    private Scene _rootScene;
+    private RenderScene _rootScene;
 
     @Override
     public void LoadResources() {
@@ -41,7 +42,7 @@ public class EditorModule implements IEngineModule {
 
     @Override
     public void PreInitialize() {
-        _rootScene = new RenderScene(800, 600);
+        _rootScene = new RenderScene(false);
         _rootScene.loadFromFile("truc.map");
 
         new LevelEditorViewport((RenderScene) _rootScene, "viewport");
@@ -96,7 +97,8 @@ public class EditorModule implements IEngineModule {
                     if (ImGui.menuItem("Points")) Window.GetPrimaryWindow().setDrawMode(GL_POINT);
                     ImGui.endMenu();
                 }
-                ImGui.checkbox("draw debug boxes", HudUtils.bDrawDebugBoxes);
+                ImGui.checkbox("SCENE show bounds", EngineSettings.DRAW_DEBUG_BOUNDS);
+                ImGui.checkbox("UI draw debug boxes", HudUtils.bDrawDebugBoxes);
                 ImGui.endMenu();
             }
             if (ImGui.beginMenu("Import")) {

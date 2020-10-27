@@ -1,6 +1,9 @@
 package Core.Renderer.Scene;
 
 import Core.IO.LogOutput.Log;
+import Core.Renderer.Scene.Components.Camera;
+import Core.Renderer.Window;
+import org.joml.Matrix4f;
 
 import static org.lwjgl.opengl.GL46.*;
 
@@ -10,6 +13,7 @@ public class Framebuffer {
     private int _renderBufferObject = -1;
     private int _textureColorBuffer = -1;
 
+    private int _drawOffsetX, _drawOffsetY;
     private int _fbWidth, _fbHeight;
 
     private void createFramebuffer() {
@@ -39,7 +43,8 @@ public class Framebuffer {
     public Framebuffer(int width, int height) {
         _fbWidth = width;
         _fbHeight = height;
-
+        _drawOffsetX = 0;
+        _drawOffsetY = 0;
         createFramebuffer();
     }
 
@@ -54,6 +59,14 @@ public class Framebuffer {
     }
 
     public int getColorBuffer() { return _textureColorBuffer; }
+
+    public void updateDrawPosition(int x, int y) {
+        _drawOffsetX = x;
+        _drawOffsetY = y;
+    }
+
+    public int getDrawOffsetX() { return _drawOffsetX; }
+    public int getDrawOffsetY() { return _drawOffsetY; }
 
     public int getWidth() { return _fbWidth; }
     public int getHeight() { return _fbHeight; }

@@ -1,6 +1,7 @@
 package Editor.UI.LevelEditor.Tools;
 
 import Core.IO.LogOutput.Log;
+import Core.Renderer.Scene.RenderScene;
 import Core.Renderer.Scene.Scene;
 import Core.Renderer.Scene.SceneComponent;
 import Core.UI.SubWindows.SubWindow;

@@ -1,49 +1,53 @@
 package Core.Renderer.Scene;
 
-import Core.Assets.AssetManager;
-import Core.Assets.Material;
 import Core.IO.LogOutput.Log;
+import Core.Renderer.RenderUtils;
 import Core.Renderer.Scene.Components.Camera;
 import Core.Renderer.Scene.Gamemode.DefaultGamemode;
 import Core.Renderer.Scene.Gamemode.IGamemodeBase;
-import Core.Renderer.Window;
+import Core.Types.Color;
 import org.joml.Matrix4f;
 
 import java.io.*;
 import java.util.ArrayList;
 
-import static org.lwjgl.opengl.GL30.glBindBufferRange;
-import static org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER;
+import static org.lwjgl.opengl.GL11.GL_SELECT;
 import static org.lwjgl.opengl.GL31.glGetUniformBlockIndex;
-import static org.lwjgl.opengl.GL31C.glUniformBlockBinding;
 
 public class Scene {
-    private final transient Camera _camera;
     private final transient IGamemodeBase _gameMode;
     private ArrayList<SceneComponent> _components;
-    private SceneStaticBuffer _sceneUbo;
 
     protected SceneProperty _sceneProperties;
 
 
     public Scene() {
         _components = new ArrayList<>();
-        _gameMode = new DefaultGamemode(this);
-        _camera = new Camera();
-        _sceneUbo = new SceneStaticBuffer();
-        _sceneUbo.load();
+        _gameMode = new DefaultGamemode((RenderScene) this);
         _sceneProperties = new SceneProperty();
     }
 
-    public void renderScene() {
-        // Tick gameMode
-        _gameMode.update(this);
-        //Update static buffer
-        _sceneUbo.use(this);
+    public IGamemodeBase getGamemode() { return _gameMode; }
 
+    private static int colorCount = 0;
+
+    public void renderScene() {
+
+        _gameMode.update(this);
+
+
+        colorCount = 0;
         // Draw attached components
-        for (SceneComponent component : _components) {
-            component.drawInternal(this);
+        for (int i = 0; i < _components.size(); ++i) {
+
+            if (RenderUtils.RENDER_MODE == GL_SELECT) {
+                colorCount++;
+                RenderUtils.getPickMaterial().use(this);
+                RenderUtils.getPickMaterial().getShader().setIntParameter("pickId", i + 1);
+                RenderUtils.CheckGLErrors();
+            }
+
+            _components.get(i).drawInternal(this);
         }
     }
 
@@ -76,16 +80,12 @@ public class Scene {
         }
     }
 
-    public Camera getCamera() {
-        return _camera;
-    }
-
-    public Matrix4f getProjection() {
+    public static Matrix4f getProjection(float width, float height, Camera camera) {
         return new Matrix4f().perspective(
-                (float) Math.toRadians(_camera.getFieldOfView()),
-                Window.GetPrimaryWindow().getPixelWidth() / (float) Window.GetPrimaryWindow().getPixelHeight(),
-                _camera.getNearClipPlane(),
-                _camera.getFarClipPlane()
+                (float) Math.toRadians(camera.getFieldOfView()),
+                width / height,
+                camera.getNearClipPlane(),
+                camera.getFarClipPlane()
         );
     }
 

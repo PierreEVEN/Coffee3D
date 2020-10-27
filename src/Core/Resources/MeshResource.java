@@ -1,8 +1,11 @@
 package Core.Resources;
 
-import Core.IO.LogOutput.Log;
+import Core.Renderer.DebugRendering.DebugRenderer;
 import Core.Renderer.Scene.Scene;
+import Core.Types.Color;
+import Core.Types.SphereBound;
 import Core.Types.Vertex;
+import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 
 import java.nio.FloatBuffer;
@@ -19,6 +22,9 @@ public class MeshResource extends GraphicResource {
     private final int[] _indices;
 
     private int _meshVao, _meshEbo;
+
+    private SphereBound _bound;
+
 
     public MeshResource(String resourceName, Vertex[] vertices, int[] indices) {
         super(resourceName);
@@ -90,9 +96,32 @@ public class MeshResource extends GraphicResource {
         return data;
     }
 
-    public void unload() {
-
+    private void rebuildBound() {
+        if (_bound == null) _bound = new SphereBound();
+        _bound.position.zero();
+        Vector3f temp = new Vector3f();
+        for (Vertex vert : _vertices) {
+            _bound.position.add(vert.position);
+        }
+        _bound.position.div(_vertices.length);
+        _bound.radius = 0f;
+        for (Vertex vert : _vertices) {
+            temp.x = vert.position.x;
+            temp.y = vert.position.y;
+            temp.z = vert.position.z;
+            float length = temp.sub(_bound.position).length();
+            if (length > _bound.radius) {
+                _bound.radius = length;
+            }
+        }
     }
+
+    public SphereBound getBound() {
+        if (_bound == null) rebuildBound();
+        return _bound;
+    }
+
+    public void unload() {}
 
     public void use(Scene context) {
         glBindVertexArray(_meshVao);

@@ -2,11 +2,14 @@ package Core.Renderer.Scene;
 
 import Core.IO.LogOutput.Log;
 import Core.Renderer.RenderUtils;
+import Core.Renderer.Scene.Components.Camera;
 import Core.Resources.GraphicResource;
 import Core.Types.SceneBufferData;
+import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
 
+import java.awt.*;
 import java.nio.FloatBuffer;
 
 import static org.lwjgl.opengl.GL46.*;
@@ -43,14 +46,22 @@ public class SceneStaticBuffer extends GraphicResource {
 
     @Override
     public void use(Scene context) {
-        bufferData.viewMatrix = context.getCamera().getViewMatrix();
-        bufferData.worldProjection = context.getProjection();
-        bufferData.cameraPosition = context.getCamera().getRelativePosition();
-        bufferData.cameraDirection = context.getCamera().getUpVector();
+        Log.Fail("wrong usage");
+    }
+
+    public void use(float width, float height, Camera camera, Matrix4f viewMatrix) {
+        bufferData.viewMatrix = viewMatrix;
+        bufferData.worldProjection = Scene.getProjection(width, height, camera);
+        bufferData.cameraPosition = camera.getRelativePosition();
+        bufferData.cameraDirection = camera.getUpVector();
         bufferData.time = (float)GLFW.glfwGetTime();
 
         glBindBuffer(GL_UNIFORM_BUFFER, _uboHandle);
         glBufferSubData(GL_UNIFORM_BUFFER, 0, bufferData.serializeData());
         glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    }
+
+    public void use(float width, float height, Camera camera) {
+        use(width, height, camera, camera.getViewMatrix());
     }
 }

@@ -1,14 +1,11 @@
 package Core.Renderer.DebugRendering;
 
-import Core.IO.LogOutput.Log;
 import Core.Renderer.RenderUtils;
 import Core.Renderer.Scene.Scene;
 import Core.Types.Color;
-import Core.Types.TypeHelper;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
-import org.lwjgl.glfw.GLFW;
 
 import static org.lwjgl.opengl.GL11.*;
 

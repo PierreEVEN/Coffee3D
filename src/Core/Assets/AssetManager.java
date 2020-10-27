@@ -27,6 +27,7 @@ public class AssetManager {
      * @param asset new asset
      */
     public static void RegisterAsset(Asset asset) {
+        if (asset.getSavePath() == null) return;
         if (_assets.containsKey(asset.getName())) {
             Log.Fail("Asset named " + asset.getName() + " already exist : " + asset.getFilepath());
             return;
