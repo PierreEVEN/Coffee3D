@@ -11,6 +11,7 @@ import Editor.UI.LevelEditor.Tools.ComponentInspector;
 import Editor.UI.LevelEditor.Tools.LevelProperties;
 import Editor.UI.LevelEditor.Tools.SceneOutliner;
 import Editor.UI.SceneViewport;
+import Editor.UI.Tools.StatWindow;
 import imgui.ImGui;
 import org.joml.Quaterniond;
 import org.joml.Quaternionf;
@@ -38,6 +39,7 @@ public class LevelEditorViewport extends SceneViewport {
             }
             if (ImGui.beginMenu("window")) {
                 if (ImGui.menuItem("scene outliner")) new SceneOutliner(this, "Scene outliner");
+                if (ImGui.menuItem("stats")) new StatWindow(_sceneContext, "statistics");
                 ImGui.endMenu();
             }
             ImGui.endMenuBar();

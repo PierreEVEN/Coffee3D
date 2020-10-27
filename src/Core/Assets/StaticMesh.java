@@ -21,13 +21,13 @@ import java.util.ArrayList;
 import static org.lwjgl.opengl.GL11.GL_SELECT;
 
 public class StaticMesh extends Asset {
-    private static final long serialVersionUID = -3309672296934490500L;
+    private transient static final long serialVersionUID = -3309672296934490500L;
     private transient MeshResource[] _sections;
     protected ArrayList<AssetReference<Material>> _materials;
     private transient Material[] materialRefs = new Material[0];
-    private Matrix4f _modelMatrix;
-    private static final Color meshColor = new Color(.19f, .8f, .9f, 1);
-    private SphereBound _meshBound;
+    private transient Matrix4f _modelMatrix;
+    private transient static final Color meshColor = new Color(.19f, .8f, .9f, 1);
+    private transient SphereBound _meshBound;
 
     public StaticMesh(String name, String filePath, File assetPath, String[] materials) {
         super(name, filePath, assetPath);
@@ -68,8 +68,6 @@ public class StaticMesh extends Asset {
         }
         return materialRefs;
     }
-
-    static final Matrix3f test = new Matrix3f();
 
     @Override
     public void use(Scene context) {

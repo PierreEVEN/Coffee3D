@@ -1,6 +1,8 @@
 package Core.Types;
 
+import imgui.ImGui;
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
@@ -11,15 +13,18 @@ public class TypeHelper {
     private static int _vec3Index = 0;
     private static int _vec4Index = 0;
     private static int _math4Index = 0;
+    private static int _quatIndex = 0;
 
     private final static ArrayList<Vector3f> _vec3s = new ArrayList<>();
     private final static ArrayList<Vector4f> _vec4s = new ArrayList<>();
     private final static ArrayList<Matrix4f> _mat4s = new ArrayList<>();
+    private final static ArrayList<Quaternionf> _quats = new ArrayList<>();
 
     public static void nextFrame() {
         _vec3Index = 0;
         _vec4Index = 0;
         _math4Index = 0;
+        _quatIndex = 0;
     }
 
     public static Vector3f getVector3(float x, float y, float z) {
@@ -84,5 +89,21 @@ public class TypeHelper {
         Matrix4f item = _mat4s.get(_math4Index);
         _math4Index++;
         return item;
+    }
+
+    public static Quaternionf getQuat() {
+        if (_quatIndex >= _quats.size()) {
+            _quats.add(new Quaternionf());
+        }
+        Quaternionf item = _quats.get(_quatIndex);
+        _quatIndex++;
+        return item;
+    }
+
+    public static void DrawStats() {
+        ImGui.text("vector3 count : " + _vec3s.size());
+        ImGui.text("vector4 count : " + _vec4s.size());
+        ImGui.text("matrix4 count : " + _mat4s.size());
+        ImGui.text("quaternion count : " + _quats.size());
     }
 }

@@ -12,9 +12,6 @@ import org.joml.Vector4f;
 
 public class MathLibrary {
 
-    private static Vector3f vec0 = new Vector3f();
-
-
     public static float GetPointDistanceToLine(Vector3f direction, Vector3f origin, Vector3f pointLocation) {
         Vector3f lineToPointVector = TypeHelper.getVector3(origin).sub(pointLocation);
         Vector3f surfaceNormal = TypeHelper.getVector3(direction).cross(lineToPointVector);

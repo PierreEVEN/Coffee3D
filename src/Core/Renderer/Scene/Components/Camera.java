@@ -26,9 +26,9 @@ public class Camera extends SceneComponent {
     }
 
     private void sendRotation() {
-        Quaternionf rot = new Quaternionf().identity()
-                .rotateZ((float)Math.toRadians(_pitch))
-                .rotateY((float)Math.toRadians(_yaw));
+        Quaternionf rot = TypeHelper.getQuat().identity()
+                .rotateY((float)Math.toRadians(-_pitch))
+                .rotateZ((float)Math.toRadians(_yaw));
         setRelativeRotation(rot);
     }
 

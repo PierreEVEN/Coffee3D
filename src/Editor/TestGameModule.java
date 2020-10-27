@@ -1,25 +1,30 @@
 package Editor;
 
+import Core.Controller.DefaultController;
+import Core.Controller.IGameController;
 import Core.IEngineModule;
 import Core.Renderer.Scene.RenderScene;
-import Core.Renderer.Scene.Scene;
 import Core.Renderer.Window;
 import Core.UI.ImGuiImpl.ImGuiImplementation;
+import Core.UI.Tools.StatHelper;
 import imgui.ImGui;
 import imgui.ImGuiIO;
-import org.joml.Vector4f;
 
 public class TestGameModule implements IEngineModule {
-    RenderScene _rootScene;
+    private RenderScene _rootScene;
+    private DefaultController controller;
+
 
     @Override
     public void LoadResources() {
-
-        Window.GetPrimaryWindow().setBackgroundColor(new Vector4f(0,0,0,0));
-
         ImGuiImplementation.Get().addFont("resources/fonts/roboto/Roboto-Medium.ttf", 60);
         ImGuiIO io = ImGui.getIO();
         io.setFontGlobalScale(0.4f);
+    }
+
+    @Override
+    public IGameController GetController() {
+        return controller;
     }
 
     @Override
@@ -27,6 +32,7 @@ public class TestGameModule implements IEngineModule {
 
         _rootScene = new RenderScene(true);
         _rootScene.loadFromFile("truc.map");
+        controller = new DefaultController(_rootScene);
         Window.GetPrimaryWindow().showCursor(false);
 
         Window.GetPrimaryWindow().setWindowTitle("Sample game");
@@ -38,12 +44,10 @@ public class TestGameModule implements IEngineModule {
     }
 
     @Override
-    public void DrawUI() {
-
-    }
+    public void DrawUI() {}
 
     @Override
     public void DrawHUD() {
-
+        StatHelper.DrawStats(_rootScene);
     }
 }

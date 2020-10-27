@@ -9,17 +9,18 @@ import java.util.*;
  * Handle assets by names
  */
 public class AssetManager {
+    private static final List<Asset> assetsByClass = new ArrayList<>();
     private static final HashMap<String, Asset> _assets = new HashMap<>();
 
     public static Collection<Asset> GetAssets() { return _assets.values(); }
 
-    public static <T> List<T> GetAssetByClass(Class desiredClass) {
-        List<T> ret = new ArrayList<>();
+    public static <T> List<Asset> GetAssetByClass(Class desiredClass) {
+        assetsByClass.clear();
         for (Asset asset : GetAssets()) {
             T assetRef = (T)asset;
-            if (assetRef != null && asset.getClass().isAssignableFrom(desiredClass)) ret.add(assetRef);
+            if (assetRef != null && asset.getClass().isAssignableFrom(desiredClass)) assetsByClass.add((Asset) assetRef);
         }
-        return ret;
+        return assetsByClass;
     }
 
     /**
@@ -71,11 +72,10 @@ public class AssetManager {
     }
 
     public static ArrayList<File> ScanAssets(File path) {
-        ArrayList<File> assets = new ArrayList<>();
-
+        final ArrayList<File> scannedAssets = new ArrayList<>();
         for (File subFile : path.listFiles()) {
             if (subFile.isDirectory()) {
-                assets.addAll(ScanAssets(subFile));
+                scannedAssets.addAll(ScanAssets(subFile));
             }
             else {
                 Optional<String> extension = Optional.ofNullable(subFile.getName())
@@ -83,11 +83,10 @@ public class AssetManager {
                         .map(f -> f.substring(subFile.getName().lastIndexOf(".") + 1));
                 if (extension.isEmpty()) continue;
                 if (extension.get().equals("asset")) {
-                    assets.add(subFile);
+                    scannedAssets.add(subFile);
                 }
             }
         }
-
-        return assets;
+        return scannedAssets;
     }
 }

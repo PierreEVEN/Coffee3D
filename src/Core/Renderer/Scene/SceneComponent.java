@@ -117,7 +117,7 @@ public class SceneComponent implements Serializable {
      * @return relative transform
      */
     public Matrix4f getRelativeTransformationMatrix() {
-        return new Matrix4f()
+        return TypeHelper.getMat4()
                 .identity()
                 .translate(getRelativePosition())
                 .rotate(getRelativeRotation())
@@ -130,7 +130,7 @@ public class SceneComponent implements Serializable {
      */
     public Matrix4f getWorldTransformationMatrix() {
         if (_parent != null) {
-            return new Matrix4f(_parent.getWorldTransformationMatrix()).mul(getRelativeTransformationMatrix());
+            return TypeHelper.getMat4().set(_parent.getWorldTransformationMatrix()).mul(getRelativeTransformationMatrix());
         }
         else {
             return getRelativeTransformationMatrix();
@@ -160,7 +160,7 @@ public class SceneComponent implements Serializable {
      * @return local roll axis
      */
     public float getRoll() {
-        Vector3f angles = new Vector3f();
+        Vector3f angles = TypeHelper.getVector3();
         getRelativeRotation().getEulerAnglesXYZ(angles);
         return angles.x;
     }
@@ -170,9 +170,9 @@ public class SceneComponent implements Serializable {
      * @return local pitch axis
      */
     public float getPitch() {
-        Vector3f angles = new Vector3f();
+        Vector3f angles = TypeHelper.getVector3();
         getRelativeRotation().getEulerAnglesXYZ(angles);
-        return angles.y;
+        return angles.z;
     }
 
     /**
@@ -180,9 +180,9 @@ public class SceneComponent implements Serializable {
      * @return local yaw axis
      */
     public float getYaw() {
-        Vector3f angles = new Vector3f();
+        Vector3f angles = TypeHelper.getVector3();
         getRelativeRotation().getEulerAnglesXYZ(angles);
-        return angles.z;
+        return angles.y;
     }
 
     /**
@@ -190,7 +190,7 @@ public class SceneComponent implements Serializable {
      * @return forward vector
      */
     public Vector3f getForwardVector() {
-        Vector3f vec = new Vector3f();
+        Vector3f vec = TypeHelper.getVector3();
         _rotation.normalizedPositiveX(vec);
         return vec;
     }
@@ -200,9 +200,9 @@ public class SceneComponent implements Serializable {
      * @return right vector
      */
     public Vector3f getRightVector() {
-        Vector3f vec = new Vector3f();
-        _rotation.normalizedPositiveZ(vec);
-        return vec;
+        Vector3f vec = TypeHelper.getVector3();
+        _rotation.normalizedPositiveY(vec);
+        return vec.mul(-1f);
     }
 
     /**
@@ -210,8 +210,8 @@ public class SceneComponent implements Serializable {
      * @return up vector
      */
     public Vector3f getUpVector() {
-        Vector3f vec = new Vector3f();
-        _rotation.normalizedPositiveY(vec);
+        Vector3f vec = TypeHelper.getVector3();
+        _rotation.normalizedPositiveZ(vec);
         return vec;
     }
 

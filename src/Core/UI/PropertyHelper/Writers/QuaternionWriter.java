@@ -35,7 +35,6 @@ public class QuaternionWriter extends FieldWriter
             return vec.identity().rotateXYZ((float)Math.toRadians(values[0]), (float)Math.toRadians(values[1]), (float)Math.toRadians(values[2]));
         }
 
-
         return null;
     }
 }

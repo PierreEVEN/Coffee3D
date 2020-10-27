@@ -1,6 +1,7 @@
 package Editor;
 
 import Core.Assets.*;
+import Core.Controller.IGameController;
 import Core.IEngineModule;
 import Core.IO.Settings.EngineSettings;
 import Core.Renderer.Scene.RenderScene;
@@ -9,6 +10,7 @@ import Core.Renderer.Window;
 import Core.UI.HUD.*;
 import Core.UI.ImGuiImpl.ImGuiImplementation;
 import Core.UI.SubWindows.DemoWindow;
+import Editor.Controller.EditorController;
 import Editor.UI.Browsers.ContentBrowser;
 import Editor.UI.Importers.MaterialImporter;
 import Editor.UI.Importers.MeshImporter;
@@ -16,6 +18,7 @@ import Editor.UI.Importers.TextureImporter;
 import Editor.UI.LevelEditor.LevelEditorViewport;
 import Editor.UI.Browsers.ResourcesViewer;
 import Editor.UI.Tools.AssetWindow;
+import Editor.UI.Tools.Console;
 import Editor.UI.Tools.StyleEditor;
 import imgui.*;
 import imgui.flag.ImGuiDockNodeFlags;
@@ -28,12 +31,10 @@ import static org.lwjgl.opengl.GL11.*;
 public class EditorModule implements IEngineModule {
 
     private RenderScene _rootScene;
+    private EditorController _controller;
 
     @Override
     public void LoadResources() {
-
-        Window.GetPrimaryWindow().setBackgroundColor(new Vector4f(0,0,0,0));
-
         ImGuiImplementation.Get().addFont("resources/fonts/roboto/Roboto-Medium.ttf", 60);
         ImGuiIO io = ImGui.getIO();
         io.setFontGlobalScale(0.4f);
@@ -47,10 +48,18 @@ public class EditorModule implements IEngineModule {
 
         new LevelEditorViewport((RenderScene) _rootScene, "viewport");
         new ContentBrowser("Content browser");
+        new Console("Console");
 
         String vendor = glGetString(GL_VENDOR);
         String renderer = glGetString(GL_RENDERER);
         GLFW.glfwSetWindowTitle(Window.GetPrimaryWindow().getGlfwWindowHandle(), "Coffee3D Editor - " + vendor + " " + renderer);
+
+        if (_controller == null) _controller = new EditorController(_rootScene);
+    }
+
+    @Override
+    public IGameController GetController() {
+        return _controller;
     }
 
     @Override

@@ -4,6 +4,7 @@ import Core.Renderer.DebugRendering.DebugRenderer;
 import Core.Renderer.Scene.Scene;
 import Core.Types.Color;
 import Core.Types.SphereBound;
+import Core.Types.TypeHelper;
 import Core.Types.Vertex;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
@@ -99,7 +100,7 @@ public class MeshResource extends GraphicResource {
     private void rebuildBound() {
         if (_bound == null) _bound = new SphereBound();
         _bound.position.zero();
-        Vector3f temp = new Vector3f();
+        Vector3f temp = TypeHelper.getVector3();
         for (Vertex vert : _vertices) {
             _bound.position.add(vert.position);
         }

@@ -19,9 +19,9 @@ import static org.lwjgl.opengl.GL11.GL_SELECT;
 
 public class StaticMeshComponent extends SceneComponent {
 
-    private static final long serialVersionUID = 4648435994317397619L;
+    private transient static final long serialVersionUID = 4648435994317397619L;
     protected AssetReference<StaticMesh> _mesh;
-    private SphereBound _componentBound;
+    private transient SphereBound _componentBound;
 
     public StaticMeshComponent(StaticMesh mesh, Vector3f position, Quaternionf rotation, Vector3f scale) {
         super(position, rotation, scale);

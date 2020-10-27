@@ -1,5 +1,6 @@
-package Core.Renderer.Scene.Gamemode;
+package Core.Controller;
 
+import Core.IO.Inputs.GlfwInputHandler;
 import Core.IO.Inputs.IInputListener;
 import Core.Renderer.RenderUtils;
 import Core.Renderer.Scene.RenderScene;
@@ -18,10 +19,11 @@ public abstract class IGameController implements IInputListener {
     private double _cursorDeltaY = 0;
 
     protected IGameController(RenderScene scene) {
+        GlfwInputHandler.AddListener(this);
         _scene = scene;
     }
 
-    abstract void update(Scene context);
+    public abstract void update();
 
     @Override
     public void cursorPosCallback(double x, double y) {
@@ -30,9 +32,6 @@ public abstract class IGameController implements IInputListener {
         _cursorPosX = x;
         _cursorPosY = y;
     }
-
-    public double getCursorPosX() { return _cursorPosX; }
-    public double getCursorPosY() { return _cursorPosY; }
 
     public double getCursorDeltaX() { return _cursorDeltaX; }
     public double getCursorDeltaY() { return _cursorDeltaY; }

@@ -19,7 +19,6 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWFramebufferSizeCallback;
 
-import java.io.File;
 import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
 
@@ -35,7 +34,6 @@ public class Window {
     private boolean _bDisplayCursor;
     private IEngineModule _engineModule;
     private int _drawMode;
-    private Vector4f _backgroundColor;
 
     /**
      * Singleton used to reference the primary window
@@ -49,7 +47,6 @@ public class Window {
     private Window() {
         _bfrSize = new Vector2i(-1, -1);
         _drawMode = GL_FILL;
-        _backgroundColor = new Vector4f(0,0,0,0);
     }
 
     /**
@@ -111,10 +108,6 @@ public class Window {
         glfwSetWindowTitle(_glfwWindowHandle, title);
     }
 
-    public void setBackgroundColor(Vector4f color) {
-        _backgroundColor = color;
-    }
-
     /**
      * Poll glfw events,
      * then draw window content
@@ -123,6 +116,9 @@ public class Window {
         while (!glfwWindowShouldClose(_glfwWindowHandle)) {
             // Poll inputs
             glfwPollEvents();
+
+            if (_engineModule.GetController() == null) Log.Fail("Internal error : Controller is null");
+            _engineModule.GetController().update();
 
             // Draw frame
             drawFrame();
@@ -144,7 +140,9 @@ public class Window {
         _engineModule.DrawScene();
         glPolygonMode( GL_FRONT_AND_BACK, GL_FILL);
 
+
         initUI();
+
         HudUtils.ResetCounters();
         ImGui.setNextWindowPos(0, 0);
         ImGui.setNextWindowSize(Window.GetPrimaryWindow().getPixelWidth(), Window.GetPrimaryWindow().getPixelHeight());
@@ -229,5 +227,18 @@ public class Window {
         else {
             glfwSetInputMode(_glfwWindowHandle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         }
+    }
+
+
+
+    private static final double[] _cursorPosX = {0}, _cursorPosY = {0};
+
+    public double getCursorPosX() {
+        glfwGetCursorPos(getGlfwWindowHandle(), _cursorPosX, _cursorPosY);
+        return _cursorPosX[0];
+    }
+    public double getCursorPosY() {
+        glfwGetCursorPos(getGlfwWindowHandle(), _cursorPosX, _cursorPosY);
+        return _cursorPosY[0];
     }
 }

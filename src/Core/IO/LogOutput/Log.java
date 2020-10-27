@@ -2,11 +2,15 @@ package Core.IO.LogOutput;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Receive log events
  */
 public class Log {
+
+    private static final List<LogMessage> _logHistory = new ArrayList<>();
 
     /** log colors */
     private static final String ANSI_RESET = "\u001B[0m";
@@ -34,8 +38,15 @@ public class Log {
             case FAIL -> color = ANSI_PURPLE;
         }
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yy:HH:mm:ss");
-        Logger.Get().print("[" + dtf.format(LocalDateTime.now()) + "] " + message, color);
+        Logger.Get().print("[" + dtf.format(LocalDateTime.now()) + "] " + message, color, verbosity);
+
+        LogMessage logMessage = new LogMessage();
+        logMessage.verbosity = verbosity;
+        logMessage.message = message;
+        _logHistory.add(logMessage);
     }
+
+    public static List<LogMessage> GetLogHistory() { return _logHistory; }
 
     /**
      * print display message

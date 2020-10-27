@@ -3,6 +3,7 @@ package Core.Renderer.DebugRendering;
 import Core.Renderer.RenderUtils;
 import Core.Renderer.Scene.Scene;
 import Core.Types.Color;
+import Core.Types.TypeHelper;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -11,16 +12,14 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class DebugRenderer {
 
-    private static final Matrix4f renderMatrix = new Matrix4f();
-    private static final Quaternionf rotation = new Quaternionf();
-
     public static void DrawDebugLine(Scene context, Vector3f p1, Vector3f p2, Color color) {
+        if (RenderUtils.RENDER_MODE == GL_SELECT) return;
         RenderUtils.CheckGLErrors();
         RenderUtils.getDebugMaterial().setColor(color);
         RenderUtils.CheckGLErrors();
         RenderUtils.getDebugMaterial().use(context);
 
-        RenderUtils.getDebugMaterial().getShader().setMatrixParameter("model", renderMatrix.identity());
+        RenderUtils.getDebugMaterial().getShader().setMatrixParameter("model", TypeHelper.getMat4().identity());
         glMatrixMode(GL_MODELVIEW);
         glBegin(GL_LINES);
         {
@@ -30,8 +29,9 @@ public class DebugRenderer {
     }
 
     public static void DrawDebugBox(Scene context, Vector3f p1, Vector3f p2, Color color) {
+        if (RenderUtils.RENDER_MODE == GL_SELECT) return;
         RenderUtils.getDebugMaterial().use(context);
-        RenderUtils.getDebugMaterial().getShader().setMatrixParameter("model", renderMatrix.identity());
+        RenderUtils.getDebugMaterial().getShader().setMatrixParameter("model", TypeHelper.getMat4().identity());
         RenderUtils.getDebugMaterial().getShader().setColorParameter("color", color);
         glMatrixMode(GL_MODELVIEW);
         glBegin(GL_LINES);
@@ -56,6 +56,7 @@ public class DebugRenderer {
 
     /*
     public static void DrawDebugCircle(Scene context, Vector3f center, Vector3f direction, float radius, int segments, Color color) {
+        if (RenderUtils.RENDER_MODE == GL_SELECT) return;
         RenderUtils.getDebugMaterial().use(context);
 
         rotation.identity().fromAxisAngleDeg(direction, 90);
@@ -81,8 +82,9 @@ public class DebugRenderer {
      */
 
     public static void DrawDebugSphere(Scene context, Vector3f center, float radius, int segments, Color color) {
+        if (RenderUtils.RENDER_MODE == GL_SELECT) return;
         RenderUtils.getDebugMaterial().use(context);
-        RenderUtils.getDebugMaterial().getShader().setMatrixParameter("model", renderMatrix.identity().translate(center));
+        RenderUtils.getDebugMaterial().getShader().setMatrixParameter("model", TypeHelper.getMat4().identity().translate(center));
         RenderUtils.getDebugMaterial().getShader().setColorParameter("color", color);
         glMatrixMode(GL_MODELVIEW);
         glBegin(GL_LINES);

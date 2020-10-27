@@ -9,7 +9,7 @@ public class MainGame {
         EngineSettings.FULLSCREEN_MODE = false;
         EngineSettings.MSAA_SAMPLES = 8;
         EngineSettings.ENABLE_DOUBLE_BUFFERING = true;
-        EngineSettings.TRANSPARENT_FRAMEBUFFER = true;
+        EngineSettings.TRANSPARENT_FRAMEBUFFER = false;
 
         Window.GetPrimaryWindow().run(new TestGameModule());
     }

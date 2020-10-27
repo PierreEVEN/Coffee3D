@@ -1,6 +1,5 @@
 package Core.Renderer.Scene;
 
-import Core.IO.LogOutput.Log;
 import Core.IO.Settings.EngineSettings;
 import Core.Maths.MathLibrary;
 import Core.Renderer.RenderUtils;
@@ -13,9 +12,6 @@ import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 
 import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
@@ -127,11 +123,11 @@ public class RenderScene extends Scene {
     public int getFbHeight() { return _sceneBuffer == null ? Window.GetPrimaryWindow().getPixelHeight() : _sceneBuffer.getHeight(); }
 
     public float getCursorPosX() {
-        return (float) (_sceneBuffer == null ? getGamemode().getController().getCursorPosX() : getGamemode().getController().getCursorPosX() - _sceneBuffer.getDrawOffsetX());
+        return (float) (_sceneBuffer == null ? Window.GetPrimaryWindow().getCursorPosX() : Window.GetPrimaryWindow().getCursorPosY() - _sceneBuffer.getDrawOffsetX());
     }
 
     public float getCursorPosY() {
-        return (float) (_sceneBuffer == null ? getGamemode().getController().getCursorPosY() : getGamemode().getController().getCursorPosY() - _sceneBuffer.getDrawOffsetY());
+        return (float) (_sceneBuffer == null ? Window.GetPrimaryWindow().getCursorPosX() : Window.GetPrimaryWindow().getCursorPosY() - _sceneBuffer.getDrawOffsetY());
     }
 
     public void getCursorSceneDirection(Vector3f result) {

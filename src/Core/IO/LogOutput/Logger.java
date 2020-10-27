@@ -6,6 +6,9 @@ import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+
 
 class Logger {
 
@@ -21,7 +24,6 @@ class Logger {
 
     private Logger() {
         try {
-
             if (!Files.exists(Path.of("./saved/logs"), LinkOption.NOFOLLOW_LINKS)) {
                 Files.createDirectories(Path.of("./saved/logs"));
             }
@@ -33,7 +35,7 @@ class Logger {
         }
     }
 
-    protected void print(String text, String colorString) {
+    protected void print(String text, String colorString, LogVerbosity verbosity) {
         printToConsole(colorString + text);
         printToLog(text);
     }

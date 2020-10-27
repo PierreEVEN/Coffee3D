@@ -3,19 +3,13 @@ package Core.Renderer.Scene;
 import Core.IO.LogOutput.Log;
 import Core.Renderer.RenderUtils;
 import Core.Renderer.Scene.Components.Camera;
-import Core.Renderer.Scene.Gamemode.DefaultGamemode;
-import Core.Renderer.Scene.Gamemode.IGamemodeBase;
-import Core.Types.Color;
+import Core.Types.TypeHelper;
 import org.joml.Matrix4f;
-
 import java.io.*;
 import java.util.ArrayList;
-
 import static org.lwjgl.opengl.GL11.GL_SELECT;
-import static org.lwjgl.opengl.GL31.glGetUniformBlockIndex;
 
 public class Scene {
-    private final transient IGamemodeBase _gameMode;
     private ArrayList<SceneComponent> _components;
 
     protected SceneProperty _sceneProperties;
@@ -23,18 +17,12 @@ public class Scene {
 
     public Scene() {
         _components = new ArrayList<>();
-        _gameMode = new DefaultGamemode((RenderScene) this);
         _sceneProperties = new SceneProperty();
     }
-
-    public IGamemodeBase getGamemode() { return _gameMode; }
 
     private static int colorCount = 0;
 
     public void renderScene() {
-
-        _gameMode.update(this);
-
 
         colorCount = 0;
         // Draw attached components
@@ -81,7 +69,7 @@ public class Scene {
     }
 
     public static Matrix4f getProjection(float width, float height, Camera camera) {
-        return new Matrix4f().perspective(
+        return TypeHelper.getMat4().identity().perspective(
                 (float) Math.toRadians(camera.getFieldOfView()),
                 width / height,
                 camera.getNearClipPlane(),

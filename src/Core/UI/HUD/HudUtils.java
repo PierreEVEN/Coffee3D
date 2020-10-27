@@ -28,7 +28,7 @@ public final class HudUtils {
     private HudUtils() {}
 
     private static int _containerCount;
-    private static ImVec2 textSize;
+    private static final ImVec2 textSize = new ImVec2();
 
     public static void ResetCounters() { _containerCount = 0; }
     public static final ImBoolean bDrawDebugBoxes = new ImBoolean(false);
@@ -62,7 +62,6 @@ public final class HudUtils {
         HudNodePosition pos = HudNodePosition.Get(anchor, offset);
 
         if (HudUtils.BeginContainer(anchor, offset)) {
-            if (textSize == null) textSize = new ImVec2();
 
             bHasBeenPressed = ImGui.invisibleButton(text._text + _containerCount++, ImGui.getContentRegionAvailX(), ImGui.getContentRegionAvailY());
 
