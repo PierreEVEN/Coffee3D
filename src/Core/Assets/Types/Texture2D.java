@@ -1,5 +1,6 @@
-package Core.Assets;
+package Core.Assets.Types;
 
+import Core.Assets.Asset;
 import Core.Factories.TextureFactory;
 import Core.IO.LogOutput.Log;
 import Core.Renderer.Scene.Scene;

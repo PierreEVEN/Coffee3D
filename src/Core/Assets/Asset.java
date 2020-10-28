@@ -32,7 +32,7 @@ public abstract class Asset extends SerializableData {
         _assetPath = assetPath;
         AssetManager.RegisterAsset(this);
         load();
-        if (assetPath != null) Log.Display("import " + name + " (" + getClass().getSimpleName() + ") from " + sourcePath + " to " + assetPath);
+        if (assetPath != null && sourcePath != null) Log.Display("import " + name + " (" + getClass().getSimpleName() + ") from " + sourcePath + " to " + assetPath);
     }
 
     public String[] getAssetExtensions() { return null; }
@@ -103,11 +103,13 @@ public abstract class Asset extends SerializableData {
         }
         ImGui.text("source file : ");
         ImGui.sameLine();
-        if (ImGui.button(_sourcePath.exists() ? _sourcePath.getPath() : "none")) {
-            new FileBrowser("find asset", getAssetExtensions(), _sourcePath, file -> {
-                _sourcePath = file;
-                reload();
-            });
+        if (_sourcePath != null) {
+            if (ImGui.button(_sourcePath.exists() ? _sourcePath.getPath() : "none")) {
+                new FileBrowser("find asset", getAssetExtensions(), _sourcePath, file -> {
+                    _sourcePath = file;
+                    reload();
+                });
+            }
         }
         if (newAssetName == null) newAssetName = new ImString(_name);
         ImGui.inputText("asset name", newAssetName);
@@ -151,7 +153,7 @@ public abstract class Asset extends SerializableData {
             oos.close();
             fos.close();
         } catch (Exception e) {
-            Log.Warning("failed to serialise scene : " + e.getMessage());
+            Log.Warning("failed to serialise asset " + sourceAsset.getName() + " : " + e.getMessage());
         }
     }
 
@@ -164,7 +166,7 @@ public abstract class Asset extends SerializableData {
             ois.close();
             fis.close();
         } catch (Exception e) {
-            Log.Warning("failed to deserialize scene : " + e.getMessage());
+            Log.Warning("failed to deserialize asset " + filePath.getName() + " : " + e.getMessage());
         }
         return null;
     }

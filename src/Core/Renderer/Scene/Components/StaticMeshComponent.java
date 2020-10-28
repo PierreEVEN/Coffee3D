@@ -1,17 +1,12 @@
 package Core.Renderer.Scene.Components;
 
 import Core.Assets.AssetReference;
-import Core.Assets.Material;
-import Core.IO.LogOutput.Log;
-import Core.Renderer.DebugRendering.DebugRenderer;
 import Core.Renderer.RenderUtils;
 import Core.Renderer.Scene.Scene;
-import Core.Assets.StaticMesh;
+import Core.Assets.Types.StaticMesh;
 import Core.Renderer.Scene.SceneComponent;
-import Core.Types.Color;
 import Core.Types.SphereBound;
 import Core.Types.TypeHelper;
-import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 

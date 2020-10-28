@@ -6,7 +6,6 @@ out vec4 outputColor;
 
 uniform vec4 color;
 
-
 layout (std140) uniform shader_data
 {
     mat4 viewMatrix;
@@ -20,5 +19,5 @@ layout (std140) uniform shader_data
 
 void main()
 {
-    outputColor = color;
+    outputColor = vec4(1,1,0,0);
 }

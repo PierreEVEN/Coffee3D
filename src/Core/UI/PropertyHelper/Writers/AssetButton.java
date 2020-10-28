@@ -3,6 +3,7 @@ package Core.UI.PropertyHelper.Writers;
 import Core.Assets.Asset;
 import Core.Assets.AssetManager;
 import Core.Assets.AssetReference;
+import Core.IO.LogOutput.Log;
 import Core.UI.Tools.AssetPicker;
 import imgui.ImGui;
 

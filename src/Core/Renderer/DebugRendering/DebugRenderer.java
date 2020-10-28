@@ -19,7 +19,7 @@ public class DebugRenderer {
         RenderUtils.CheckGLErrors();
         RenderUtils.getDebugMaterial().use(context);
 
-        RenderUtils.getDebugMaterial().getShader().setMatrixParameter("model", TypeHelper.getMat4().identity());
+        RenderUtils.getDebugMaterial().getResource().setMatrixParameter("model", TypeHelper.getMat4().identity());
         glMatrixMode(GL_MODELVIEW);
         glBegin(GL_LINES);
         {
@@ -31,8 +31,8 @@ public class DebugRenderer {
     public static void DrawDebugBox(Scene context, Vector3f p1, Vector3f p2, Color color) {
         if (RenderUtils.RENDER_MODE == GL_SELECT) return;
         RenderUtils.getDebugMaterial().use(context);
-        RenderUtils.getDebugMaterial().getShader().setMatrixParameter("model", TypeHelper.getMat4().identity());
-        RenderUtils.getDebugMaterial().getShader().setColorParameter("color", color);
+        RenderUtils.getDebugMaterial().getResource().setMatrixParameter("model", TypeHelper.getMat4().identity());
+        RenderUtils.getDebugMaterial().getResource().setColorParameter("color", color);
         glMatrixMode(GL_MODELVIEW);
         glBegin(GL_LINES);
         {
@@ -84,8 +84,8 @@ public class DebugRenderer {
     public static void DrawDebugSphere(Scene context, Vector3f center, float radius, int segments, Color color) {
         if (RenderUtils.RENDER_MODE == GL_SELECT) return;
         RenderUtils.getDebugMaterial().use(context);
-        RenderUtils.getDebugMaterial().getShader().setMatrixParameter("model", TypeHelper.getMat4().identity().translate(center));
-        RenderUtils.getDebugMaterial().getShader().setColorParameter("color", color);
+        RenderUtils.getDebugMaterial().getResource().setMatrixParameter("model", TypeHelper.getMat4().identity().translate(center));
+        RenderUtils.getDebugMaterial().getResource().setColorParameter("color", color);
         glMatrixMode(GL_MODELVIEW);
         glBegin(GL_LINES);
         {

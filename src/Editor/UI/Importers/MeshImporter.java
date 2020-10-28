@@ -1,14 +1,13 @@
 package Editor.UI.Importers;
 
 import Core.Assets.*;
+import Core.Assets.Types.Material;
+import Core.Assets.Types.MaterialInterface;
+import Core.Assets.Types.StaticMesh;
 import Core.IO.LogOutput.Log;
 import Core.UI.PropertyHelper.Writers.AssetButton;
-import Core.UI.SubWindows.SubWindow;
 import Core.UI.Tools.AssetPicker;
-import Editor.UI.Browsers.FileBrowser;
 import imgui.ImGui;
-import imgui.flag.ImGuiCol;
-import imgui.type.ImString;
 import org.lwjgl.assimp.AIScene;
 
 import java.io.File;
@@ -19,7 +18,7 @@ import static org.lwjgl.assimp.Assimp.aiProcess_Triangulate;
 
 public class MeshImporter extends AssetImporter {
 
-    private ArrayList<AssetReference<Material>> _materials;
+    private ArrayList<AssetReference<MaterialInterface>> _materials;
 
     private AIScene _previewData;
 
@@ -39,7 +38,7 @@ public class MeshImporter extends AssetImporter {
         ImGui.text("materials");
         ImGui.sameLine();
         if (ImGui.button("add material")) {
-            AssetReference ref = new AssetReference<Material>(Material.class);
+            AssetReference ref = new AssetReference<Material>(MaterialInterface.class);
             new AssetPicker("Choose material", ref, null);
             _materials.add(ref);
         }
@@ -47,8 +46,8 @@ public class MeshImporter extends AssetImporter {
 
 
         int materialIndex = 0;
-        AssetReference<Material> removedElem = null;
-        for (AssetReference<Material> material : _materials) {
+        AssetReference<MaterialInterface> removedElem = null;
+        for (AssetReference<MaterialInterface> material : _materials) {
             materialIndex++;
             if (ImGui.button(" - ##" + materialIndex)) {
                 removedElem = material;
@@ -94,7 +93,7 @@ public class MeshImporter extends AssetImporter {
             _previewData = aiImportFile(getSelectedSource().getPath(), aiProcess_Triangulate);
             _materials = new ArrayList<>();
             for (int i = 0; i < _previewData.mNumMeshes(); ++i) {
-                _materials.add(new AssetReference<>(Material.class));
+                _materials.add(new AssetReference<>(MaterialInterface.class));
             }
         }
         catch (Exception e){

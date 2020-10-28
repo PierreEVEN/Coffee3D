@@ -1,10 +1,11 @@
-package Core.Assets;
+package Core.Assets.Types;
 
+import Core.Assets.Asset;
+import Core.Assets.AssetReference;
 import Core.Factories.MeshFactory;
 import Core.IO.LogOutput.Log;
 import Core.IO.Settings.EngineSettings;
 import Core.Renderer.DebugRendering.DebugRenderer;
-import Core.Renderer.RenderUtils;
 import Core.Renderer.Scene.Scene;
 import Core.Resources.MeshResource;
 import Core.Resources.ResourceManager;
@@ -18,25 +19,23 @@ import org.joml.Vector3f;
 import java.io.File;
 import java.util.ArrayList;
 
-import static org.lwjgl.opengl.GL11.GL_SELECT;
-
 public class StaticMesh extends Asset {
     private transient static final long serialVersionUID = -3309672296934490500L;
     private transient MeshResource[] _sections;
-    protected ArrayList<AssetReference<Material>> _materials;
-    private transient Material[] materialRefs = new Material[0];
+    protected ArrayList<AssetReference<MaterialInterface>> _materials;
+    private transient MaterialInterface[] materialRefs = new MaterialInterface[0];
     private transient Matrix4f _modelMatrix;
     private transient static final Color meshColor = new Color(.19f, .8f, .9f, 1);
     private transient SphereBound _meshBound;
     private static final String[] meshExtensions = new String[] {"fbx", "obj"};
-    private transient Material[] _materialDrawList;
+    private transient MaterialInterface[] _materialDrawList;
 
     public StaticMesh(String name, File filePath, File assetPath, String[] materials) {
         super(name, filePath, assetPath);
 
         _materials = new ArrayList<>();
         for (String mat : materials) {
-            _materials.add(new AssetReference<>(Material.class, mat));
+            _materials.add(new AssetReference<>(MaterialInterface.class, mat));
         }
 
         _modelMatrix = new Matrix4f().identity();
@@ -84,11 +83,11 @@ public class StaticMesh extends Asset {
         _modelMatrix = modelMatrix;
     }
 
-    public Material[] getMaterials() {
-        if (materialRefs == null || materialRefs.length != _materials.size()) materialRefs = new Material[_materials.size()];
+    public MaterialInterface[] getMaterials() {
+        if (materialRefs == null || materialRefs.length != _materials.size()) materialRefs = new MaterialInterface[_materials.size()];
 
         for (int i = 0; i < _materials.size(); ++i) {
-            Material foundMat = _materials.get(i).get();
+            MaterialInterface foundMat = _materials.get(i).get();
             if (foundMat != null) {
                 materialRefs[i] = foundMat;
             }
@@ -99,7 +98,7 @@ public class StaticMesh extends Asset {
         return materialRefs;
     }
 
-    public void setMaterialList(Material[] materials) {
+    public void setMaterialList(MaterialInterface[] materials) {
         _materialDrawList = materials;
     }
 
@@ -107,9 +106,9 @@ public class StaticMesh extends Asset {
     public void use(Scene context) {
         if (_sections != null) {
             for (int i = 0; i < _sections.length; ++i) {
-                if (_materialDrawList != null && _materialDrawList.length > i && _materialDrawList[i] != null && _materialDrawList[i].getShader() != null) {
+                if (_materialDrawList != null && _materialDrawList.length > i && _materialDrawList[i] != null && _materialDrawList[i].getResource() != null) {
                     _materialDrawList[i].use(context);
-                    _materialDrawList[i].getShader().setMatrixParameter("model", _modelMatrix);
+                    _materialDrawList[i].getResource().setMatrixParameter("model", _modelMatrix);
                 }
                 if (_sections[i] != null) {
                     _sections[i].use(context);

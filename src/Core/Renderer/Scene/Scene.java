@@ -22,14 +22,14 @@ public class Scene {
 
     public void renderScene() {
 
-        if (RenderUtils.getPickMaterialDrawList()[0].getShader() == null) return;
+        if (RenderUtils.getPickMaterialDrawList()[0].getResource() == null) return;
 
         // Draw attached components
         for (int i = 0; i < _components.size(); ++i) {
 
             if (RenderUtils.RENDER_MODE == GL_SELECT) {
                 RenderUtils.getPickMaterialDrawList()[0].use(this);
-                RenderUtils.getPickMaterialDrawList()[0].getShader().setIntParameter("pickId", i + 1);
+                RenderUtils.getPickMaterialDrawList()[0].getResource().setIntParameter("pickId", i + 1);
                 RenderUtils.CheckGLErrors();
             }
 

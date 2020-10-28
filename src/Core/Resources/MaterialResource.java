@@ -96,22 +96,7 @@ public class MaterialResource extends GraphicResource {
 
     @Override
     public void use(Scene context) {
-        // Bind shader program
         glUseProgram(_materialHandle);
-
-        // Bind textures
-        if (_textures != null) {
-            for (int i = 0; i < _textures.length; ++i) {
-                //Handle Texture2DResources
-                if (_textures[i] instanceof Texture2DResource) {
-                    setIntParameter("texture" + i, i);
-                    glActiveTexture(GL_TEXTURE0 + i);
-                    glBindTexture(GL_TEXTURE_2D, _textures[i].getTextureHandle());
-                    Log.Display("draw text " + i);
-                }
-            }
-        }
-
     }
 
     /**

@@ -13,6 +13,7 @@ import Core.UI.SubWindows.DemoWindow;
 import Editor.Controller.EditorController;
 import Editor.UI.Browsers.ContentBrowser;
 import Editor.UI.Importers.MaterialImporter;
+import Editor.UI.Importers.MaterialInstanceImporter;
 import Editor.UI.Importers.MeshImporter;
 import Editor.UI.Importers.TextureImporter;
 import Editor.UI.LevelEditor.LevelEditorViewport;
@@ -113,6 +114,7 @@ public class EditorModule implements IEngineModule {
             if (ImGui.beginMenu("Import")) {
                 if (ImGui.menuItem("Static mesh")) new MeshImporter("Mesh importer");
                 if (ImGui.menuItem("Material")) new MaterialImporter("Material importer");
+                if (ImGui.menuItem("Material instance")) new MaterialInstanceImporter("create material instance");
                 if (ImGui.menuItem("Texture2D")) new TextureImporter("Texture importer");
                 ImGui.endMenu();
             }

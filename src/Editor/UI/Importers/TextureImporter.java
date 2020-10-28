@@ -1,22 +1,13 @@
 package Editor.UI.Importers;
 
-import Core.Assets.AssetManager;
-import Core.Assets.Texture2D;
+import Core.Assets.Types.Texture2D;
 import Core.Factories.TextureFactory;
 import Core.IO.LogOutput.Log;
 import Core.Resources.ResourceManager;
 import Core.Resources.Texture2DResource;
-import Core.UI.SubWindows.SubWindow;
-import Editor.UI.Browsers.FileBrowser;
-import Editor.UI.Browsers.IFileValidated;
 import imgui.ImGui;
-import imgui.flag.ImGuiCol;
-import imgui.flag.ImGuiStyleVar;
-import imgui.type.ImString;
-import org.lwjgl.egl.IMGContextPriority;
 
 import java.io.File;
-import java.util.Optional;
 
 public class TextureImporter extends AssetImporter {
 

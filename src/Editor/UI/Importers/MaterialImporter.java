@@ -1,18 +1,11 @@
 package Editor.UI.Importers;
 
-import Core.Assets.AssetManager;
 import Core.Assets.AssetReference;
-import Core.Assets.Material;
-import Core.Assets.Texture2D;
-import Core.IO.LogOutput.Log;
-import Core.Resources.MaterialResource;
+import Core.Assets.Types.Material;
+import Core.Assets.Types.Texture2D;
 import Core.UI.PropertyHelper.Writers.AssetButton;
-import Core.UI.SubWindows.SubWindow;
 import Core.UI.Tools.AssetPicker;
-import Editor.UI.Browsers.FileBrowser;
 import imgui.ImGui;
-import imgui.flag.ImGuiCol;
-import imgui.type.ImString;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -87,7 +80,15 @@ public class MaterialImporter extends AssetImporter {
                 for (int i = 0; i < _textures.size(); ++i) {
                     textureNames[i] = _textures.get(i) == null ? "" : _textures.get(i).get().getName();
                 }
-                Material mat = new Material(getTargetFileName(), getSelectedSource(), new File(getTargetFilePath()), textureNames);
+
+                AssetReference<Texture2D>[] textures = new AssetReference[textureNames.length];
+
+                for (int i = 0; i < textureNames.length; ++i) {
+                    textures[i] = new AssetReference<>(Texture2D.class, textureNames[i]);
+                }
+
+
+                Material mat = new Material(getTargetFileName(), getSelectedSource(), new File(getTargetFilePath()), textures);
                 mat.save();
                 close();
             }

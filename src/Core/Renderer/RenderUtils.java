@@ -1,10 +1,10 @@
 package Core.Renderer;
 
-import Core.Assets.Material;
+import Core.Assets.Types.Material;
+import Core.Assets.Types.MaterialInterface;
 import Core.IO.Inputs.GlfwInputHandler;
 import Core.IO.LogOutput.Log;
 import Core.IO.Settings.EngineSettings;
-import org.joml.Matrix4f;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -24,15 +24,15 @@ import static org.lwjgl.system.MemoryStack.stackPush;
 public class RenderUtils {
 
 
-    private static Material debugMaterial;
-    private static Material[] pickMaterial;
-    private static Material[] outlineMaterial;
+    private static MaterialInterface debugMaterial;
+    private static MaterialInterface[] pickMaterial;
+    private static MaterialInterface[] outlineMaterial;
 
     public static int RENDER_MODE = GL_NONE;
 
-    public static Material getDebugMaterial() {
+    public static MaterialInterface getDebugMaterial() {
         if (debugMaterial == null) {
-            debugMaterial = new Material("DebugMaterial", EngineSettings.DEBUG_MATERIAL_PATH, null);
+            debugMaterial = new Material("DebugMaterial", EngineSettings.DEBUG_MATERIAL_PATH, null, null);
             if (debugMaterial == null) {
                 Log.Fail("failed to load debug material from : " + EngineSettings.DEBUG_MATERIAL_PATH);
             }
@@ -40,9 +40,9 @@ public class RenderUtils {
         return debugMaterial;
     }
 
-    public static Material[] getPickMaterialDrawList() {
+    public static MaterialInterface[] getPickMaterialDrawList() {
         if (pickMaterial == null) {
-            pickMaterial = new Material[] { new Material("PickMaterial", EngineSettings.PICK_MATERIAL_PATH, null) };
+            pickMaterial = new Material[] { new Material("PickMaterial", EngineSettings.PICK_MATERIAL_PATH, null, null) };
             if (pickMaterial[0] == null) {
                 Log.Fail("failed to load pick material from : " + EngineSettings.DEBUG_MATERIAL_PATH);
             }
@@ -50,9 +50,9 @@ public class RenderUtils {
         return pickMaterial;
     }
 
-    public static Material[] getOutlineMaterialDrawList() {
+    public static MaterialInterface[] getOutlineMaterialDrawList() {
         if (outlineMaterial == null) {
-            outlineMaterial = new Material[] { new Material("OutlineMaterial", EngineSettings.OUTLINE_MATERIAL_PATH, null) };
+            outlineMaterial = new Material[] { new Material("OutlineMaterial", EngineSettings.OUTLINE_MATERIAL_PATH, null, null) };
             if (outlineMaterial[0] == null) {
                 Log.Fail("failed to load pick material from : " + EngineSettings.OUTLINE_MATERIAL_PATH);
             }

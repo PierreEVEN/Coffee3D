@@ -18,7 +18,7 @@ public class AssetManager {
         assetsByClass.clear();
         for (Asset asset : GetAssets()) {
             T assetRef = (T)asset;
-            if (assetRef != null && asset.getClass().isAssignableFrom(desiredClass)) assetsByClass.add((Asset) assetRef);
+            if (assetRef != null && desiredClass.isAssignableFrom(asset.getClass())) assetsByClass.add((Asset) assetRef);
         }
         return assetsByClass;
     }
@@ -60,7 +60,7 @@ public class AssetManager {
     public static boolean IsAssetNameFree(String name) {
         if (name.equals("")) return false;
         if (AssetManager.FindAsset(name) != null) return false;
-        if (!name.matches("^[a-zA-Z0-9]*$")) return false;
+        if (!name.matches("^[a-zA-Z0-9_]*$")) return false;
         return true;
     }
 
