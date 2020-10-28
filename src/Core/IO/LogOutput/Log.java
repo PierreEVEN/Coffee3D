@@ -66,7 +66,6 @@ public class Log {
      */
     public static void Error(String message) {
         Print(message, LogVerbosity.ERROR);
-        printStackTrace();
     }
 
     /**

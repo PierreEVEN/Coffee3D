@@ -1,7 +1,9 @@
 package Core.Assets;
 
 import Core.Factories.TextureFactory;
+import Core.IO.LogOutput.Log;
 import Core.Renderer.Scene.Scene;
+import Core.Resources.ResourceManager;
 import Core.Resources.Texture2DResource;
 import Core.Types.Color;
 import imgui.ImGui;
@@ -13,9 +15,15 @@ public class Texture2D extends Asset {
     private static final long serialVersionUID = -868665333590764448L;
     private transient Texture2DResource _texture;
     private static final Color textureColor = new Color(.9f, .5f, .5f, 1);
+    private static final String[] meshExtensions = new String[] {"png"};
 
-    public Texture2D(String name, String filePath, File assetPath) {
+    public Texture2D(String name, File filePath, File assetPath) {
         super(name, filePath, assetPath);
+    }
+
+    @Override
+    public String[] getAssetExtensions() {
+        return meshExtensions;
     }
 
     @Override
@@ -29,7 +37,26 @@ public class Texture2D extends Asset {
 
     @Override
     public void load() {
-        _texture = TextureFactory.T2dFromFile(getName(), getFilepath());
+        _texture = TextureFactory.T2dFromFile(getName(), getSourcePath());
+    }
+
+    @Override
+    public void reload() {
+        ResourceManager.UnRegisterResource(_texture);
+        Texture2DResource newTexture = null;
+        try {
+            newTexture = TextureFactory.T2dFromFile(getName(), getSourcePath());
+        }
+        catch (Exception e) {
+            Log.Warning("failed to load or compile shaders : " + e.getMessage());
+        }
+
+        if (newTexture != null) {
+            _texture = newTexture;
+        }
+        else {
+            ResourceManager.RegisterResource(newTexture);
+        }
     }
 
     @Override

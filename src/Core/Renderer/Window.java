@@ -14,7 +14,6 @@ import imgui.ImGui;
 import imgui.ImGuiIO;
 import imgui.flag.ImGuiWindowFlags;
 import org.joml.Vector2i;
-import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWFramebufferSizeCallback;
@@ -68,7 +67,7 @@ public class Window {
         ImGuiImplementation.Get().preInit(_glfwWindowHandle);
 
         Log.Display("load resources");
-        AssetManager.LoadAssetLibrary(EngineSettings.DEFAULT_ASSET_PATH);
+        AssetManager.LoadAssetLibrary(EngineSettings.ENGINE_ASSET_PATH);
         _engineModule.LoadResources();
 
         Log.Display("initialize imGui");

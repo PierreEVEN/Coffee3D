@@ -87,7 +87,7 @@ public class MaterialImporter extends AssetImporter {
                 for (int i = 0; i < _textures.size(); ++i) {
                     textureNames[i] = _textures.get(i) == null ? "" : _textures.get(i).get().getName();
                 }
-                Material mat = new Material(getTargetFileName(), getSelectedSource().getPath(), new File(getTargetFilePath()), textureNames);
+                Material mat = new Material(getTargetFileName(), getSelectedSource(), new File(getTargetFilePath()), textureNames);
                 mat.save();
                 close();
             }

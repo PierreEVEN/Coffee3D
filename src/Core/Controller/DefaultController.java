@@ -56,7 +56,6 @@ public class DefaultController extends IGameController {
 
     @Override
     public void keyCallback(int key, int scancode, int action, int mods) {
-       if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_PRESS) Window.GetPrimaryWindow().switchCursor();
         if (!Window.GetPrimaryWindow().captureMouse()) return;
         if (action != GLFW.GLFW_RELEASE) {
             switch (key) {
@@ -67,15 +66,10 @@ public class DefaultController extends IGameController {
     }
 
     @Override
-    public void charCallback(int chr) {
-
-    }
+    public void charCallback(int chr) {}
 
     @Override
-    public void mouseButtonCallback(int button, int action, int mods) {
-        if (button == GLFW.GLFW_MOUSE_BUTTON_2 && action == GLFW.GLFW_PRESS) Window.GetPrimaryWindow().showCursor(false);
-        if (button == GLFW.GLFW_MOUSE_BUTTON_2 && action == GLFW.GLFW_RELEASE) Window.GetPrimaryWindow().showCursor(true);
-    }
+    public void mouseButtonCallback(int button, int action, int mods) {}
 
     @Override
     public void scrollCallback(double xOffset, double yOffset) {

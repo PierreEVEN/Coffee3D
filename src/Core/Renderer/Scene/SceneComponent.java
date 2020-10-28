@@ -16,12 +16,17 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.lwjgl.opengl.GL11.GL_S;
 import static org.lwjgl.opengl.GL11.GL_SELECT;
 
 public class SceneComponent implements Serializable {
     private static final long serialVersionUID = 744620683032598971L;
 
     protected String _componentName;
+    private transient boolean _showOutlines;
+
+    public boolean doesDisplayOutlines() { return _showOutlines && RenderUtils.RENDER_MODE != GL_SELECT; }
+    public void setOutlined(boolean enableOutlines) { _showOutlines = enableOutlines; }
 
     public String getComponentName() {
         return _componentName;
@@ -44,6 +49,7 @@ public class SceneComponent implements Serializable {
         this._rotation = rotation;
         this._scale = scale;
         _componentName = getClass().getSimpleName();
+        _showOutlines = false;
     }
 
 
@@ -260,7 +266,7 @@ public class SceneComponent implements Serializable {
     /**
      * parent scene
      */
-    private Scene _parentScene;
+    private transient Scene _parentScene;
 
     public List<SceneComponent> getChildren() { return _children; }
 

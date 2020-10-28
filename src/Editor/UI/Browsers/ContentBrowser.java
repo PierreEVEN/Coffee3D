@@ -9,7 +9,6 @@ import imgui.flag.ImGuiTreeNodeFlags;
 import imgui.type.ImBoolean;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collection;
 
 public class ContentBrowser extends SubWindow {
@@ -20,7 +19,7 @@ public class ContentBrowser extends SubWindow {
     public ContentBrowser(String windowName) {
         super(windowName);
 
-        _selectedFile = EngineSettings.DEFAULT_ASSET_PATH;
+        _selectedFile = EngineSettings.ENGINE_ASSET_PATH;
 
     }
 
@@ -70,7 +69,13 @@ public class ContentBrowser extends SubWindow {
             _bSetColumnWidth = true;
         }
 
-        drawHierarchy(EngineSettings.DEFAULT_ASSET_PATH);
+        ImGui.text("game");
+        ImGui.separator();
+        drawHierarchy(EngineSettings.GAME_ASSET_PATH);
+        ImGui.separator();
+        ImGui.text("engine");
+        ImGui.separator();
+        drawHierarchy(EngineSettings.ENGINE_ASSET_PATH);
 
         ImGui.nextColumn();
 

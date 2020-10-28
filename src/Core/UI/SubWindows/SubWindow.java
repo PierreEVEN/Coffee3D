@@ -1,6 +1,6 @@
 package Core.UI.SubWindows;
 
-import Core.IO.LogOutput.Log;
+import Core.Renderer.Window;
 import imgui.ImGui;
 import imgui.flag.ImGuiWindowFlags;
 import imgui.type.ImBoolean;
@@ -14,6 +14,9 @@ public abstract class SubWindow {
     private ImBoolean _bDisplay;
     private String _windowName;
     protected boolean bHasMenuBar = false;
+    private float _wPosX = 0, _wPosY = 0, _wSizeX = 0, _wSizeY = 0;
+    private boolean _bCanDisplay;
+
 
     public SubWindow(String windowName) {
         _bDisplay = new ImBoolean(true);
@@ -32,7 +35,15 @@ public abstract class SubWindow {
 
         if (_bDisplay.get()) {
             if (ImGui.begin(_windowName, _bDisplay, bHasMenuBar ? ImGuiWindowFlags.MenuBar : ImGuiWindowFlags.None)) {
+                _wPosX = ImGui.getWindowPosX();
+                _wPosY = ImGui.getWindowPosY();
+                _wSizeX = ImGui.getWindowSizeX();
+                _wSizeY = ImGui.getWindowSizeY();
+                _bCanDisplay = true;
                 draw();
+            }
+            else {
+                _bCanDisplay = false;
             }
             ImGui.end();
         }
@@ -45,5 +56,13 @@ public abstract class SubWindow {
         for (int i = _windows.size() - 1; i >= 0; --i) {
             _windows.get(i).drawInternal();
         }
+    }
+
+    public boolean isMouseInsideWindow() {
+        float posX = (float) Window.GetPrimaryWindow().getCursorPosX();
+        float posY = (float) Window.GetPrimaryWindow().getCursorPosY();
+        if (posX < _wPosX || posY < _wPosY) return false;
+        if (posX > _wPosX + _wSizeX || posY > _wPosY + _wSizeY) return false;
+        return _bCanDisplay;
     }
 }

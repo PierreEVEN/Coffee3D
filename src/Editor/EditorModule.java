@@ -35,7 +35,7 @@ public class EditorModule implements IEngineModule {
 
     @Override
     public void LoadResources() {
-        ImGuiImplementation.Get().addFont("resources/fonts/roboto/Roboto-Medium.ttf", 60);
+        ImGuiImplementation.Get().addFont(EngineSettings.ENGINE_ASSET_PATH + "/assets/fonts/roboto/Roboto-Medium.ttf", 60);
         ImGuiIO io = ImGui.getIO();
         io.setFontGlobalScale(0.4f);
         Asset.SetAssetEditWidget(asset -> new AssetWindow(asset, asset.getName()));

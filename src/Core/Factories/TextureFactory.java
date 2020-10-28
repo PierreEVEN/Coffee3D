@@ -17,9 +17,9 @@ public class TextureFactory {
      * @param filePath
      * @return generated texture resource
      */
-    public static Texture2DResource T2dFromFile(String resourceName, String filePath) {
+    public static Texture2DResource T2dFromFile(String resourceName, File filePath) {
         try {
-            BufferedImage bfr = ImageIO.read(new File(filePath));
+            BufferedImage bfr = ImageIO.read(new File(filePath.getPath()));
             int[] pixels = new int[bfr.getWidth() * bfr.getHeight()];
             bfr.getRGB(0, 0, bfr.getWidth(), bfr.getHeight(), pixels, 0, bfr.getWidth());
 

@@ -8,12 +8,17 @@ import org.joml.Vector3f;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
 
+import java.io.File;
+
 import static org.lwjgl.assimp.Assimp.*;
 
 public class MeshFactory {
-    public static MeshResource[] FromFile(String resourceName, String filePath) {
-        AIScene aiScene = aiImportFile(filePath, aiProcess_Triangulate);
-        if (aiScene == null) Log.Error("Failed to load model " + resourceName + " : " + filePath);
+    public static MeshResource[] FromFile(String resourceName, File filePath) {
+        AIScene aiScene = aiImportFile(filePath.getPath(), aiProcess_Triangulate);
+        if (aiScene == null) {
+            Log.Error("Failed to load model " + resourceName + " : " + filePath);
+            return null;
+        }
 
         int numMeshes = aiScene.mNumMeshes();
         PointerBuffer aiMeshes = aiScene.mMeshes();

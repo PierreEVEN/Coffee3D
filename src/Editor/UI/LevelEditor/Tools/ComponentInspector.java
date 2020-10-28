@@ -18,9 +18,23 @@ public class ComponentInspector extends SubWindow {
     @Override
     protected void draw() {
         drawComponentProperties();
+        if (_editedComponent != null) {
+            _editedComponent.setOutlined(true);
+        }
+    }
+
+    @Override
+    public void close() {
+        super.close();
+        if (_editedComponent != null) {
+            _editedComponent.setOutlined(false);
+        }
     }
 
     public void setComponent(SceneComponent inComponent) {
+        if (_editedComponent != null) {
+            _editedComponent.setOutlined(false);
+        }
         _editedComponent = inComponent;
     }
 
@@ -29,9 +43,5 @@ public class ComponentInspector extends SubWindow {
     private void drawComponentProperties() {
         if (_editedComponent == null) return;
         StructureReader.WriteObj(_editedComponent, "SceneComponent");
-    }
-
-    private void drawClassProperties(Class inClass) {
-
     }
 }

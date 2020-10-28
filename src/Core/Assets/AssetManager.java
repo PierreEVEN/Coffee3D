@@ -30,11 +30,18 @@ public class AssetManager {
     public static void RegisterAsset(Asset asset) {
         if (asset.getSavePath() == null) return;
         if (_assets.containsKey(asset.getName())) {
-            Log.Fail("Asset named " + asset.getName() + " already exist : " + asset.getFilepath());
+            Log.Fail("Asset named " + asset.getName() + " already exist : " + asset.getSourcePath());
             return;
         }
         _assets.put(asset.getName(), asset);
     }
+
+    public static void UnRegisterAsset(Asset asset) {
+        if (_assets.containsKey(asset.getName())) {
+            _assets.remove(asset.getName());
+        }
+    }
+
 
     /**
      * Find asset into database by name
@@ -50,7 +57,7 @@ public class AssetManager {
         return null;
     }
 
-    public static boolean CanCreateAssetWithName(String name) {
+    public static boolean IsAssetNameFree(String name) {
         if (name.equals("")) return false;
         if (AssetManager.FindAsset(name) != null) return false;
         if (!name.matches("^[a-zA-Z0-9]*$")) return false;
@@ -88,5 +95,17 @@ public class AssetManager {
             }
         }
         return scannedAssets;
+    }
+
+
+    private static final transient List<IAssetRenamed> _renameAssetEvent = new ArrayList<>();
+    public static void bindOnRenameAsset(IAssetRenamed event) {
+        _renameAssetEvent.add(event);
+    }
+
+    public static void RenameAsset(String oldName, String newName) {
+        for (IAssetRenamed event : _renameAssetEvent) {
+            event.rename(oldName, newName);
+        }
     }
 }

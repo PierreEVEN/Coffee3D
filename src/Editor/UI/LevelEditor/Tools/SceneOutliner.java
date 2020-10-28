@@ -1,7 +1,9 @@
 package Editor.UI.LevelEditor.Tools;
 
+import Core.IO.Clipboard;
+import Core.IO.Inputs.GlfwInputHandler;
+import Core.IO.Inputs.IInputListener;
 import Core.IO.LogOutput.Log;
-import Core.Renderer.Scene.RenderScene;
 import Core.Renderer.Scene.Scene;
 import Core.Renderer.Scene.SceneComponent;
 import Core.UI.SubWindows.SubWindow;
@@ -9,23 +11,24 @@ import Editor.UI.LevelEditor.LevelEditorViewport;
 import imgui.ImGui;
 import imgui.flag.ImGuiDragDropFlags;
 import imgui.flag.ImGuiTreeNodeFlags;
+import org.lwjgl.glfw.GLFW;
 
+import javax.sound.sampled.Clip;
 import java.io.*;
 import java.util.ArrayList;
 
-public class SceneOutliner extends SubWindow {
-    Scene _parentScene;
-    LevelEditorViewport _parentViewport;
-
+public class SceneOutliner extends SubWindow implements IInputListener {
+    private final Scene _parentScene;
+    private final LevelEditorViewport _parentViewport;
+    private int _currentNodeIndex = 0;
+    private final ArrayList<SceneComponent> _drawedComponents = new ArrayList<>();
 
     public SceneOutliner(LevelEditorViewport parentViewport, String windowName) {
         super(windowName);
         _parentScene = parentViewport.getScene();
         _parentViewport = parentViewport;
+        GlfwInputHandler.AddListener(this);
     }
-
-    int nodeIndex = 0;
-
 
     private static byte[] SerializeHierarchy(SceneComponent component) {
         try {
@@ -39,7 +42,7 @@ public class SceneOutliner extends SubWindow {
             return data;
         }
         catch (Exception e) {
-            Log.Warning(e.getMessage());
+            Log.Warning("failed to copy data : " + e.getMessage());
         }
         return null;
     }
@@ -60,15 +63,17 @@ public class SceneOutliner extends SubWindow {
     }
 
     private void drawNode(SceneComponent comp) {
-        nodeIndex ++;
+        _currentNodeIndex++;
 
         String componentName = comp.getComponentName();
+
+        _drawedComponents.add(comp);
 
         int flags = ImGuiTreeNodeFlags.OpenOnDoubleClick;
         if (comp.getChildren() == null || comp.getChildren().size() == 0) flags |= ImGuiTreeNodeFlags.Leaf;
         if (comp == _parentViewport.getEditedComponent()) flags |= ImGuiTreeNodeFlags.Selected;
 
-        boolean bExpand = ImGui.treeNodeEx(componentName + "##" + nodeIndex, flags);
+        boolean bExpand = ImGui.treeNodeEx(componentName + "##" + _currentNodeIndex, flags);
 
         if (ImGui.beginDragDropSource(ImGuiDragDropFlags.None)) {
             byte[] data = SerializeHierarchy(comp);
@@ -103,10 +108,73 @@ public class SceneOutliner extends SubWindow {
 
     @Override
     protected void draw() {
-        nodeIndex = 0;
+        _currentNodeIndex = 0;
+        _drawedComponents.clear();
         for (SceneComponent comp : _parentScene.getComponents())
         {
             drawNode(comp);
         }
+    }
+
+    @Override
+    public void keyCallback(int keycode, int scancode, int action, int mods) {
+        if (!isMouseInsideWindow()) return;
+        if (action == GLFW.GLFW_PRESS) {
+            switch (keycode) {
+                case GLFW.GLFW_KEY_ESCAPE -> _parentViewport.editComponent(null);
+                case GLFW.GLFW_KEY_UP -> {
+                    int lastComp = _drawedComponents.indexOf(_parentViewport.getEditedComponent());
+                    if (lastComp > 0) _parentViewport.editComponent(_drawedComponents.get(lastComp - 1));
+                }
+                case GLFW.GLFW_KEY_DOWN -> {
+                    int lastComp = _drawedComponents.indexOf(_parentViewport.getEditedComponent());
+                    if (lastComp + 1 < _drawedComponents.size()) _parentViewport.editComponent(_drawedComponents.get(lastComp + 1));
+                }
+                case GLFW.GLFW_KEY_C -> {
+                    if (mods == GLFW.GLFW_MOD_CONTROL) {
+                        if (_parentViewport.getEditedComponent() != null) Clipboard.Write(SerializeHierarchy(_parentViewport.getEditedComponent()));
+                    }
+                }
+                case GLFW.GLFW_KEY_V -> {
+                    if (mods == GLFW.GLFW_MOD_CONTROL) {
+                        SceneComponent newComp = DeserializeHierarchy(Clipboard.Get());
+                        if (newComp != null) {
+                            if (_parentViewport.getEditedComponent() != null) {
+                                newComp.attachToComponent(_parentViewport.getEditedComponent());
+                            }
+                            else {
+                                newComp.attachToScene(_parentScene);
+                            }
+                        }
+                    }
+                }
+                case GLFW.GLFW_KEY_DELETE -> {
+                    if (_parentViewport.getEditedComponent() != null) {
+                        _parentViewport.getEditedComponent().detach();
+                        _parentViewport.editComponent(null);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void charCallback(int chr) {
+
+    }
+
+    @Override
+    public void mouseButtonCallback(int button, int action, int mods) {
+
+    }
+
+    @Override
+    public void scrollCallback(double xOffset, double yOffset) {
+
+    }
+
+    @Override
+    public void cursorPosCallback(double x, double y) {
+
     }
 }

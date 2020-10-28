@@ -20,18 +20,16 @@ public class Scene {
         _sceneProperties = new SceneProperty();
     }
 
-    private static int colorCount = 0;
-
     public void renderScene() {
 
-        colorCount = 0;
+        if (RenderUtils.getPickMaterialDrawList()[0].getShader() == null) return;
+
         // Draw attached components
         for (int i = 0; i < _components.size(); ++i) {
 
             if (RenderUtils.RENDER_MODE == GL_SELECT) {
-                colorCount++;
-                RenderUtils.getPickMaterial().use(this);
-                RenderUtils.getPickMaterial().getShader().setIntParameter("pickId", i + 1);
+                RenderUtils.getPickMaterialDrawList()[0].use(this);
+                RenderUtils.getPickMaterialDrawList()[0].getShader().setIntParameter("pickId", i + 1);
                 RenderUtils.CheckGLErrors();
             }
 
@@ -51,7 +49,6 @@ public class Scene {
      */
     protected void attachComponent(SceneComponent rootComponent) {
         if (rootComponent != null && !_components.contains(rootComponent)) {
-            rootComponent.detach();
             _components.add(rootComponent);
         }
     }
@@ -63,8 +60,10 @@ public class Scene {
      * @param rootComponent detached component
      */
     protected void detachComponent(SceneComponent rootComponent) {
+        Log.Display("remove A");
         if (rootComponent != null && _components.contains(rootComponent)) {
-            _components.add(rootComponent);
+            Log.Display("remove B");
+            _components.remove(rootComponent);
         }
     }
 
@@ -95,7 +94,12 @@ public class Scene {
             ObjectInputStream ois = new ObjectInputStream(fis);
             ArrayList<SceneComponent> comps = (ArrayList<SceneComponent>) ois.readObject();
             _sceneProperties = (SceneProperty) ois.readObject();
-            if (comps != null) _components = comps;
+            _components.clear();
+            if (comps != null) {
+                for (SceneComponent comp : comps) {
+                    comp.attachToScene(this);
+                }
+            }
             ois.close();
             fis.close();
         } catch (Exception e) {

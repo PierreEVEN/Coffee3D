@@ -4,17 +4,13 @@ import Core.IO.LogOutput.Log;
 import Core.IO.Settings.EngineSettings;
 import Core.UI.SubWindows.SubWindow;
 import imgui.ImGui;
-import imgui.ImVec4;
 import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiStyleVar;
 import imgui.type.ImBoolean;
-import imgui.type.ImInt;
-import org.lwjgl.egl.IMGContextPriority;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Optional;
-import java.util.function.IntBinaryOperator;
 
 public class FileBrowser extends SubWindow {
 
@@ -29,7 +25,7 @@ public class FileBrowser extends SubWindow {
     public FileBrowser(String windowName, String[] desiredExtension, File currentFile, IFileValidated validateEvent) {
         super(windowName);
         _desiredExtensions = desiredExtension;
-        _currentDirectory = EngineSettings.DEFAULT_ASSET_PATH;
+        _currentDirectory = EngineSettings.ENGINE_ASSET_PATH;
         _checkExtensions = new ImBoolean(true);
         _validateEvent = validateEvent;
         if (currentFile != null) {

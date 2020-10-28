@@ -19,20 +19,27 @@ public class Material extends Asset {
     private transient MaterialResource _mat;
     protected Color _materialColor = new Color(1f, 1f, 1f, 1f);
     protected ArrayList<AssetReference<Texture2D>> _textures = new ArrayList<>();
+
     private static final Color _matAssetColor = new Color(0f, .5f, 0f, 1);
+    private static final String[] materialExtensions = new String[] {"vert"};
 
     public Color getColor() { return _materialColor; }
     public void setColor(Color color) { _materialColor = color; }
 
-    public Material(String name, String filePath, File assetPath) {
+    public Material(String name, File filePath, File assetPath) {
         super(name, filePath, assetPath);
     }
 
-    public Material(String name, String filePath, File assetPath, String[] textureNames) {
+    public Material(String name, File filePath, File assetPath, String[] textureNames) {
         super(name, filePath, assetPath);
         for (String texture : textureNames) {
             _textures.add(new AssetReference<>(Texture2D.class, texture));
         }
+    }
+
+    @Override
+    public String[] getAssetExtensions() {
+        return materialExtensions;
     }
 
     @Override
@@ -44,12 +51,13 @@ public class Material extends Asset {
 
     @Override
     public void load() {
-        String fileCleanName = getFilepath().replaceFirst("[.][^.]+$", "");
+        String fileCleanName = getSourcePath().getPath().replaceFirst("[.][^.]+$", "");
         _mat = MaterialFactory.FromFiles(getName(), fileCleanName + ".vert", fileCleanName + ".frag");
     }
 
-    public void recompile() {
-        String fileCleanName = getFilepath().replaceFirst("[.][^.]+$", "");
+    @Override
+    public void reload() {
+        String fileCleanName = getSourcePath().getPath().replaceFirst("[.][^.]+$", "");
         ResourceManager.UnRegisterResource(_mat);
         MaterialResource newMat = null;
 
@@ -68,18 +76,9 @@ public class Material extends Asset {
         }
     }
 
-
     protected void drawThumbnailImage() {
         if (ImGui.button(("#" + getName()), 64, 64)) {
             if (_assetEditFunction != null) _assetEditFunction.applyAsset(this);
-        }
-    }
-
-    @Override
-    public void drawDetailedContent() {
-        super.drawDetailedContent();
-        if (ImGui.button("recompile Shader")) {
-            recompile();
         }
     }
 

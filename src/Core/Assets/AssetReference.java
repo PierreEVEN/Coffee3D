@@ -14,16 +14,28 @@ public class AssetReference <T> implements Serializable {
     public AssetReference(Class assetClass, T asset) {
         _assetClass = assetClass;
         set(asset);
+        bindEvent();
     }
 
     public AssetReference(Class assetClass) {
         _assetClass = assetClass;
         set(null);
+        bindEvent();
     }
 
     public AssetReference(Class assetClass, String asset) {
         _assetClass = assetClass;
         set(AssetManager.FindAsset(asset));
+        bindEvent();
+    }
+
+    private void bindEvent() {
+        AssetManager.bindOnRenameAsset((oldName, newName) -> {
+            if (oldName.equals(_assetName)) {
+                _assetName = newName;
+                _asset = AssetManager.FindAsset(_assetName);
+            }
+        });
     }
 
     public Class getGenericClass() {

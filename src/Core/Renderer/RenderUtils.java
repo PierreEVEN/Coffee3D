@@ -25,9 +25,10 @@ public class RenderUtils {
 
 
     private static Material debugMaterial;
-    private static Material pickMaterial;
+    private static Material[] pickMaterial;
+    private static Material[] outlineMaterial;
 
-    public static int RENDER_MODE = GL_SELECT;
+    public static int RENDER_MODE = GL_NONE;
 
     public static Material getDebugMaterial() {
         if (debugMaterial == null) {
@@ -39,14 +40,24 @@ public class RenderUtils {
         return debugMaterial;
     }
 
-    public static Material getPickMaterial() {
+    public static Material[] getPickMaterialDrawList() {
         if (pickMaterial == null) {
-            pickMaterial = new Material("PickMaterial", EngineSettings.PICK_MATERIAL_PATH, null);
-            if (pickMaterial == null) {
+            pickMaterial = new Material[] { new Material("PickMaterial", EngineSettings.PICK_MATERIAL_PATH, null) };
+            if (pickMaterial[0] == null) {
                 Log.Fail("failed to load pick material from : " + EngineSettings.DEBUG_MATERIAL_PATH);
             }
         }
         return pickMaterial;
+    }
+
+    public static Material[] getOutlineMaterialDrawList() {
+        if (outlineMaterial == null) {
+            outlineMaterial = new Material[] { new Material("OutlineMaterial", EngineSettings.OUTLINE_MATERIAL_PATH, null) };
+            if (outlineMaterial[0] == null) {
+                Log.Fail("failed to load pick material from : " + EngineSettings.OUTLINE_MATERIAL_PATH);
+            }
+        }
+        return outlineMaterial;
     }
 
     public static void InitializeOpenGL() {

@@ -15,7 +15,7 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-import static org.lwjgl.opengl.GL11.GL_SELECT;
+import static org.lwjgl.opengl.GL11.*;
 
 public class StaticMeshComponent extends SceneComponent {
 
@@ -32,8 +32,19 @@ public class StaticMeshComponent extends SceneComponent {
     public void draw(Scene context) {
         super.draw(context);
         if (_mesh.get() == null) return;
+
         _mesh.get().setMaterialModel(getWorldTransformationMatrix());
+
+        _mesh.get().setMaterialList(RenderUtils.RENDER_MODE == GL_SELECT ? RenderUtils.getPickMaterialDrawList() : _mesh.get().getMaterials());
         _mesh.get().use(context);
+        glEnable(GL_DEPTH_TEST);
+
+        if (doesDisplayOutlines()) {
+            glCullFace(GL_BACK);
+            _mesh.get().setMaterialList(RenderUtils.getOutlineMaterialDrawList());
+            _mesh.get().use(context);
+            glCullFace(GL_FRONT);
+        }
     }
 
     public StaticMesh getStaticMesh() { return _mesh.get(); }

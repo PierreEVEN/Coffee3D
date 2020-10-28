@@ -7,11 +7,11 @@ import Core.Renderer.DebugRendering.DebugRenderer;
 import Core.Renderer.RenderUtils;
 import Core.Renderer.Scene.Scene;
 import Core.Resources.MeshResource;
+import Core.Resources.ResourceManager;
 import Core.Types.Color;
 import Core.Types.SphereBound;
 import Core.Types.TypeHelper;
 import imgui.ImGui;
-import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -28,8 +28,10 @@ public class StaticMesh extends Asset {
     private transient Matrix4f _modelMatrix;
     private transient static final Color meshColor = new Color(.19f, .8f, .9f, 1);
     private transient SphereBound _meshBound;
+    private static final String[] meshExtensions = new String[] {"fbx", "obj"};
+    private transient Material[] _materialDrawList;
 
-    public StaticMesh(String name, String filePath, File assetPath, String[] materials) {
+    public StaticMesh(String name, File filePath, File assetPath, String[] materials) {
         super(name, filePath, assetPath);
 
         _materials = new ArrayList<>();
@@ -41,13 +43,41 @@ public class StaticMesh extends Asset {
     }
 
     @Override
+    public String[] getAssetExtensions() {
+        return meshExtensions;
+    }
+
+    @Override
     public Color getAssetColor() {
         return meshColor;
     }
 
     @Override
     public void load() {
-        _sections = MeshFactory.FromFile(getName(), getFilepath());
+        _sections = MeshFactory.FromFile(getName(), getSourcePath());
+    }
+
+    @Override
+    public void reload() {
+        for (MeshResource section : _sections) {
+            ResourceManager.UnRegisterResource(section);
+        }
+        MeshResource[] newSections = null;
+        try {
+            newSections = MeshFactory.FromFile(getName(), getSourcePath());
+        }
+        catch (Exception e) {
+            Log.Warning("failed to load or compile shaders : " + e.getMessage());
+        }
+
+        if (newSections != null) {
+            _sections = newSections;
+        }
+        else {
+            for (MeshResource section : _sections) {
+                ResourceManager.RegisterResource(section);
+            }
+        }
     }
 
     public void setMaterialModel(Matrix4f modelMatrix) {
@@ -69,22 +99,17 @@ public class StaticMesh extends Asset {
         return materialRefs;
     }
 
+    public void setMaterialList(Material[] materials) {
+        _materialDrawList = materials;
+    }
+
     @Override
     public void use(Scene context) {
-        Material[] materials = null;
-        if (RenderUtils.RENDER_MODE == GL_SELECT) {
-            RenderUtils.getPickMaterial().use(context);
-            RenderUtils.getPickMaterial().getShader().setMatrixParameter("model", _modelMatrix);
-            RenderUtils.CheckGLErrors();
-        }
-        else {
-            materials = getMaterials();
-        }
         if (_sections != null) {
             for (int i = 0; i < _sections.length; ++i) {
-                if (materials != null && materials.length > i && materials[i] != null && materials[i].getShader() != null) {
-                    materials[i].use(context);
-                    materials[i].getShader().setMatrixParameter("model", _modelMatrix);
+                if (_materialDrawList != null && _materialDrawList.length > i && _materialDrawList[i] != null && _materialDrawList[i].getShader() != null) {
+                    _materialDrawList[i].use(context);
+                    _materialDrawList[i].getShader().setMatrixParameter("model", _modelMatrix);
                 }
                 if (_sections[i] != null) {
                     _sections[i].use(context);

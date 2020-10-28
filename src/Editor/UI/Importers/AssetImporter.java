@@ -21,7 +21,7 @@ public abstract class AssetImporter extends SubWindow {
     public AssetImporter(String windowName) {
         super(windowName);
         _targetFileName = new ImString();
-        _selectedTarget = EngineSettings.DEFAULT_ASSET_PATH;
+        _selectedTarget = EngineSettings.ENGINE_ASSET_PATH;
     }
 
     public File getSelectedSource() { return _selectedSource; }
@@ -38,8 +38,10 @@ public abstract class AssetImporter extends SubWindow {
     }
 
     public final boolean isNameValid() {
-        return AssetManager.CanCreateAssetWithName(_targetFileName.get());
+        return AssetManager.IsAssetNameFree(_targetFileName.get());
     }
+
+    public void onSourceChanged() {}
 
     @Override
     protected void draw() {
@@ -51,6 +53,7 @@ public abstract class AssetImporter extends SubWindow {
                 if (_targetFileName.get().equals("")) {
                     _targetFileName.set(_selectedSource.getName().replaceFirst("[.][^.]+$", ""));
                 }
+                onSourceChanged();
             });
         }
 

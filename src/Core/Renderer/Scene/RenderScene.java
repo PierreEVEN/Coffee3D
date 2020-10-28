@@ -1,7 +1,9 @@
 package Core.Renderer.Scene;
 
+import Core.IO.LogOutput.Log;
 import Core.IO.Settings.EngineSettings;
 import Core.Maths.MathLibrary;
+import Core.Renderer.DebugRendering.DebugRenderer;
 import Core.Renderer.RenderUtils;
 import Core.Renderer.Scene.Components.Camera;
 import Core.Renderer.Window;
@@ -32,7 +34,7 @@ public class RenderScene extends Scene {
     private final SceneStaticBuffer _sceneUbo;
     private final transient Camera _camera;
     private final ByteBuffer _pickOutputBuffer;
-    private SceneComponent lastHitComponent = null;
+    private transient SceneComponent _lastHitComponent = null;
 
     public RenderScene(boolean fullscreen) {
         super();
@@ -75,6 +77,8 @@ public class RenderScene extends Scene {
         updatePickBuffer();
     }
 
+    public SceneComponent getLastHitComponent() { return _lastHitComponent; }
+
     public Camera getCamera() {
         return _camera;
     }
@@ -89,6 +93,7 @@ public class RenderScene extends Scene {
         glCullFace(GL_FRONT);
         glFrontFace(GL_CW);
         glViewport(0, 0, _pickBuffer.getWidth(), _pickBuffer.getHeight());
+
 
         RenderUtils.RENDER_MODE = GL_SELECT;
 
@@ -105,11 +110,11 @@ public class RenderScene extends Scene {
         glReadPixels(0, 0, 1, 1,  GL_RGB, GL_UNSIGNED_BYTE, _pickOutputBuffer);
 
         int hitCompId = (_pickOutputBuffer.get(0) & 0xff) + ((_pickOutputBuffer.get(1) & 0xff) << 8) + ((_pickOutputBuffer.get(2) & 0xff) << 16);
-        if (hitCompId > 0) {
-            lastHitComponent = getComponents().get(hitCompId - 1);
+        if (hitCompId > 0 && getComponents().size() >= hitCompId) {
+            _lastHitComponent = getComponents().get(hitCompId - 1);
         }
         else {
-            lastHitComponent = null;
+            _lastHitComponent = null;
         }
 
         RenderUtils.RENDER_MODE = GL_RENDER;
@@ -123,11 +128,11 @@ public class RenderScene extends Scene {
     public int getFbHeight() { return _sceneBuffer == null ? Window.GetPrimaryWindow().getPixelHeight() : _sceneBuffer.getHeight(); }
 
     public float getCursorPosX() {
-        return (float) (_sceneBuffer == null ? Window.GetPrimaryWindow().getCursorPosX() : Window.GetPrimaryWindow().getCursorPosY() - _sceneBuffer.getDrawOffsetX());
+        return (float) (_sceneBuffer == null ? Window.GetPrimaryWindow().getCursorPosX() : Window.GetPrimaryWindow().getCursorPosX() - _sceneBuffer.getDrawOffsetX());
     }
 
     public float getCursorPosY() {
-        return (float) (_sceneBuffer == null ? Window.GetPrimaryWindow().getCursorPosX() : Window.GetPrimaryWindow().getCursorPosY() - _sceneBuffer.getDrawOffsetY());
+        return (float) (_sceneBuffer == null ? Window.GetPrimaryWindow().getCursorPosY() : Window.GetPrimaryWindow().getCursorPosY() - _sceneBuffer.getDrawOffsetY());
     }
 
     public void getCursorSceneDirection(Vector3f result) {
