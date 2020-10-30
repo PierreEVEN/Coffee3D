@@ -58,7 +58,7 @@ public class LevelEditorViewport extends SceneViewport implements IInputListener
                 if (droppedAsset != null && droppedAsset instanceof StaticMesh) {
                     StaticMeshComponent sm = new StaticMeshComponent(
                             (StaticMesh)droppedAsset,
-                            new Vector3f(getScene().getCamera().getRelativePosition()),
+                            new Vector3f(getScene().getCamera().getForwardVector()).mul(2 * ((StaticMesh) droppedAsset).getBound().radius).add(getScene().getCamera().getRelativePosition()),
                             new Quaternionf().identity(),
                             new Vector3f(1,1,1));
                     sm.attachToScene(getScene());

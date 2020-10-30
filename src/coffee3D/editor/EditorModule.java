@@ -4,7 +4,6 @@ import coffee3D.core.controller.IGameController;
 import coffee3D.core.IEngineModule;
 import coffee3D.core.io.settings.EngineSettings;
 import coffee3D.core.renderer.scene.RenderScene;
-import coffee3D.core.renderer.Window;
 import coffee3D.core.ui.imgui.ImGuiImplementation;
 
 import coffee3D.editor.controller.EditorController;
@@ -13,11 +12,8 @@ import coffee3D.editor.ui.browsers.ContentBrowser;
 import coffee3D.editor.ui.EditorUI;
 import coffee3D.editor.ui.levelEditor.LevelEditorViewport;
 import coffee3D.editor.ui.tools.Console;
-
-import imgui.*;
-import org.lwjgl.glfw.GLFW;
-
-import static org.lwjgl.opengl.GL11.*;
+import imgui.ImGui;
+import imgui.ImGuiIO;
 
 public class EditorModule implements IEngineModule {
 
@@ -43,11 +39,6 @@ public class EditorModule implements IEngineModule {
         new LevelEditorViewport((RenderScene) _rootScene, "viewport");
         new ContentBrowser("Content browser");
         new Console("Console");
-
-        /* Set window title */
-        String vendor = glGetString(GL_VENDOR);
-        String renderer = glGetString(GL_RENDERER);
-        GLFW.glfwSetWindowTitle(Window.GetPrimaryWindow().getGlfwWindowHandle(), "Coffee3D Editor - " + vendor + " " + renderer);
     }
 
     @Override

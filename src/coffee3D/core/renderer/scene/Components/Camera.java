@@ -20,6 +20,16 @@ public class Camera extends SceneComponent {
         sendRotation();
     }
 
+    public void setPitchInput(float pitch) {
+        _pitch = pitch;
+        sendRotation();
+    }
+
+    public void setYawInput(float yaw) {
+        _yaw = yaw;
+        sendRotation();
+    }
+
     public void addYawInput(float delta) {
         _yaw += delta;
         sendRotation();

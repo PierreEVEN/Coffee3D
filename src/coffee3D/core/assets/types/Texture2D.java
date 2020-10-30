@@ -16,7 +16,7 @@ public class Texture2D extends Asset {
 
     private static final long serialVersionUID = -868665333590764448L;
     private transient Texture2DResource _texture;
-    private static final Color textureColor = new Color(.9f, .5f, .5f, 1);
+    private static final Color textureColor = new Color(69/255f, 111/255f, 243/255f, 1);
     private static final String[] meshExtensions = new String[] {"png"};
 
     public Texture2D(String name, File filePath, File assetPath) {

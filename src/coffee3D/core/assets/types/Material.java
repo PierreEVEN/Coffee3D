@@ -15,7 +15,7 @@ public class Material extends MaterialInterface {
 
     private transient MaterialResource _mat;
 
-    private static final Color _matAssetColor = new Color(0f, .5f, 0f, 1);
+    private static final Color _matAssetColor = new Color(99/255f, 224/255f, 106/255f, 1);
     private static final String[] materialExtensions = new String[] {"vert"};
 
     public Material(String name, File filePath, File assetPath, AssetReference<Texture2D>[] textures) {

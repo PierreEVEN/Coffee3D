@@ -25,7 +25,7 @@ public class StaticMesh extends Asset {
     protected ArrayList<AssetReference<MaterialInterface>> _materials;
     private transient MaterialInterface[] materialRefs = new MaterialInterface[0];
     private transient Matrix4f _modelMatrix;
-    private transient static final Color meshColor = new Color(.19f, .8f, .9f, 1);
+    private transient static final Color meshColor = new Color(106/255f, 219/255f, 228/255f, 1);
     private transient SphereBound _meshBound;
     private static final String[] meshExtensions = new String[] {"fbx", "obj"};
     private transient MaterialInterface[] _materialDrawList;

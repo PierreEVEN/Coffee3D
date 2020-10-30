@@ -14,7 +14,7 @@ public abstract class IGameController implements IInputListener {
     private double _cursorDeltaX = 0;
     private double _cursorDeltaY = 0;
 
-    protected IGameController(RenderScene scene) {
+    public IGameController(RenderScene scene) {
         GlfwInputHandler.AddListener(this);
         _scene = scene;
     }

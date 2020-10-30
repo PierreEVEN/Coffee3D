@@ -23,7 +23,7 @@ public abstract class MaterialInterface extends Asset {
 
     protected MaterialInterface(String name, File sourcePath, File assetPath, AssetReference<Texture2D>[] textures) {
         super(name, sourcePath, assetPath);
-        _materialColor = new Color(1f, 1f, 1f, 1f);
+        _materialColor = new Color(1, 1, 1, 1f);
         _uvScale = 1f;
         _textures = textures;
     }
