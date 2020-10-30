@@ -55,9 +55,11 @@ public class AssetPicker extends SubWindow {
         if (lastIndex != _selectedItem.get()) {
             if (_selectedItem.get() == 0) {
                 _assetPtr.set(null);
+                _execEvent.execute();
             }
             else {
                 _assetPtr.set(_availableAssets.get(_selectedItem.get() - 1));
+                _execEvent.execute();
             }
             close();
         }

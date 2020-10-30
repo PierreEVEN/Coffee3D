@@ -60,7 +60,7 @@ public abstract class AssetImporter extends SubWindow {
         ImGui.text("target path : ");
         ImGui.sameLine();
         if (ImGui.button(_selectedTarget.getPath())) {
-            new FolderPicker("Select folder", _selectedTarget, _targetFileName.get(), (file) -> {
+            new FolderPicker("Select folder", _selectedTarget, (file) -> {
                 _selectedTarget = file;
             });
         }

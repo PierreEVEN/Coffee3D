@@ -21,8 +21,6 @@ layout (std140) uniform shader_data
     float time;
 };
 
-
-
 void main()
 {
     vec3 lightDir = normalize(vec3(1, 1, 1));

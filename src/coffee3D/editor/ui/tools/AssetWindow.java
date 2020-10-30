@@ -2,6 +2,7 @@ package coffee3D.editor.ui.tools;
 
 import coffee3D.core.assets.Asset;
 import coffee3D.core.assets.AssetManager;
+import coffee3D.core.io.log.Log;
 import coffee3D.editor.ui.propertyHelper.StructureReader;
 import coffee3D.core.ui.subWindows.SubWindow;
 import coffee3D.editor.ui.browsers.FileBrowser;
@@ -19,6 +20,8 @@ public class AssetWindow extends SubWindow {
         super(windowName);
         _editedAsset = asset;
         newAssetName = new ImString(_editedAsset.getName());
+        if (newAssetName.getBufferSize() < 100) newAssetName.resize(100);
+
     }
 
     @Override

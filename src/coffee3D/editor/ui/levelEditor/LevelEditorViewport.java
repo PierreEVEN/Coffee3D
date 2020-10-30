@@ -3,8 +3,10 @@ package coffee3D.editor.ui.levelEditor;
 import coffee3D.core.assets.Asset;
 import coffee3D.core.assets.AssetManager;
 import coffee3D.core.assets.types.StaticMesh;
+import coffee3D.core.assets.types.World;
 import coffee3D.core.io.inputs.GlfwInputHandler;
 import coffee3D.core.io.inputs.IInputListener;
+import coffee3D.core.io.log.Log;
 import coffee3D.core.renderer.scene.Components.StaticMeshComponent;
 import coffee3D.core.renderer.scene.RenderScene;
 import coffee3D.core.renderer.scene.SceneComponent;
@@ -13,6 +15,8 @@ import coffee3D.editor.ui.levelEditor.tools.ComponentInspector;
 import coffee3D.editor.ui.levelEditor.tools.LevelProperties;
 import coffee3D.editor.ui.levelEditor.tools.SceneOutliner;
 import coffee3D.editor.ui.SceneViewport;
+import coffee3D.editor.ui.propertyHelper.AssetPicker;
+import coffee3D.editor.ui.propertyHelper.writers.OnAssetEdited;
 import coffee3D.editor.ui.tools.StatWindow;
 import imgui.ImGui;
 import org.joml.Quaternionf;
@@ -35,8 +39,10 @@ public class LevelEditorViewport extends SceneViewport implements IInputListener
     protected void draw() {
         if (ImGui.beginMenuBar()) {
             if (ImGui.beginMenu("edit")) {
-                if (ImGui.menuItem("save")) getScene().saveToFile("truc.map");
-                if (ImGui.menuItem("load")) getScene().loadFromFile("truc.map");
+                if (ImGui.menuItem("save")) getScene().save();
+                if (ImGui.menuItem("load")) new AssetPicker("select level", _sceneContext.getSource(), () -> {
+                    _sceneContext.load(_sceneContext.getSource().get());
+                });
                 ImGui.endMenu();
             }
             if (ImGui.beginMenu("window")) {
@@ -44,6 +50,12 @@ public class LevelEditorViewport extends SceneViewport implements IInputListener
                 if (ImGui.menuItem("stats")) new StatWindow(_sceneContext, "statistics");
                 ImGui.endMenu();
             }
+
+            ImGui.sameLine();
+            ImGui.dummy(ImGui.getContentRegionAvailX() / 2 - 100, 0);
+            ImGui.sameLine();
+            ImGui.text("current level : " + (_sceneContext.getSource().get() == null ? "none" : _sceneContext.getSource().get().getName()));
+
             ImGui.endMenuBar();
         }
 
@@ -84,7 +96,7 @@ public class LevelEditorViewport extends SceneViewport implements IInputListener
                 case GLFW.GLFW_KEY_ESCAPE -> Window.GetPrimaryWindow().switchCursor();
                 case GLFW.GLFW_KEY_S -> {
                     if (mods == GLFW.GLFW_MOD_CONTROL) {
-                        _sceneContext.saveToFile("engineContent/truc.map");
+                        _sceneContext.save();
                     }
                 }
             }

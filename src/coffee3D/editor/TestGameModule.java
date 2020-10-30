@@ -1,8 +1,10 @@
 package coffee3D.editor;
 
 import coffee3D.core.IEngineModule;
+import coffee3D.core.assets.AssetManager;
 import coffee3D.core.controller.IGameController;
 import coffee3D.core.controller.TopViewController;
+import coffee3D.core.io.settings.EngineSettings;
 import coffee3D.core.renderer.Window;
 import coffee3D.core.renderer.scene.RenderScene;
 import coffee3D.core.ui.imgui.ImGuiImplementation;
@@ -30,7 +32,7 @@ public class TestGameModule implements IEngineModule {
     public void PreInitialize() {
 
         _rootScene = new RenderScene(true);
-        _rootScene.loadFromFile("truc.map");
+        _rootScene.load(AssetManager.FindAsset(EngineSettings.DEFAULT_MAP_NAME));
         controller = new TopViewController(_rootScene);
         Window.GetPrimaryWindow().showCursor(true);
 

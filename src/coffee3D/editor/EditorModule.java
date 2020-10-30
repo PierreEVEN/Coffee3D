@@ -1,5 +1,7 @@
 package coffee3D.editor;
 
+import coffee3D.core.assets.AssetManager;
+import coffee3D.core.assets.types.World;
 import coffee3D.core.controller.IGameController;
 import coffee3D.core.IEngineModule;
 import coffee3D.core.io.settings.EngineSettings;
@@ -32,7 +34,7 @@ public class EditorModule implements IEngineModule {
     public void PreInitialize() {
         /* Create default scene and default controller */
         _rootScene = new RenderScene(false);
-        _rootScene.loadFromFile("engineContent/truc.map");
+        _rootScene.load(AssetManager.FindAsset(EngineSettings.DEFAULT_MAP_NAME));
         _controller = new EditorController(_rootScene);
 
         /* load default widgets */

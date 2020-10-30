@@ -46,7 +46,7 @@ public class MaterialInstanceImporter extends SubWindow {
         ImGui.text("target path : ");
         ImGui.sameLine();
         if (ImGui.button(outputPath.getPath())) {
-            new FolderPicker("Select folder", outputPath, assetName.get(), (file) -> {
+            new FolderPicker("Select folder", outputPath, (file) -> {
                 outputPath = file;
             });
         }

@@ -14,7 +14,7 @@ public class EngineSettings {
     public static File DEBUG_MATERIAL_PATH = new File("engineContent/assets/shaders/debugMaterial");
     public static File OUTLINE_MATERIAL_PATH = new File("engineContent/assets/shaders/outlineMaterial");
     public static File PICK_MATERIAL_PATH = new File("engineContent/assets/shaders/pickMaterial");
-    public static String DEFAULT_MAP_NAME = "default";
+    public static String DEFAULT_MAP_NAME = "defaultWorld";
 
     public static imgui.type.ImBoolean DRAW_DEBUG_BOUNDS = new ImBoolean(false);
     public static boolean ENABLE_DOUBLE_BUFFERING = false;

@@ -12,12 +12,11 @@ import java.util.ArrayList;
 public class FolderPicker extends SubWindow {
 
     private File _currentDirectory;
-    private String _wantedFileName;
     private boolean _bSetColumnWidth = false;
     private IFileValidated _validateEvent;
     private boolean _bValidated = false;
 
-    public FolderPicker(String windowName, File currentFolder, String fileName, IFileValidated validateEvent) {
+    public FolderPicker(String windowName, File currentFolder, IFileValidated validateEvent) {
         super(windowName);
         _currentDirectory = new File("./");
         _validateEvent = validateEvent;
@@ -30,7 +29,6 @@ public class FolderPicker extends SubWindow {
                 _currentDirectory = currentFolder;
             }
         }
-        _wantedFileName = fileName;
     }
 
     @Override
