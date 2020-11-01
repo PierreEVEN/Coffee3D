@@ -8,8 +8,8 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 public class Camera extends SceneComponent {
-
     private static final long serialVersionUID = 3287874597857486658L;
+
     protected float _pitch, _yaw, _fov, _zMin, _zMax;
     protected boolean _bUsePerspective = true;
 

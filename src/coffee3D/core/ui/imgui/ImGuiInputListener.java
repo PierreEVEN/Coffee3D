@@ -1,6 +1,7 @@
 package coffee3D.core.ui.imgui;
 
 import coffee3D.core.io.inputs.IInputListener;
+import coffee3D.core.renderer.Window;
 import imgui.ImGui;
 import imgui.ImGuiIO;
 import imgui.callback.ImStrConsumer;
@@ -33,6 +34,7 @@ public class ImGuiInputListener implements IInputListener {
 
     @Override
     public void keyCallback(int key, int scancode, int action, int mods) {
+        if (Window.GetPrimaryWindow().captureMouse()) return;
         if (action == GLFW_PRESS) {
             _io.setKeysDown(key, true);
         } else if (action == GLFW_RELEASE) {
@@ -47,6 +49,7 @@ public class ImGuiInputListener implements IInputListener {
 
     @Override
     public void charCallback(int c) {
+        if (Window.GetPrimaryWindow().captureMouse()) return;
         if (c != GLFW_KEY_DELETE) {
             _io.addInputCharacter(c);
         }
@@ -54,6 +57,7 @@ public class ImGuiInputListener implements IInputListener {
 
     @Override
     public void mouseButtonCallback(int button, int action, int mods) {
+        if (Window.GetPrimaryWindow().captureMouse()) return;
         final boolean[] mouseDown = new boolean[5];
 
         mouseDown[0] = button == GLFW_MOUSE_BUTTON_1 && action != GLFW_RELEASE;
@@ -71,10 +75,14 @@ public class ImGuiInputListener implements IInputListener {
 
     @Override
     public void scrollCallback(double xOffset, double yOffset) {
+        if (Window.GetPrimaryWindow().captureMouse()) return;
         _io.setMouseWheelH(_io.getMouseWheelH() + (float) xOffset);
         _io.setMouseWheel(_io.getMouseWheel() + (float) yOffset);
     }
 
     @Override
-    public void cursorPosCallback(double x, double y) {}
+    public void cursorPosCallback(double x, double y) {
+        if (Window.GetPrimaryWindow().captureMouse()) return;
+
+    }
 }

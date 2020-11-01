@@ -72,6 +72,7 @@ public class Texture2D extends Asset {
     @Override
     public void drawDetailedContent() {
         super.drawDetailedContent();
-        ImGui.image(getTextureID(), 400, 400, 0, 1, 1, 0);
+        ImGui.text("resolution : " + _texture.getWidth() + "x" + _texture.getHeight());
+        ImGui.image(getTextureID(), _texture.getWidth(), _texture.getHeight(), 0, 1, 1, 0);
     }
 }

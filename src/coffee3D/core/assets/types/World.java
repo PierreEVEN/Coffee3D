@@ -5,6 +5,7 @@ import coffee3D.core.renderer.scene.Scene;
 import coffee3D.core.types.Color;
 
 import java.io.File;
+import java.util.Random;
 
 public class World extends Asset {
     private static final long serialVersionUID = 243302515535612352L;
@@ -47,5 +48,7 @@ public class World extends Asset {
             _linkedScene.save();
         }
         super.save();
+
+        Random test;
     }
 }

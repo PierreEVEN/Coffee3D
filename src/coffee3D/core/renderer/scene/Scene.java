@@ -12,7 +12,7 @@ import java.io.*;
 import java.util.ArrayList;
 import static org.lwjgl.opengl.GL11.GL_SELECT;
 
-public abstract class Scene {
+public class Scene {
     private ArrayList<SceneComponent> _components;
 
     protected SceneProperty _sceneProperties;
@@ -24,6 +24,8 @@ public abstract class Scene {
         _sceneProperties = new SceneProperty();
         _source = new AssetReference<>(World.class);
     }
+
+    public SceneProperty getProperties() { return _sceneProperties; }
 
     public void renderScene() {
 

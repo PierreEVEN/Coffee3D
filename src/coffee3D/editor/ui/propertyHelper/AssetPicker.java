@@ -18,7 +18,7 @@ public class AssetPicker extends SubWindow {
     private String[] _assetNames;
     private List<Asset> _availableAssets;
     private ImInt _selectedItem;
-    private OnAssetEdited _execEvent;
+    private final OnAssetEdited _execEvent;
 
 
     public AssetPicker(String windowName, AssetReference assetPtr, OnAssetEdited execEvent) {
@@ -55,12 +55,11 @@ public class AssetPicker extends SubWindow {
         if (lastIndex != _selectedItem.get()) {
             if (_selectedItem.get() == 0) {
                 _assetPtr.set(null);
-                _execEvent.execute();
             }
             else {
                 _assetPtr.set(_availableAssets.get(_selectedItem.get() - 1));
-                _execEvent.execute();
             }
+            if (_execEvent != null) _execEvent.execute();
             close();
         }
     }

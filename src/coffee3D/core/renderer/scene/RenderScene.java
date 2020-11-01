@@ -19,10 +19,7 @@ import static org.lwjgl.opengl.GL13.GL_MULTISAMPLE;
 import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
 import static org.lwjgl.opengl.GL30.glBindFramebuffer;
 
-class RenderSceneProperties extends SceneProperty {
-    private static final long serialVersionUID = -7591302437531604737L;
-    protected Color _backgroundColor = new Color(0,0,0,1);
-}
+
 
 
 public class RenderScene extends Scene {

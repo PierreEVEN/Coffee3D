@@ -88,7 +88,7 @@ public class TypeHelper {
         }
         Matrix4f item = _mat4s.get(_math4Index);
         _math4Index++;
-        return item;
+        return item.identity();
     }
 
     public static Quaternionf getQuat() {
@@ -97,7 +97,7 @@ public class TypeHelper {
         }
         Quaternionf item = _quats.get(_quatIndex);
         _quatIndex++;
-        return item;
+        return item.identity();
     }
 
     public static void DrawStats() {

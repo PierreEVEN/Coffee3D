@@ -11,23 +11,27 @@ import static org.lwjgl.opengl.GL46.*;
 
 public class SceneStaticBuffer extends GraphicResource {
 
-    private int _uboHandle;
+    private static int _uboHandle = -1;
 
     private SceneBufferData bufferData;
+    private static int _bufferId = 0;
 
     public SceneStaticBuffer() {
-        super("World static buffer");
+        super("World static buffer" + _bufferId++);
         bufferData = new SceneBufferData();
     }
 
 
     @Override
     public void load() {
-        _uboHandle = glGenBuffers();
-        glBindBuffer(GL_UNIFORM_BUFFER, _uboHandle);
-        glBufferData(GL_UNIFORM_BUFFER, bufferData.GetByteSize(), GL_STATIC_DRAW);
-        glBindBuffer(GL_UNIFORM_BUFFER, 0);
-        glBindBufferRange(GL_UNIFORM_BUFFER, 0, _uboHandle, 0, bufferData.GetByteSize());
+        if (_uboHandle == -1) {
+            _uboHandle = glGenBuffers();
+            glBindBuffer(GL_UNIFORM_BUFFER, _uboHandle);
+            glBufferData(GL_UNIFORM_BUFFER, bufferData.GetByteSize(), GL_STATIC_DRAW);
+            glBindBuffer(GL_UNIFORM_BUFFER, 0);
+            glBindBufferRange(GL_UNIFORM_BUFFER, 0, _uboHandle, 0, bufferData.GetByteSize());
+            glBindBuffer(GL_UNIFORM_BUFFER, 0);
+        }
     }
 
     public int getBufferHandle() {

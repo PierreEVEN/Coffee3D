@@ -27,18 +27,20 @@ public class MaterialInstance extends MaterialInterface {
 
     @Override
     public void use(Scene context) {
-        _parentMaterial.get().getResource().use(context);
+        if (_parentMaterial.get() != this) _parentMaterial.get().getResource().use(context);
         bindColor(getColor());
         bindTextures(getTextures());
     }
 
     @Override
     public void reload() {
+        if (_parentMaterial.get() == this) return;
         _parentMaterial.get().reload();
     }
 
     @Override
     public MaterialResource getResource() {
+        if (_parentMaterial.get() == this) return null;
         return _parentMaterial.get().getResource();
     }
 }

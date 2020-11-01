@@ -2,6 +2,7 @@ package coffee3D.core.ui.subWindows;
 
 import coffee3D.core.renderer.Window;
 import imgui.ImGui;
+import imgui.ImGuiIO;
 import imgui.flag.ImGuiWindowFlags;
 import imgui.type.ImBoolean;
 

@@ -9,7 +9,7 @@ import java.io.Serializable;
 /**
  * Basically a vertex data wrapper
  */
-public final class Vertex implements Serializable {
+public final class Vertex {
     /**
      * vertex position
      */

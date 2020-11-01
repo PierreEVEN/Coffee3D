@@ -46,9 +46,11 @@ public class Framebuffer {
     }
 
     public void resizeFramebuffer(int width, int height) {
-        _fbWidth = width;
-        _fbHeight = height;
-        createFramebuffer();
+        if (width != _fbWidth || height != _fbHeight) {
+            _fbWidth = width;
+            _fbHeight = height;
+            createFramebuffer();
+        }
     }
 
     public int getBufferId() {

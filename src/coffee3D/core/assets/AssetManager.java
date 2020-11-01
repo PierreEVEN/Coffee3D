@@ -11,6 +11,7 @@ import java.util.*;
 public class AssetManager {
     private static final List<Asset> assetsByClass = new ArrayList<>();
     private static final HashMap<String, Asset> _assets = new HashMap<>();
+    private static boolean _bShouldRecreateAssetMap = true;
 
     public static Collection<Asset> GetAssets() { return _assets.values(); }
 
@@ -34,12 +35,14 @@ public class AssetManager {
             return;
         }
         _assets.put(asset.getName(), asset);
+        _bShouldRecreateAssetMap = true;
     }
 
     public static void UnRegisterAsset(Asset asset) {
         if (_assets.containsKey(asset.getName())) {
             _assets.remove(asset.getName());
         }
+        _bShouldRecreateAssetMap = true;
     }
 
 
@@ -108,5 +111,28 @@ public class AssetManager {
         for (IAssetRenamed event : _renameAssetEvent) {
             event.rename(oldName, newName);
         }
+    }
+
+
+
+    private final static HashMap<Class, List<Asset>> _assetMap = new HashMap<>();
+
+    public static HashMap<Class, List<Asset>> GetAssetMap() {
+        if (_bShouldRecreateAssetMap) {
+            _bShouldRecreateAssetMap = false;
+            _assetMap.clear();
+            Collection<Asset> assets = AssetManager.GetAssets();
+            for (Asset asset : assets) {
+
+                List list = _assetMap.get(asset.getClass());
+                if (list == null) {
+                    list = new ArrayList();
+                    _assetMap.put(asset.getClass(), list);
+                }
+                list.add(asset);
+            }
+        }
+
+        return _assetMap;
     }
 }
