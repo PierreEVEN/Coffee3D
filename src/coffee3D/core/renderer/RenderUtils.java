@@ -68,7 +68,7 @@ public class RenderUtils {
         int errCode;
         while((errCode = glGetError()) != GL_NO_ERROR)
         {
-            Log.Fail("GL error : " + Integer.toHexString(errCode));
+            Log.Error("GL error : " + Integer.toHexString(errCode));
         }
     }
 

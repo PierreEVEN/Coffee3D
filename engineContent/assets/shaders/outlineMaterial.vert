@@ -7,19 +7,10 @@ layout (location = 3) in vec4 aVertexColor;
 
 uniform mat4 model;
 
-layout (std140) uniform shader_data
-{
-    mat4 viewMatrix;
-    mat4 projMatrix;
-    vec3 cameraPos;
-    vec3 cameraDir;
-    float time;
-};
+#include "materialFunctions/uniformDeclaration.glsl";
 
 void main()
 {
-
-    float distance = length(cameraPos - aPos);
-
+    float distance = length(cameraPos.xyz - aPos);
     gl_Position = projMatrix * viewMatrix * (model * vec4(aPos, 1.0f) + vec4(aNormal * (distance * 0.002), 0));
 }

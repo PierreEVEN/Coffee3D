@@ -48,19 +48,20 @@ public class SceneStaticBuffer extends GraphicResource {
         Log.Fail("wrong usage");
     }
 
-    public void use(float width, float height, Camera camera, Matrix4f viewMatrix) {
-        bufferData.viewMatrix = viewMatrix;
-        bufferData.worldProjection = Scene.getProjection(width, height, camera);
-        bufferData.cameraPosition = camera.getRelativePosition();
-        bufferData.cameraDirection = camera.getUpVector();
+    public void use(RenderScene scene, float width, float height, Camera camera, Matrix4f viewMatrix) {
+        bufferData.viewMatrix.set(viewMatrix);
+        bufferData.worldProjection.set(Scene.getProjection(width, height, camera));
+        bufferData.cameraPosition.set(camera.getRelativePosition());
+        bufferData.cameraDirection.set(camera.getUpVector());
         bufferData.time = (float)GLFW.glfwGetTime();
+        bufferData.sunVector.set(((RenderSceneProperties)scene._sceneProperties).getSunVector());
 
         glBindBuffer(GL_UNIFORM_BUFFER, _uboHandle);
         glBufferSubData(GL_UNIFORM_BUFFER, 0, bufferData.serializeData());
         glBindBuffer(GL_UNIFORM_BUFFER, 0);
     }
 
-    public void use(float width, float height, Camera camera) {
-        use(width, height, camera, camera.getViewMatrix());
+    public void use(RenderScene scene, float width, float height, Camera camera) {
+        use(scene, width, height, camera, camera.getViewMatrix());
     }
 }

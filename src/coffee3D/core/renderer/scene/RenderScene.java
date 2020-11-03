@@ -32,7 +32,6 @@ public class RenderScene extends Scene {
     private final Camera _camera;
     private final ByteBuffer _pickOutputBuffer;
     private SceneComponent _lastHitComponent = null;
-    private GizmoComponent _gizmo;
 
     public RenderScene(boolean fullscreen) {
         super();
@@ -43,7 +42,6 @@ public class RenderScene extends Scene {
         _sceneUbo.load();
         _camera = new Camera();
         _pickOutputBuffer = BufferUtils.createByteBuffer(3);
-        _gizmo = new GizmoComponent(new Vector3f(0,0,0), new Quaternionf().identity(),new Vector3f(1,1,1));
     }
 
     @Override
@@ -66,7 +64,7 @@ public class RenderScene extends Scene {
         glViewport(0, 0, getFbWidth(), getFbHeight());
 
         //Update static buffer
-        _sceneUbo.use(getFbWidth(), getFbHeight(), getCamera());
+        _sceneUbo.use(this, getFbWidth(), getFbHeight(), getCamera());
 
         _camera.draw(this);
 
@@ -74,9 +72,6 @@ public class RenderScene extends Scene {
         super.renderScene();
 
         glClear(GL_DEPTH_BUFFER_BIT);
-
-        //_gizmo.setRelativeRotation(getComponents().get(0).getRelativeRotation());
-        //_gizmo.draw(this);
 
         // Bind default buffer
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -109,7 +104,7 @@ public class RenderScene extends Scene {
 
         Vector3f camWorldPosition = getCamera().getWorldPosition();
 
-        _sceneUbo.use(_pickBuffer.getWidth(), _pickBuffer.getHeight(), getCamera(),
+        _sceneUbo.use(this, _pickBuffer.getWidth(), _pickBuffer.getHeight(), getCamera(),
                 TypeHelper.getMat4().identity().lookAt(camWorldPosition, TypeHelper.getVector3(camWorldPosition).add(dir), getCamera().getUpVector()));
 
         RenderUtils.CheckGLErrors();

@@ -9,6 +9,7 @@ import coffee3D.core.io.settings.EngineSettings;
 import coffee3D.core.renderer.RenderUtils;
 import coffee3D.core.renderer.Window;
 import coffee3D.core.renderer.scene.RenderScene;
+import coffee3D.core.renderer.scene.RenderSceneProperties;
 import coffee3D.core.ui.hud.*;
 import coffee3D.core.ui.imgui.ImGuiImplementation;
 import coffee3D.core.ui.tools.StatHelper;
@@ -47,6 +48,9 @@ public class TestGameModule extends IEngineModule {
 
     @Override
     public void DrawScene() {
+
+        ((RenderSceneProperties)_rootScene.getProperties()).sunOrientation.identity().rotateXYZ((float) (GLFW.glfwGetTime() * .1), (float) Math.toRadians(-20), 0);
+
         RenderUtils.CheckGLErrors();
         _rootScene.renderScene();
         RenderUtils.CheckGLErrors();
@@ -57,7 +61,7 @@ public class TestGameModule extends IEngineModule {
 
     @Override
     public void DrawHUD() {
-        StatHelper.DrawStats(_rootScene);
+        //StatHelper.DrawStats(_rootScene);
 
         /*
         ImGui.image(AssetManager.<Texture2D>FindAsset("defaultTexture").getTextureID(), 50, 50);
@@ -102,6 +106,6 @@ public class TestGameModule extends IEngineModule {
 
         }
         HudUtils.EndContainer();
-         */
+        */
     }
 }

@@ -15,6 +15,7 @@ public class SceneBufferData {
         worldProjection = new Matrix4f().identity();
         cameraPosition = new Vector3f().zero();
         cameraDirection = new Vector3f(1, 0,0);
+        sunVector = new Vector3f(0, 0, -1);
         _bufferByteData = BufferUtils.createFloatBuffer(GetFloatSize());
     }
 
@@ -22,6 +23,7 @@ public class SceneBufferData {
     public Matrix4f worldProjection;
     public Vector3f cameraPosition;
     public Vector3f cameraDirection;
+    public Vector3f sunVector;
     public float time;
 
     public static int GetByteSize() { return GetFloatSize() * 4; }
@@ -29,9 +31,10 @@ public class SceneBufferData {
     public static int GetFloatSize() {
         return 16 + //view
         16 + // world
-        3 + // cam pos
-        3 + // cam dir
-        1; // time
+        4 + // cam pos
+        4 + // cam dir
+        1 + // time
+        4; //sun
     }
 
     public FloatBuffer serializeData() {
@@ -54,15 +57,22 @@ public class SceneBufferData {
         _bufferByteData.put(cameraPosition.x);
         _bufferByteData.put(cameraPosition.y);
         _bufferByteData.put(cameraPosition.z);
+        _bufferByteData.put(0);
 
         // Cam dir
         _bufferByteData.put(cameraDirection.x);
         _bufferByteData.put(cameraDirection.y);
         _bufferByteData.put(cameraDirection.z);
+        _bufferByteData.put(0);
+
+        // Sun
+        _bufferByteData.put(sunVector.x);
+        _bufferByteData.put(sunVector.y);
+        _bufferByteData.put(sunVector.z);
+        _bufferByteData.put(0);
 
         // Time
         _bufferByteData.put(time);
-
 
         _bufferByteData.flip();
         return _bufferByteData;

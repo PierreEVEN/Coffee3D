@@ -4,8 +4,7 @@ import coffee3D.core.io.log.Log;
 import coffee3D.core.resources.types.MaterialResource;
 import coffee3D.core.resources.types.TextureResource;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.*;
 
 /**
  * Handle material shaders creation
@@ -31,15 +30,8 @@ public class MaterialFactory {
     public static MaterialResource FromFiles(String resourceName, String vertexFile, String fragmentFile, TextureResource[] textures) {
         // Load shader data
         try {
-            File file = new File(vertexFile);
-            FileInputStream inputStream = new FileInputStream(file);
-            String vertexData = new String(inputStream.readAllBytes());
-            inputStream.close();
-
-            file = new File(fragmentFile);
-            inputStream = new FileInputStream(file);
-            String fragmentData = new String(inputStream.readAllBytes());
-            inputStream.close();
+            String vertexData = buildShaderContent(vertexFile);
+            String fragmentData = buildShaderContent(fragmentFile);
             return FromData(resourceName, vertexData, fragmentData, textures);
         }
         catch (Exception e) {
@@ -72,4 +64,34 @@ public class MaterialFactory {
             return null;
         }
     }
+
+
+    public static String buildShaderContent(String filePath) {
+        try {
+            BufferedReader inputStream = new BufferedReader(new FileReader(filePath));
+            String content = "";
+            String line = inputStream.readLine();
+            while (line != null) {
+
+                if (line.startsWith("#include")) {
+                    String includePath = line.substring(line.indexOf('"') + 1, line.indexOf(';') - 1);
+                    File newContent = new File(new File(filePath).getParent() + "/" + includePath);
+                    if (newContent.exists()) content += buildShaderContent(newContent.getPath());
+                    else Log.Error("Failed to import shader file " + newContent.getPath());
+                }
+                else {
+                    content += line + "\n";
+                }
+                line = inputStream.readLine();
+            }
+            inputStream.close();
+            return content;
+        }
+        catch (Exception e) {
+            Log.Error("failed to read shader file " + filePath + " : " + e.getMessage());
+        }
+        return "";
+
+    }
+
 }

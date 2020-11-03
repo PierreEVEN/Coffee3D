@@ -10,9 +10,7 @@ import org.lwjgl.glfw.GLFW;
 
 public class TopViewController extends IGameController {
 
-
-
-    private float defaultHeight = 0;
+    private static final Vector3f defaultOffset = new Vector3f(0,0,5);
     private float distance = 10;
     private float wantedDistance = 10;
     private float yaw = 0;
@@ -24,9 +22,6 @@ public class TopViewController extends IGameController {
     private final Vector3f targetPosition;
     private final Vector3f cameraPosition;
     private float borderDetection = 200f;
-
-
-
 
     public TopViewController(RenderScene scene) {
         super(scene);
@@ -56,7 +51,7 @@ public class TopViewController extends IGameController {
 
         cameraPosition.set(getScene().getCamera().getForwardVector());
         cameraPosition.mul(distance * -1);
-        cameraPosition.add(targetPosition);
+        cameraPosition.add(targetPosition).add(defaultOffset);
 
         getScene().getCamera().setRelativePosition(cameraPosition);
 

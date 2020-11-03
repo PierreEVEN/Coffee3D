@@ -63,11 +63,11 @@ public class MaterialResource extends GraphicResource {
         glCompileShader(fragmentShaderId);
 
         if (glGetShaderi(vertexShaderId, GL_COMPILE_STATUS) == 0) {
-            Log.Warning("Error compiling vertex Shader code: " + glGetShaderInfoLog(vertexShaderId, 1024));
+            Log.Warning("Error compiling vertex Shader code " + toString() + " : " + glGetShaderInfoLog(vertexShaderId, 1024));
             _bSuccessfullyCompiled = false;
         }
         if (glGetShaderi(fragmentShaderId, GL_COMPILE_STATUS) == 0) {
-            Log.Warning("Error compiling fragment Shader code: " + glGetShaderInfoLog(fragmentShaderId, 1024));
+            Log.Warning("Error compiling fragment Shader code " + toString() + " : " + glGetShaderInfoLog(fragmentShaderId, 1024));
             _bSuccessfullyCompiled = false;
         }
 

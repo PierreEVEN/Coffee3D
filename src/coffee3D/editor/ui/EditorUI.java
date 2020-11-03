@@ -15,6 +15,7 @@ import coffee3D.editor.ui.importers.MaterialInstanceImporter;
 import coffee3D.editor.ui.importers.MeshImporter;
 import coffee3D.editor.ui.importers.TextureImporter;
 import coffee3D.editor.ui.levelEditor.LevelEditorViewport;
+import coffee3D.editor.ui.tools.StatWindow;
 import coffee3D.editor.ui.tools.StyleEditor;
 import imgui.ImGui;
 import imgui.ImVec2;
@@ -47,6 +48,7 @@ public class EditorUI {
                 if (ImGui.menuItem("Content browser")) new ContentBrowser("Content browser");
                 ImGui.separator();
                 if (ImGui.menuItem("Resource viewer")) new ResourcesViewer("resource viewer");
+                if (ImGui.menuItem("Stat window")) new StatWindow(context, "Stat window");
                 ImGui.separator();
                 if (ImGui.menuItem("Style editor")) new StyleEditor("Style editor");
                 ImGui.endMenu();
