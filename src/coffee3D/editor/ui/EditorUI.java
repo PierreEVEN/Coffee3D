@@ -1,11 +1,13 @@
 package coffee3D.editor.ui;
 
+import coffee3D.core.IEngineModule;
 import coffee3D.core.assets.Asset;
 import coffee3D.core.assets.AssetManager;
 import coffee3D.core.io.settings.EngineSettings;
 import coffee3D.core.renderer.scene.RenderScene;
 import coffee3D.core.renderer.Window;
 import coffee3D.core.ui.hud.HudUtils;
+import coffee3D.editor.EditorModule;
 import coffee3D.editor.ui.browsers.ContentBrowser;
 import coffee3D.editor.ui.browsers.ResourcesViewer;
 import coffee3D.editor.ui.importers.MaterialImporter;
@@ -34,11 +36,7 @@ public class EditorUI {
 
         if (ImGui.beginMainMenuBar()) {
             if (ImGui.beginMenu("Files")) {
-                if (ImGui.menuItem("save all")) {
-                    for (Asset as : AssetManager.GetAssets()) {
-                        as.save();
-                    }
-                }
+                if (ImGui.menuItem("save all")) EditorModule.SaveAll();
                 if (ImGui.menuItem("quit")) {
                     Window.GetPrimaryWindow().close();
                 }

@@ -1,8 +1,11 @@
 package coffee3D.editor.controller;
 
+import coffee3D.core.IEngineModule;
+import coffee3D.core.assets.AssetManager;
 import coffee3D.core.controller.DefaultController;
 import coffee3D.core.renderer.scene.RenderScene;
 import coffee3D.core.renderer.Window;
+import coffee3D.editor.EditorModule;
 import org.lwjgl.glfw.GLFW;
 
 import static org.lwjgl.opengl.GL46.*;
@@ -16,6 +19,14 @@ public class EditorController extends DefaultController {
     @Override
     public void keyCallback(int key, int scancode, int action, int mods) {
         super.keyCallback(key, scancode, action, mods);
+        if (action == GLFW.GLFW_PRESS) {
+            switch (key) {
+                case GLFW.GLFW_KEY_S -> {
+                    if ((mods & GLFW.GLFW_MOD_SHIFT) != 0 && (mods & GLFW.GLFW_MOD_CONTROL) != 0)
+                        EditorModule.SaveAll();
+                }
+            }
+        }
         if (!Window.GetPrimaryWindow().captureMouse()) return;
         if (action == GLFW.GLFW_PRESS) {
             switch (key) {
@@ -23,9 +34,10 @@ public class EditorController extends DefaultController {
                 case GLFW.GLFW_KEY_F2 -> Window.GetPrimaryWindow().setDrawMode(GL_LINE);
                 case GLFW.GLFW_KEY_F3 -> Window.GetPrimaryWindow().setDrawMode(GL_POINT);
                 case GLFW.GLFW_KEY_F5 -> getScene().getCamera().setPerspective(!getScene().getCamera().enablePerspective());
-            }
+             }
         }
     }
+
 
     @Override
     public void mouseButtonCallback(int button, int action, int mods) {

@@ -1,10 +1,13 @@
 package coffee3D.editor.ui.propertyHelper;
 
 import coffee3D.core.io.log.Log;
+import coffee3D.editor.ui.propertyHelper.writers.EnumWriter;
 import imgui.ImGui;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class StructureReader {
 
@@ -86,6 +89,10 @@ public class StructureReader {
                     }
                     ImGui.treePop();
                 }
+            }
+            else if (field.getType().isEnum()) {
+
+                EnumWriter.Draw(field, obj);
             }
             else {
                 // Handle other properties

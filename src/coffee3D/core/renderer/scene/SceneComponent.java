@@ -344,4 +344,8 @@ public class SceneComponent implements Serializable {
         }
         return false;
     }
+
+    public SceneComponent getParent() {
+        return _parent;
+    }
 }

@@ -1,6 +1,7 @@
 package coffee3D.core.renderer.scene;
 
 import coffee3D.core.io.log.Log;
+import coffee3D.core.renderer.RenderUtils;
 
 import static org.lwjgl.opengl.GL46.*;
 
@@ -14,6 +15,7 @@ public class Framebuffer {
     private int _fbWidth, _fbHeight;
 
     private void createFramebuffer() {
+        if (_fbWidth <= 0 || _fbHeight <= 0) return;
         if (_framebufferId == -1) _framebufferId = glGenFramebuffers();
         glBindFramebuffer(GL_FRAMEBUFFER, _framebufferId);
 

@@ -1,10 +1,12 @@
 package coffee3D.editor;
 
+import coffee3D.core.assets.Asset;
 import coffee3D.core.assets.AssetManager;
 import coffee3D.core.assets.types.World;
 import coffee3D.core.controller.IGameController;
 import coffee3D.core.IEngineModule;
 import coffee3D.core.io.settings.EngineSettings;
+import coffee3D.core.renderer.RenderUtils;
 import coffee3D.core.renderer.scene.RenderScene;
 import coffee3D.core.ui.imgui.ImGuiImplementation;
 
@@ -17,7 +19,7 @@ import coffee3D.editor.ui.tools.Console;
 import imgui.ImGui;
 import imgui.ImGuiIO;
 
-public class EditorModule implements IEngineModule {
+public class EditorModule extends IEngineModule {
 
     private RenderScene _rootScene;
     private EditorController _controller;
@@ -47,11 +49,21 @@ public class EditorModule implements IEngineModule {
     public IGameController GetController() { return _controller; }
 
     @Override
-    public void DrawScene() { _rootScene.renderScene(); }
+    public void DrawScene() {
+        RenderUtils.CheckGLErrors();
+        _rootScene.renderScene();
+        RenderUtils.CheckGLErrors();
+    }
 
     @Override
     public void DrawUI() { EditorUI.DrawMenuBar(_rootScene); }
 
     @Override
     public void DrawHUD() { }
+
+    public static void SaveAll() {
+        for (Asset as : AssetManager.GetAssets()) {
+            as.save();
+        }
+    }
 }

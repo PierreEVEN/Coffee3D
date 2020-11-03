@@ -11,6 +11,8 @@ public class DefaultController extends IGameController {
     private float _speed = 100f;
     private float _mouseSensitivity = .18f;
     private final Vector3f currentSpeed = new Vector3f().zero();
+    private boolean _enableCameraMovements = true;
+    public void enableCameraMovements(boolean bEnable) { _enableCameraMovements = bEnable; }
 
     public DefaultController(RenderScene scene) {
         super(scene);
@@ -43,7 +45,7 @@ public class DefaultController extends IGameController {
     @Override
     public void cursorPosCallback(double x, double y) {
         super.cursorPosCallback(x, y);
-        if (!Window.GetPrimaryWindow().captureMouse()) return;
+        if (!Window.GetPrimaryWindow().captureMouse() || !_enableCameraMovements) return;
         getScene().getCamera().addYawInput((float) getCursorDeltaX() * _mouseSensitivity);
         getScene().getCamera().addPitchInput((float) getCursorDeltaY() * _mouseSensitivity);
     }

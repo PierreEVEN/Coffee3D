@@ -53,7 +53,7 @@ public class TextureImporter extends AssetImporter {
         _failed = false;
         try {
             if (_preview != null) _preview.unload();
-            _preview = TextureFactory.T2dFromFile("previewResource_" + getSelectedSource().getName(), getSelectedSource());
+            _preview = TextureFactory.T2dFromFile("previewResource_" + getSelectedSource().getName(), getSelectedSource(), true);
             if (_preview != null) ResourceManager.UnRegisterResource(_preview);
             else {
                 _failed = true;

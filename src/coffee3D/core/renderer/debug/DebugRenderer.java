@@ -4,7 +4,11 @@ import coffee3D.core.renderer.RenderUtils;
 import coffee3D.core.renderer.scene.Scene;
 import coffee3D.core.types.Color;
 import coffee3D.core.types.TypeHelper;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
+
+import java.lang.reflect.Type;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -78,6 +82,46 @@ public class DebugRenderer {
         glEnd();
     }
      */
+
+    public static void DrawDebugCylinder(Scene context, Vector3f p1, Vector3f p2, float radius, int segments, Color color) {
+
+        RenderUtils.getDebugMaterial().use(context);
+
+        Vector3f zAxis = TypeHelper.getVector3(0,0,1);
+
+        if (TypeHelper.getVector3(p2).sub(p1).normalize().equals(zAxis) || TypeHelper.getVector3(p1).sub(p2).normalize().equals(zAxis)) {
+            zAxis.set(0,1,0);
+        }
+
+        Matrix4f transformation = TypeHelper.getMat4().identity().lookAt(p1, p2, zAxis);
+        RenderUtils.getDebugMaterial().getResource().setMatrixParameter("model", transformation);
+        RenderUtils.getDebugMaterial().getResource().setColorParameter("color", color);
+        glMatrixMode(GL_MODELVIEW);
+        glBegin(GL_QUADS);
+        float length = p1.distance(p2);
+
+
+        for (int i = 0; i < segments; ++i) {
+            float y = (float) Math.cos(i / (float)segments * Math.PI * 2) * radius;
+            float z = (float) Math.sin(i / (float)segments * Math.PI * 2) * radius;
+            float y2 = (float) Math.cos((i + 1) / (float)segments * Math.PI * 2) * radius;
+            float z2 = (float) Math.sin((i + 1) / (float)segments * Math.PI * 2) * radius;
+
+            Vector3f forward = TypeHelper.getVector3(p2).sub(p1);
+            Vector3f rightA = TypeHelper.getVector3(forward).cross(zAxis);
+            Vector3f upA;
+
+            Vector3f rightB;
+            Vector3f upB;
+
+
+            glVertex3f(length, y, z);
+            glVertex3f(0, y, z);
+            glVertex3f(0, y2, z2);
+            glVertex3f(length, y2, z2);
+        }
+        glEnd();
+    }
 
     public static void DrawDebugSphere(Scene context, Vector3f center, float radius, int segments, Color color) {
         if (RenderUtils.RENDER_MODE == GL_SELECT) return;

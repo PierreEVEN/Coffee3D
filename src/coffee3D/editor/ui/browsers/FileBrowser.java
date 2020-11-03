@@ -25,7 +25,7 @@ public class FileBrowser extends SubWindow {
     public FileBrowser(String windowName, String[] desiredExtension, File currentFile, IFileValidated validateEvent) {
         super(windowName);
         _desiredExtensions = desiredExtension;
-        _currentDirectory = EngineSettings.ENGINE_ASSET_PATH;
+        _currentDirectory = EngineSettings.GAME_ASSET_PATH;
         _checkExtensions = new ImBoolean(true);
         _validateEvent = validateEvent;
         if (currentFile != null) {

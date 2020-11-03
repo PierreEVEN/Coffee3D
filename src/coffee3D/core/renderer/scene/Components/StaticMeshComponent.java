@@ -55,10 +55,10 @@ public class StaticMeshComponent extends SceneComponent {
         glEnable(GL_DEPTH_TEST);
 
         if (doesDisplayOutlines()) {
-            glCullFace(GL_BACK);
+            glDisable(GL_CULL_FACE);
             _mesh.get().setMaterialList(RenderUtils.getOutlineMaterialDrawList());
             _mesh.get().use(context);
-            glCullFace(GL_FRONT);
+            glDisable(GL_CULL_FACE);
         }
 
     }

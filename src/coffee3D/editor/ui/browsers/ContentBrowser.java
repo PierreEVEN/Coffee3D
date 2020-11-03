@@ -28,7 +28,7 @@ public class ContentBrowser extends SubWindow {
     public ContentBrowser(String windowName) {
         super(windowName);
 
-        _selectedFile = EngineSettings.ENGINE_ASSET_PATH;
+        _selectedFile = EngineSettings.GAME_ASSET_PATH;
     }
 
 

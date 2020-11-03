@@ -5,8 +5,10 @@ import coffee3D.core.maths.MathLibrary;
 import coffee3D.core.renderer.RenderUtils;
 import coffee3D.core.renderer.scene.Components.Camera;
 import coffee3D.core.renderer.Window;
+import coffee3D.core.renderer.scene.Components.GizmoComponent;
 import coffee3D.core.types.Color;
 import coffee3D.core.types.TypeHelper;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
@@ -27,9 +29,10 @@ public class RenderScene extends Scene {
     private final Framebuffer _sceneBuffer;
     private final Framebuffer _pickBuffer;
     private final SceneStaticBuffer _sceneUbo;
-    private final transient Camera _camera;
+    private final Camera _camera;
     private final ByteBuffer _pickOutputBuffer;
-    private transient SceneComponent _lastHitComponent = null;
+    private SceneComponent _lastHitComponent = null;
+    private GizmoComponent _gizmo;
 
     public RenderScene(boolean fullscreen) {
         super();
@@ -40,10 +43,12 @@ public class RenderScene extends Scene {
         _sceneUbo.load();
         _camera = new Camera();
         _pickOutputBuffer = BufferUtils.createByteBuffer(3);
+        _gizmo = new GizmoComponent(new Vector3f(0,0,0), new Quaternionf().identity(),new Vector3f(1,1,1));
     }
 
     @Override
     public void renderScene() {
+        if (getFbWidth() <= 0 || getFbHeight() <= 0) return;
         // Bind and reset scene frame buffer
         if (_sceneBuffer == null) glBindFramebuffer(GL_FRAMEBUFFER, 0);
         else glBindFramebuffer(GL_FRAMEBUFFER, _sceneBuffer.getBufferId());
@@ -63,8 +68,15 @@ public class RenderScene extends Scene {
         //Update static buffer
         _sceneUbo.use(getFbWidth(), getFbHeight(), getCamera());
 
+        _camera.draw(this);
+
         // render scene content
         super.renderScene();
+
+        glClear(GL_DEPTH_BUFFER_BIT);
+
+        //_gizmo.setRelativeRotation(getComponents().get(0).getRelativeRotation());
+        //_gizmo.draw(this);
 
         // Bind default buffer
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -100,7 +112,9 @@ public class RenderScene extends Scene {
         _sceneUbo.use(_pickBuffer.getWidth(), _pickBuffer.getHeight(), getCamera(),
                 TypeHelper.getMat4().identity().lookAt(camWorldPosition, TypeHelper.getVector3(camWorldPosition).add(dir), getCamera().getUpVector()));
 
+        RenderUtils.CheckGLErrors();
         super.renderScene();
+        RenderUtils.CheckGLErrors();
 
         glReadPixels(0, 0, 1, 1,  GL_RGB, GL_UNSIGNED_BYTE, _pickOutputBuffer);
 

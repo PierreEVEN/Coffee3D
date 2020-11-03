@@ -11,6 +11,10 @@ import java.util.List;
 public class Log {
 
     private static final List<LogMessage> _logHistory = new ArrayList<>();
+    private static ArrayList<ILogSent> logInterfaces = new ArrayList<>();
+    public static void BindLogSent(ILogSent item) {
+        logInterfaces.add(item);
+    }
 
     /** log colors */
     private static final String ANSI_RESET = "\u001B[0m";
@@ -44,6 +48,9 @@ public class Log {
         logMessage.verbosity = verbosity;
         logMessage.message = message;
         _logHistory.add(logMessage);
+        for (ILogSent item : logInterfaces) {
+            item.OnLogSent(message);
+        }
     }
 
     public static List<LogMessage> GetLogHistory() { return _logHistory; }

@@ -14,8 +14,8 @@ public class Texture2DResource extends TextureResource {
     private final int _height;
     private final int[] _data;
 
-    public Texture2DResource(String resourceName, int[] data, int width, int height) {
-        super(resourceName);
+    public Texture2DResource(String resourceName, int[] data, int width, int height, boolean bLinearFilter) {
+        super(resourceName, bLinearFilter);
         _data = data;
         _width = width;
         _height = height;
@@ -30,8 +30,8 @@ public class Texture2DResource extends TextureResource {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
         // Texture filtering mode
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _linearTextureFilter ? GL_LINEAR_MIPMAP_LINEAR : GL_NEAREST_MIPMAP_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, _linearTextureFilter ? GL_LINEAR : GL_NEAREST);
 
         glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
 

@@ -58,6 +58,8 @@ public class MeshResource extends GraphicResource {
         glVertexAttribPointer(1, 2, GL_FLOAT, false, Vertex.GetByteSize(), 3 * 4);
         glEnableVertexAttribArray(2);
         glVertexAttribPointer(2, 3, GL_FLOAT, false, Vertex.GetByteSize(), 3 * 4 + 2 * 4);
+        glEnableVertexAttribArray(3);
+        glVertexAttribPointer(3, 4, GL_FLOAT, false, Vertex.GetByteSize(), 3 * 4 + 2 * 4 + 3 * 4);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         glBindVertexArray(0);

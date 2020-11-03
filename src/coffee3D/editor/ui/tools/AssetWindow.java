@@ -6,6 +6,7 @@ import coffee3D.core.assets.types.Material;
 import coffee3D.core.assets.types.MaterialInterface;
 import coffee3D.core.assets.types.StaticMesh;
 import coffee3D.core.io.log.Log;
+import coffee3D.core.renderer.RenderUtils;
 import coffee3D.core.renderer.scene.*;
 import coffee3D.core.renderer.scene.Components.Camera;
 import coffee3D.core.renderer.scene.Components.StaticMeshComponent;
@@ -109,8 +110,6 @@ public class AssetWindow extends SubWindow {
 
             _thumbnailScene.renderScene();
             ImGui.image(_thumbnailScene.getFramebuffer().getColorBuffer(), sizeX, sizeX, 0, 1, 1, 0);
-
-
         }
 
     }

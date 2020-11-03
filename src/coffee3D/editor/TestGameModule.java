@@ -2,16 +2,22 @@ package coffee3D.editor;
 
 import coffee3D.core.IEngineModule;
 import coffee3D.core.assets.AssetManager;
+import coffee3D.core.assets.types.Texture2D;
 import coffee3D.core.controller.IGameController;
 import coffee3D.core.controller.TopViewController;
 import coffee3D.core.io.settings.EngineSettings;
+import coffee3D.core.renderer.RenderUtils;
 import coffee3D.core.renderer.Window;
 import coffee3D.core.renderer.scene.RenderScene;
+import coffee3D.core.ui.hud.*;
 import coffee3D.core.ui.imgui.ImGuiImplementation;
+import coffee3D.core.ui.tools.StatHelper;
+import imgui.ImColor;
 import imgui.ImGui;
 import imgui.ImGuiIO;
+import org.lwjgl.glfw.GLFW;
 
-public class TestGameModule implements IEngineModule {
+public class TestGameModule extends IEngineModule {
     private RenderScene _rootScene;
     private TopViewController controller;
 
@@ -41,7 +47,9 @@ public class TestGameModule implements IEngineModule {
 
     @Override
     public void DrawScene() {
+        RenderUtils.CheckGLErrors();
         _rootScene.renderScene();
+        RenderUtils.CheckGLErrors();
     }
 
     @Override
@@ -49,14 +57,13 @@ public class TestGameModule implements IEngineModule {
 
     @Override
     public void DrawHUD() {
-        //StatHelper.DrawStats(_rootScene);
+        StatHelper.DrawStats(_rootScene);
+
         /*
-        ImGui.image(AssetManager.<Texture2D>FindAsset("mud").getTextureID(), 50, 50);
+        ImGui.image(AssetManager.<Texture2D>FindAsset("defaultTexture").getTextureID(), 50, 50);
 
-
-
-        int gridTexture = AssetManager.<Texture2D>FindAsset("mud").getTextureID();
-        int grassTexture = AssetManager.<Texture2D>FindAsset("mud").getTextureID();
+        int gridTexture = AssetManager.<Texture2D>FindAsset("defaultTexture").getTextureID();
+        int grassTexture = AssetManager.<Texture2D>FindAsset("defaultTexture").getTextureID();
 
         if (HudUtils.BeginContainer(NodeAnchor.Get(.05f, .1f, .95f, .95f), PixelOffset.DEFAULT)) {
 
@@ -95,9 +102,6 @@ public class TestGameModule implements IEngineModule {
 
         }
         HudUtils.EndContainer();
-
-
          */
-
     }
 }

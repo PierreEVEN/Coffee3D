@@ -2,6 +2,7 @@ package coffee3D.core.assets.types;
 
 import coffee3D.core.assets.Asset;
 import coffee3D.core.assets.AssetReference;
+import coffee3D.core.resources.factories.ImportZAxis;
 import coffee3D.core.resources.factories.MeshFactory;
 import coffee3D.core.io.log.Log;
 import coffee3D.core.io.settings.EngineSettings;
@@ -29,11 +30,12 @@ public class StaticMesh extends Asset {
     private transient SphereBound _meshBound;
     private static final String[] meshExtensions = new String[] {"fbx", "obj"};
     private transient MaterialInterface[] _materialDrawList;
+    protected ImportZAxis _zAxis;
 
     public StaticMesh(String name, File filePath, File assetPath, String[] materials) {
         super(name, filePath, assetPath);
-
         _materials = new ArrayList<>();
+        Log.Warning("set axis");
         for (String mat : materials) {
             _materials.add(new AssetReference<>(MaterialInterface.class, mat));
         }
@@ -53,17 +55,20 @@ public class StaticMesh extends Asset {
 
     @Override
     public void load() {
-        _sections = MeshFactory.FromFile(getName(), getSourcePath());
+        if (_zAxis == null) _zAxis = ImportZAxis.ZUp;
+        _sections = MeshFactory.FromFile(getName(), getSourcePath(), _zAxis);
     }
 
     @Override
     public void reload() {
-        for (MeshResource section : _sections) {
-            ResourceManager.UnRegisterResource(section);
+        if (_sections != null) {
+            for (MeshResource section : _sections) {
+                ResourceManager.UnRegisterResource(section);
+            }
         }
         MeshResource[] newSections = null;
         try {
-            newSections = MeshFactory.FromFile(getName(), getSourcePath());
+            newSections = MeshFactory.FromFile(getName(), getSourcePath(), _zAxis);
         }
         catch (Exception e) {
             Log.Warning("failed to load or compile shaders : " + e.getMessage());
@@ -167,6 +172,7 @@ public class StaticMesh extends Asset {
     @Override
     public void drawDetailedContent() {
         super.drawDetailedContent();
-        ImGui.text("section count : " + _sections.length);
+
+        ImGui.text("section count : " + (_sections == null ? "null" : _sections.length));
     }
 }

@@ -28,20 +28,19 @@ public class Scene {
     public SceneProperty getProperties() { return _sceneProperties; }
 
     public void renderScene() {
-
+        RenderUtils.CheckGLErrors();
         if (RenderUtils.getPickMaterialDrawList()[0].getResource() == null) return;
 
         // Draw attached components
         for (int i = 0; i < _components.size(); ++i) {
-
             if (RenderUtils.RENDER_MODE == GL_SELECT) {
                 RenderUtils.getPickMaterialDrawList()[0].use(this);
                 RenderUtils.getPickMaterialDrawList()[0].getResource().setIntParameter("pickId", i + 1);
                 RenderUtils.CheckGLErrors();
             }
-
             _components.get(i).drawInternal(this);
         }
+        RenderUtils.CheckGLErrors();
     }
 
     public ArrayList<SceneComponent> getComponents() {

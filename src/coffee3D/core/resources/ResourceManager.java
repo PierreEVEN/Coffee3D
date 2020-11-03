@@ -15,6 +15,7 @@ public class ResourceManager {
     public static Collection<GraphicResource> GetResources() { return _resources.values(); }
 
     public static void RegisterResource(GraphicResource resource) {
+        if (resource == null) return;
         if (_resources.containsKey(resource.toString())) {
             Log.Fail("Resource named " + resource.toString() + " already exist");
             return;

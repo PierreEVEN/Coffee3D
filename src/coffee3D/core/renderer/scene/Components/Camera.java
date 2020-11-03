@@ -17,22 +17,18 @@ public class Camera extends SceneComponent {
         _pitch += delta;
         if (_pitch < -80) _pitch = -80;
         if (_pitch > 80) _pitch = 80;
-        sendRotation();
     }
 
     public void setPitchInput(float pitch) {
         _pitch = pitch;
-        sendRotation();
     }
 
     public void setYawInput(float yaw) {
         _yaw = yaw;
-        sendRotation();
     }
 
     public void addYawInput(float delta) {
         _yaw += delta;
-        sendRotation();
     }
 
     private void sendRotation() {
@@ -54,7 +50,9 @@ public class Camera extends SceneComponent {
     }
 
     @Override
-    public void draw(Scene context) {}
+    public void draw(Scene context) {
+        sendRotation();
+    }
 
     public void setFieldOfView(float fov) {
         _fov = fov;

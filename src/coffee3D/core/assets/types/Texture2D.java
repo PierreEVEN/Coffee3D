@@ -16,6 +16,7 @@ public class Texture2D extends Asset {
 
     private static final long serialVersionUID = -868665333590764448L;
     private transient Texture2DResource _texture;
+    protected boolean _linearFilter = true;
     private static final Color textureColor = new Color(69/255f, 111/255f, 243/255f, 1);
     private static final String[] meshExtensions = new String[] {"png"};
 
@@ -39,7 +40,7 @@ public class Texture2D extends Asset {
 
     @Override
     public void load() {
-        _texture = TextureFactory.T2dFromFile(getName(), getSourcePath());
+        _texture = TextureFactory.T2dFromFile(getName(), getSourcePath(), _linearFilter);
     }
 
     @Override
@@ -47,7 +48,7 @@ public class Texture2D extends Asset {
         ResourceManager.UnRegisterResource(_texture);
         Texture2DResource newTexture = null;
         try {
-            newTexture = TextureFactory.T2dFromFile(getName(), getSourcePath());
+            newTexture = TextureFactory.T2dFromFile(getName(), getSourcePath(), _linearFilter);
         }
         catch (Exception e) {
             Log.Warning("failed to load or compile shaders : " + e.getMessage());
@@ -72,7 +73,9 @@ public class Texture2D extends Asset {
     @Override
     public void drawDetailedContent() {
         super.drawDetailedContent();
-        ImGui.text("resolution : " + _texture.getWidth() + "x" + _texture.getHeight());
-        ImGui.image(getTextureID(), _texture.getWidth(), _texture.getHeight(), 0, 1, 1, 0);
+        if (_texture != null) {
+            ImGui.text("resolution : " + _texture.getWidth() + "x" + _texture.getHeight());
+            ImGui.image(getTextureID(), _texture.getWidth(), _texture.getHeight(), 0, 1, 1, 0);
+        }
     }
 }
