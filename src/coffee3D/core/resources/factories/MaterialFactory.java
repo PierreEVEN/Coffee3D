@@ -1,6 +1,7 @@
 package coffee3D.core.resources.factories;
 
 import coffee3D.core.io.log.Log;
+import coffee3D.core.renderer.RenderUtils;
 import coffee3D.core.resources.types.MaterialResource;
 import coffee3D.core.resources.types.TextureResource;
 

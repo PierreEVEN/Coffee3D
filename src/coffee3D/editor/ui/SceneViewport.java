@@ -19,24 +19,19 @@ public class SceneViewport extends SubWindow {
     @Override
     protected void draw() {
 
-        if (_sceneContext.getFramebuffer() == null) {
+        if (_sceneContext.isFullscreen()) {
             Log.Warning("cannot render fullscreen scene in ImGui window");
             return;
         }
 
-        int sizeX = (int)ImGui.getContentRegionAvailX();
-        int sizeY = (int)ImGui.getContentRegionAvailY();
-
-        if (sizeX != _sceneContext.getFramebuffer().getWidth() || sizeY != _sceneContext.getFramebuffer().getHeight()) {
-            _sceneContext.getFramebuffer().resizeFramebuffer(sizeX, sizeY);
-        }
+        _sceneContext.setResolution((int)ImGui.getContentRegionAvailX(), (int)ImGui.getContentRegionAvailY());
 
         if (ImGui.beginChild("windowContent")) {
-            _sceneContext.getFramebuffer().updateDrawPosition((int) ImGui.getWindowPosX(), (int) ImGui.getWindowPosY());
+            _sceneContext.setPosition((int) ImGui.getWindowPosX(), (int) ImGui.getWindowPosY());
             ImGui.image(
-                    _sceneContext.getFramebuffer().getColorBuffer(),
-                    _sceneContext.getFramebuffer().getWidth(),
-                    _sceneContext.getFramebuffer().getHeight(),
+                    _sceneContext.getPostProcessBuffer() == null ? _sceneContext.getColorFrameBuffer().getColorTexture() : _sceneContext.getPostProcessBuffer().getColorTexture(),
+                    _sceneContext.getFbWidth(),
+                    _sceneContext.getFbHeight(),
                     0, 1, 1, 0);
         }
         ImGui.endChild();

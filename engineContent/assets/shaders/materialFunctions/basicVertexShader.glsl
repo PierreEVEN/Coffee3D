@@ -10,5 +10,6 @@ out vec3 pos;
 out vec3 normal;
 out vec3 worldNormal;
 out vec4 vertColor;
+out vec4 fragPosLightSpace;
 
 uniform mat4 model;

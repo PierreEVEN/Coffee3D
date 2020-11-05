@@ -11,4 +11,5 @@ void main()
     normal = aNormal;
     worldNormal = normalize(mat3(transpose(inverse(model))) * aNormal);
     vertColor = aVertexColor;
+    fragPosLightSpace = lightSpaceMatrix * vec4(pos, 1.0);
 }

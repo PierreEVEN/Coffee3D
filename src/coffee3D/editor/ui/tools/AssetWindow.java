@@ -2,13 +2,9 @@ package coffee3D.editor.ui.tools;
 
 import coffee3D.core.assets.Asset;
 import coffee3D.core.assets.AssetManager;
-import coffee3D.core.assets.types.Material;
 import coffee3D.core.assets.types.MaterialInterface;
 import coffee3D.core.assets.types.StaticMesh;
-import coffee3D.core.io.log.Log;
-import coffee3D.core.renderer.RenderUtils;
 import coffee3D.core.renderer.scene.*;
-import coffee3D.core.renderer.scene.Components.Camera;
 import coffee3D.core.renderer.scene.Components.StaticMeshComponent;
 import coffee3D.core.types.Color;
 import coffee3D.core.types.TypeHelper;
@@ -21,7 +17,6 @@ import imgui.flag.ImGuiCol;
 import imgui.type.ImString;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
 
 public class AssetWindow extends SubWindow {
@@ -99,7 +94,7 @@ public class AssetWindow extends SubWindow {
                 _background.setMaterial((MaterialInterface)_editedAsset, 0);
             }
 
-            _thumbnailScene.getFramebuffer().resizeFramebuffer(sizeX, sizeX);
+            _thumbnailScene.getColorFrameBuffer().resizeFramebuffer(sizeX, sizeX);
 
             _thumbnailScene.getCamera().setYawInput((float) (GLFW.glfwGetTime() * 20));
             _thumbnailScene.getCamera().setPitchInput(30);
@@ -109,7 +104,7 @@ public class AssetWindow extends SubWindow {
                             .add(_background.getBound().position));
 
             _thumbnailScene.renderScene();
-            ImGui.image(_thumbnailScene.getFramebuffer().getColorBuffer(), sizeX, sizeX, 0, 1, 1, 0);
+            ImGui.image(_thumbnailScene.getColorFrameBuffer().getColorTexture(), sizeX, sizeX, 0, 1, 1, 0);
         }
 
     }

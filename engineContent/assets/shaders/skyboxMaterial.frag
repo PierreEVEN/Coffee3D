@@ -11,8 +11,8 @@ void main() {
 
     float zValue = min(1, max(0, pos.z / 100));
 
-    vec3 colorA = vec3(.5,.6,.6);
-    vec3 colorB = vec3(.5, .8, 1);
+    vec3 colorA = vec3(.2,.4,.4);
+    vec3 colorB = vec3(.2, .6, 1) / 2;
     vec3 realColor = vecLerp(colorA, colorB, zValue);
 
     vec3 lightDir = normalize(sunDirection.xyz);

@@ -133,13 +133,7 @@ public class Window {
         // Update delta time
         updateDeltaTime();
 
-        // Clear background buffer
-        glClearColor(0,0,0,0);
-
-        glPolygonMode( GL_FRONT_AND_BACK, _drawMode);
         _engineModule.DrawScene();
-        glPolygonMode( GL_FRONT_AND_BACK, GL_FILL);
-
 
         initUI();
 
@@ -222,6 +216,8 @@ public class Window {
     public void setDrawMode(int drawMode) {
         _drawMode = drawMode;
     }
+
+    public int getDrawMode() { return _drawMode; }
 
     public void showCursor(boolean bShow) {
         _bDisplayCursor = bShow;

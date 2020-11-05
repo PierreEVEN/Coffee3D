@@ -3,6 +3,7 @@ package coffee3D.core.renderer.scene;
 import coffee3D.core.assets.AssetReference;
 import coffee3D.core.assets.types.World;
 import coffee3D.core.io.log.Log;
+import coffee3D.core.renderer.RenderMode;
 import coffee3D.core.renderer.RenderUtils;
 import coffee3D.core.renderer.scene.Components.Camera;
 import coffee3D.core.types.TypeHelper;
@@ -33,14 +34,20 @@ public class Scene {
 
         // Draw attached components
         for (int i = 0; i < _components.size(); ++i) {
-            if (RenderUtils.RENDER_MODE == GL_SELECT) {
-                RenderUtils.getPickMaterialDrawList()[0].use(this);
-                RenderUtils.getPickMaterialDrawList()[0].getResource().setIntParameter("pickId", i + 1);
-                RenderUtils.CheckGLErrors();
-            }
-            _components.get(i).drawInternal(this);
+            RenderComponent(i);
         }
         RenderUtils.CheckGLErrors();
+    }
+
+    private void RenderComponent(int componentIndex) {
+        // Increment select buffer color index
+        if (RenderUtils.RENDER_MODE == RenderMode.Select) {
+            RenderUtils.getPickMaterialDrawList()[0].use(this);
+            RenderUtils.getPickMaterialDrawList()[0].getResource().setIntParameter("pickId", componentIndex + 1);
+            RenderUtils.CheckGLErrors();
+        }
+        // draw component
+        _components.get(componentIndex).drawInternal(this);
     }
 
     public ArrayList<SceneComponent> getComponents() {

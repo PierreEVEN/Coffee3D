@@ -10,4 +10,5 @@ void main()
     pos = (model * vec4(aPos, 1.0f)).xyz;
     normal = aNormal;
     worldNormal = normalize(mat3(transpose(inverse(model))) * aNormal);
+    fragPosLightSpace = lightSpaceMatrix * vec4(pos, 1.0);
 }

@@ -1,21 +1,19 @@
 package coffee3D.core.renderer.debug;
 
+import coffee3D.core.renderer.RenderMode;
 import coffee3D.core.renderer.RenderUtils;
 import coffee3D.core.renderer.scene.Scene;
 import coffee3D.core.types.Color;
 import coffee3D.core.types.TypeHelper;
 import org.joml.Matrix4f;
-import org.joml.Quaternionf;
 import org.joml.Vector3f;
-
-import java.lang.reflect.Type;
 
 import static org.lwjgl.opengl.GL11.*;
 
 public class DebugRenderer {
 
     public static void DrawDebugLine(Scene context, Vector3f p1, Vector3f p2, Color color) {
-        if (RenderUtils.RENDER_MODE == GL_SELECT) return;
+        if (RenderUtils.RENDER_MODE != RenderMode.Color) return;
         RenderUtils.CheckGLErrors();
         RenderUtils.getDebugMaterial().setColor(color);
         RenderUtils.CheckGLErrors();
@@ -31,7 +29,7 @@ public class DebugRenderer {
     }
 
     public static void DrawDebugBox(Scene context, Vector3f p1, Vector3f p2, Color color) {
-        if (RenderUtils.RENDER_MODE == GL_SELECT) return;
+        if (RenderUtils.RENDER_MODE != RenderMode.Color) return;
         RenderUtils.getDebugMaterial().use(context);
         RenderUtils.getDebugMaterial().getResource().setMatrixParameter("model", TypeHelper.getMat4().identity());
         RenderUtils.getDebugMaterial().getResource().setColorParameter("color", color);
@@ -84,6 +82,7 @@ public class DebugRenderer {
      */
 
     public static void DrawDebugCylinder(Scene context, Vector3f p1, Vector3f p2, float radius, int segments, Color color) {
+        if (RenderUtils.RENDER_MODE != RenderMode.Color) return;
 
         RenderUtils.getDebugMaterial().use(context);
 
@@ -124,7 +123,7 @@ public class DebugRenderer {
     }
 
     public static void DrawDebugSphere(Scene context, Vector3f center, float radius, int segments, Color color) {
-        if (RenderUtils.RENDER_MODE == GL_SELECT) return;
+        if (RenderUtils.RENDER_MODE != RenderMode.Color) return;
         RenderUtils.getDebugMaterial().use(context);
         RenderUtils.getDebugMaterial().getResource().setMatrixParameter("model", TypeHelper.getMat4().identity().translate(center));
         RenderUtils.getDebugMaterial().getResource().setColorParameter("color", color);

@@ -1,9 +1,7 @@
 package coffee3D.core.renderer.scene.Components;
 
 import coffee3D.core.assets.AssetReference;
-import coffee3D.core.assets.types.Material;
 import coffee3D.core.assets.types.MaterialInterface;
-import coffee3D.core.io.log.Log;
 import coffee3D.core.renderer.RenderUtils;
 import coffee3D.core.renderer.scene.Scene;
 import coffee3D.core.assets.types.StaticMesh;
@@ -28,7 +26,7 @@ public class StaticMeshComponent extends SceneComponent {
         super(position, rotation, scale);
         _mesh = new AssetReference(StaticMesh.class, mesh);
         lastMesh = new AssetReference<>(StaticMesh.class);
-        updateOverrides();
+        rebuildOverrides();
     }
 
     public void setMaterial(MaterialInterface material, int index) {
@@ -38,32 +36,46 @@ public class StaticMeshComponent extends SceneComponent {
 
     @Override
     public void draw(Scene context) {
-        super.draw(context);
 
-        if (_mesh.get() == null) return;
-        if (lastMesh.get() != _mesh.get()) updateOverrides();
+        // If mesh is null, draw default billboard
+        if (_mesh.get() == null) {
+            super.draw(context);
+            return;
+        }
 
+        // rebuild override list if mesh changed
+        if (lastMesh.get() != _mesh.get()) rebuildOverrides();
+
+        // Send model matrix
         _mesh.get().setMaterialModel(getWorldTransformationMatrix());
 
-        for (int i = 0; i < _materialList.length; ++i) {
-            if (_materialOverride[i].get() != null) _materialList[i] = _materialOverride[i].get();
-            else _materialList[i] = _mesh.get().getMaterials()[i];
+        // Select material drawList
+        switch (RenderUtils.RENDER_MODE) {
+            case Select -> _mesh.get().setMaterialList(RenderUtils.getPickMaterialDrawList());
+            case Shadow -> _mesh.get().setMaterialList(RenderUtils.getShadowDrawList());
+            case Color -> {
+                for (int i = 0; i < _materialList.length; ++i) {
+                    if (_materialOverride[i].get() != null) _materialList[i] = _materialOverride[i].get();
+                    else _materialList[i] = _mesh.get().getMaterials()[i];
+                }
+                _mesh.get().setMaterialList(_materialList);
+            }
         }
 
-        _mesh.get().setMaterialList(RenderUtils.RENDER_MODE == GL_SELECT ? RenderUtils.getPickMaterialDrawList() : _materialList);
+        // Render mesh
         _mesh.get().use(context);
-        glEnable(GL_DEPTH_TEST);
 
-        if (doesDisplayOutlines()) {
-            glDisable(GL_CULL_FACE);
-            _mesh.get().setMaterialList(RenderUtils.getOutlineMaterialDrawList());
-            _mesh.get().use(context);
-            glDisable(GL_CULL_FACE);
-        }
-
+        if (doesDisplayOutlines()) drawOutlines(context);
     }
 
-    private void updateOverrides() {
+    private void drawOutlines(Scene context) {
+        glDisable(GL_CULL_FACE);
+        _mesh.get().setMaterialList(RenderUtils.getOutlineMaterialDrawList());
+        _mesh.get().use(context);
+        glDisable(GL_CULL_FACE);
+    }
+
+    private void rebuildOverrides() {
         if (lastMesh.get() == _mesh.get()) return;
         lastMesh.set(_mesh.get());
 
@@ -79,7 +91,7 @@ public class StaticMeshComponent extends SceneComponent {
 
     public void setStaticMesh(StaticMesh mesh) {
         _mesh.set(mesh);
-        updateOverrides();
+        rebuildOverrides();
     }
 
     @Override

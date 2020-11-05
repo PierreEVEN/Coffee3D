@@ -1,6 +1,7 @@
 package coffee3D.core.resources.types;
 
 import coffee3D.core.io.log.Log;
+import coffee3D.core.renderer.RenderUtils;
 import coffee3D.core.renderer.scene.Scene;
 import coffee3D.core.resources.GraphicResource;
 import coffee3D.core.resources.ResourceManager;
@@ -84,11 +85,16 @@ public class MaterialResource extends GraphicResource {
         glDeleteShader(fragmentShaderId);
 
         int uniformBlockIndexRed = glGetUniformBlockIndex(_materialHandle, "shader_data");
+        if (uniformBlockIndexRed < 0) {
+            _bSuccessfullyCompiled = false;
+            Log.Error("Error linking shader " + toString() + " : cannot find shader_data block index");
+        }
         glUniformBlockBinding(_materialHandle, uniformBlockIndexRed, 0);
 
         if (hasErrors()) {
             ResourceManager.UnRegisterResource(this);
         }
+        RenderUtils.CheckGLErrors();
     }
 
     public int getProgramHandle() { return _materialHandle; }
@@ -96,9 +102,13 @@ public class MaterialResource extends GraphicResource {
     @Override
     public void unload() { glDeleteProgram(_materialHandle); }
 
+    private static MaterialResource _lastMaterial;
     @Override
     public void use(Scene context) {
-        glUseProgram(_materialHandle);
+        if (_lastMaterial != this) {
+            _lastMaterial = this;
+            glUseProgram(_materialHandle);
+        }
     }
 
     /**
@@ -107,7 +117,9 @@ public class MaterialResource extends GraphicResource {
      * @param value         value
      */
     public void setIntParameter(String parameterName, int value) {
-        glUniform1i(glGetUniformLocation(_materialHandle, parameterName), value);
+        int matHandle = glGetUniformLocation(_materialHandle, parameterName);
+        if (matHandle < 0) return;
+        glUniform1i(matHandle, value);
     }
 
     /**
@@ -116,7 +128,9 @@ public class MaterialResource extends GraphicResource {
      * @param value         value
      */
     public void setFloatParameter(String parameterName, float value) {
-        glUniform1f(glGetUniformLocation(_materialHandle, parameterName), value);
+        int matHandle = glGetUniformLocation(_materialHandle, parameterName);
+        if (matHandle < 0) return;
+        glUniform1f(matHandle, value);
     }
 
     /**
@@ -125,20 +139,27 @@ public class MaterialResource extends GraphicResource {
      * @param value         value
      */
     public void setMatrixParameter(String parameterName, Matrix4f value) {
+        int matHandle = glGetUniformLocation(_materialHandle, parameterName);
+        if (matHandle < 0) return;
         final FloatBuffer bfr = createFloatBuffer(16);
         value.get(bfr);
-        glUniformMatrix4fv(glGetUniformLocation(_materialHandle, parameterName), false, bfr);
+        glUniformMatrix4fv(matHandle, false, bfr);
     }
 
     public void setColorParameter(String parameterName, Color color) {
-        glUniform4f(glGetUniformLocation(_materialHandle, parameterName),
+        int matHandle = glGetUniformLocation(_materialHandle, parameterName);
+        if (matHandle < 0) return;
+        glUniform4f(matHandle,
                 color.getVector().x * color.getPower(),
                 color.getVector().y * color.getPower(),
                 color.getVector().z * color.getPower(),
                 color.getVector().w * color.getPower());
+        RenderUtils.CheckGLErrors();
     }
 
     public void setVec4Parameter(String parameterName, Vector4f value) {
-        glUniform4f(glGetUniformLocation(_materialHandle, parameterName), value.x, value.y, value.z, value.w);
+        int matHandle = glGetUniformLocation(_materialHandle, parameterName);
+        if (matHandle < 0) return;
+        glUniform4f(matHandle, value.x, value.y, value.z, value.w);
     }
 }

@@ -55,6 +55,7 @@ public class SceneStaticBuffer extends GraphicResource {
         bufferData.cameraDirection.set(camera.getUpVector());
         bufferData.time = (float)GLFW.glfwGetTime();
         bufferData.sunVector.set(((RenderSceneProperties)scene._sceneProperties).getSunVector());
+        bufferData.lightSpaceMatrix = scene.getLightSpaceMatrix();
 
         glBindBuffer(GL_UNIFORM_BUFFER, _uboHandle);
         glBufferSubData(GL_UNIFORM_BUFFER, 0, bufferData.serializeData());

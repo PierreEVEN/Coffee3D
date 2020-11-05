@@ -2,6 +2,9 @@ package coffee3D.core.assets.types;
 
 import coffee3D.core.assets.Asset;
 import coffee3D.core.assets.AssetReference;
+import coffee3D.core.io.log.Log;
+import coffee3D.core.renderer.RenderUtils;
+import coffee3D.core.renderer.scene.RenderScene;
 import coffee3D.core.renderer.scene.Scene;
 import coffee3D.core.resources.types.MaterialResource;
 import coffee3D.core.types.Color;
@@ -32,13 +35,21 @@ public abstract class MaterialInterface extends Asset {
     public void use(Scene context) {
         getResource().use(context);
         bindColor(null);
+        bindShadowMaps(context);
         bindTextures(null);
+
     }
 
     public abstract MaterialResource getResource();
 
     public void bindColor(Color colorOverride) {
         getResource().setColorParameter("color", colorOverride == null ? _materialColor : colorOverride);
+    }
+
+    private void bindShadowMaps(Scene context) {
+        getResource().setIntParameter("shadowMap", 0);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, ((RenderScene)context).getShadowBuffer().getDepthStencilTexture());
     }
 
     public void bindTextures(AssetReference<Texture2D>[] textureOverride) {
@@ -49,12 +60,13 @@ public abstract class MaterialInterface extends Asset {
             if (usedTexture == null && textureOverride != null) usedTexture = textureOverride[i].get();
             if (usedTexture != null)
             {
-                getResource().setIntParameter("texture" + i, i);
-                glActiveTexture(GL_TEXTURE0 + i);
+                getResource().setIntParameter("texture" + i, i + 1);
+                glActiveTexture(GL_TEXTURE0 + 1);
                 glBindTexture(GL_TEXTURE_2D, usedTexture.getTextureID());
             }
         }
     }
+
 
     public AssetReference<Texture2D>[] getTextures() { return _textures; }
     public AssetReference<Texture2D>[] cloneTextures() {

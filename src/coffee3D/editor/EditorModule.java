@@ -56,7 +56,9 @@ public class EditorModule extends IEngineModule {
     }
 
     @Override
-    public void DrawUI() { EditorUI.DrawMenuBar(_rootScene); }
+    public void DrawUI() {
+        EditorUI.DrawMenuBar(_rootScene);
+    }
 
     @Override
     public void DrawHUD() { }

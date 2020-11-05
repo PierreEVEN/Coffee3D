@@ -25,10 +25,34 @@ public class RenderUtils {
 
 
     private static MaterialInterface debugMaterial;
-    private static MaterialInterface[] pickMaterial;
-    private static MaterialInterface[] outlineMaterial;
+    private static MaterialInterface postProcessMaterial;
+    private static MaterialInterface[] shadowDrawList;
+    private static MaterialInterface[] pickDrawList;
+    private static MaterialInterface[] outlineDrawList;
 
-    public static int RENDER_MODE = GL_NONE;
+    public static RenderMode RENDER_MODE = RenderMode.Color;
+
+    public static MaterialInterface[] getShadowDrawList() {
+        if (shadowDrawList == null) {
+            shadowDrawList = new Material[] { new Material("ShadowMaterial", EngineSettings.SHADOW_MATERIAL_PATH, null, null) };
+            if (shadowDrawList == null) {
+                Log.Fail("failed to shadow material from : " + EngineSettings.SHADOW_MATERIAL_PATH);
+            }
+            RenderUtils.CheckGLErrors();
+        }
+        return shadowDrawList;
+    }
+
+    public static MaterialInterface getPostProcessMaterial() {
+        if (postProcessMaterial == null) {
+            postProcessMaterial = new Material("PostProcessMaterial", EngineSettings.POST_PROCESS_MATERIAL, null, null);
+            if (postProcessMaterial == null) {
+                Log.Fail("failed to load post process material from : " + EngineSettings.POST_PROCESS_MATERIAL);
+            }
+            RenderUtils.CheckGLErrors();
+        }
+        return postProcessMaterial;
+    }
 
     public static MaterialInterface getDebugMaterial() {
         if (debugMaterial == null) {
@@ -36,28 +60,31 @@ public class RenderUtils {
             if (debugMaterial == null) {
                 Log.Fail("failed to load debug material from : " + EngineSettings.DEBUG_MATERIAL_PATH);
             }
+            RenderUtils.CheckGLErrors();
         }
         return debugMaterial;
     }
 
     public static MaterialInterface[] getPickMaterialDrawList() {
-        if (pickMaterial == null) {
-            pickMaterial = new Material[] { new Material("PickMaterial", EngineSettings.PICK_MATERIAL_PATH, null, null) };
-            if (pickMaterial[0] == null) {
+        if (pickDrawList == null) {
+            pickDrawList = new Material[] { new Material("PickMaterial", EngineSettings.PICK_MATERIAL_PATH, null, null) };
+            if (pickDrawList[0] == null) {
                 Log.Fail("failed to load pick material from : " + EngineSettings.DEBUG_MATERIAL_PATH);
             }
+            RenderUtils.CheckGLErrors();
         }
-        return pickMaterial;
+        return pickDrawList;
     }
 
     public static MaterialInterface[] getOutlineMaterialDrawList() {
-        if (outlineMaterial == null) {
-            outlineMaterial = new Material[] { new Material("OutlineMaterial", EngineSettings.OUTLINE_MATERIAL_PATH, null, null) };
-            if (outlineMaterial[0] == null) {
+        if (outlineDrawList == null) {
+            outlineDrawList = new Material[] { new Material("OutlineMaterial", EngineSettings.OUTLINE_MATERIAL_PATH, null, null) };
+            if (outlineDrawList[0] == null) {
                 Log.Fail("failed to load pick material from : " + EngineSettings.OUTLINE_MATERIAL_PATH);
             }
+            RenderUtils.CheckGLErrors();
         }
-        return outlineMaterial;
+        return outlineDrawList;
     }
 
     public static void InitializeOpenGL() {
@@ -68,7 +95,17 @@ public class RenderUtils {
         int errCode;
         while((errCode = glGetError()) != GL_NO_ERROR)
         {
-            Log.Error("GL error : " + Integer.toHexString(errCode));
+            String errorCode;
+            switch (errCode) {
+                case GL_INVALID_ENUM -> errorCode = "GL_INVALID_ENUM";
+                case GL_INVALID_VALUE -> errorCode = "GL_INVALID_VALUE";
+                case GL_INVALID_OPERATION -> errorCode = "GL_INVALID_OPERATION";
+                case GL_STACK_OVERFLOW -> errorCode = "GL_STACK_OVERFLOW";
+                case GL_STACK_UNDERFLOW -> errorCode = "GL_STACK_UNDERFLOW";
+                case GL_OUT_OF_MEMORY -> errorCode = "GL_OUT_OF_MEMORY";
+                default -> errorCode = "unknown : " + Integer.toHexString(errCode);
+            }
+            Log.Fail("GL error : " + errorCode);
         }
     }
 

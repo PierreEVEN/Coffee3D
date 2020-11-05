@@ -1,5 +1,6 @@
 package coffee3D.core.renderer.scene;
 
+import coffee3D.core.renderer.RenderMode;
 import coffee3D.core.renderer.RenderUtils;
 import coffee3D.core.types.SphereBound;
 import coffee3D.core.types.TypeHelper;
@@ -19,7 +20,7 @@ public class SceneComponent implements Serializable {
     protected String _componentName;
     private transient boolean _showOutlines;
 
-    public boolean doesDisplayOutlines() { return _showOutlines && RenderUtils.RENDER_MODE != GL_SELECT; }
+    public boolean doesDisplayOutlines() { return _showOutlines && RenderUtils.RENDER_MODE == RenderMode.Color; }
     public void setOutlined(boolean enableOutlines) { _showOutlines = enableOutlines; }
 
     public String getComponentName() {
