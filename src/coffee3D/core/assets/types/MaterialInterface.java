@@ -47,6 +47,7 @@ public abstract class MaterialInterface extends Asset {
     }
 
     private void bindShadowMaps(Scene context) {
+        if (((RenderScene)context).getShadowBuffer() == null) return;
         getResource().setIntParameter("shadowMap", 0);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, ((RenderScene)context).getShadowBuffer().getDepthStencilTexture());

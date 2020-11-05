@@ -28,28 +28,6 @@ public class Scene {
 
     public SceneProperty getProperties() { return _sceneProperties; }
 
-    public void renderScene() {
-        RenderUtils.CheckGLErrors();
-        if (RenderUtils.getPickMaterialDrawList()[0].getResource() == null) return;
-
-        // Draw attached components
-        for (int i = 0; i < _components.size(); ++i) {
-            RenderComponent(i);
-        }
-        RenderUtils.CheckGLErrors();
-    }
-
-    private void RenderComponent(int componentIndex) {
-        // Increment select buffer color index
-        if (RenderUtils.RENDER_MODE == RenderMode.Select) {
-            RenderUtils.getPickMaterialDrawList()[0].use(this);
-            RenderUtils.getPickMaterialDrawList()[0].getResource().setIntParameter("pickId", componentIndex + 1);
-            RenderUtils.CheckGLErrors();
-        }
-        // draw component
-        _components.get(componentIndex).drawInternal(this);
-    }
-
     public ArrayList<SceneComponent> getComponents() {
         return _components;
     }

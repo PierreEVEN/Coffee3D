@@ -8,6 +8,7 @@ import coffee3D.core.assets.types.StaticMesh;
 import coffee3D.core.renderer.scene.SceneComponent;
 import coffee3D.core.types.SphereBound;
 import coffee3D.core.types.TypeHelper;
+import org.joml.FrustumIntersection;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -36,7 +37,6 @@ public class StaticMeshComponent extends SceneComponent {
 
     @Override
     public void draw(Scene context) {
-
         // If mesh is null, draw default billboard
         if (_mesh.get() == null) {
             super.draw(context);

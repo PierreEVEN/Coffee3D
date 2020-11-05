@@ -1,3 +1,6 @@
+#ifndef LIGHTING_GLSL
+#define LIGHTING_GLSL
+
 #include "noises.glsl";
 
 #define MIN_LIGHTING 0
@@ -25,16 +28,18 @@ vec4 lightColor(vec4 sourceColor, vec3 normal, vec3 sunDirection, vec3 pos) {
 
 float ShadowCalculation(vec4 fragPosLightSpace, sampler2D shadowTexture, vec3 normal, vec3 lightDir)
 {
+
+
     // perform perspective divide
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
     // transform to [0,1] range
     projCoords = projCoords * 0.5 + 0.5;
+    if (projCoords.z > 1) return 0;
     // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
     float closestDepth = texture(shadowTexture, projCoords.xy).r;
     // get depth of current fragment from light's perspective
     float currentDepth = projCoords.z;
 
-    if (currentDepth > 1) return 0;
     // check whether current frag pos is in shadow
     float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);  ;
 
@@ -53,3 +58,24 @@ float ShadowCalculation(vec4 fragPosLightSpace, sampler2D shadowTexture, vec3 no
 
     return shadow;
 }
+
+vec3 calcLight(vec3 baseColor, vec3 worldPos, vec3 norm, sampler2D shadowTexture, vec4 posLightSpace) {
+    // ambient
+    vec3 ambient = 0.15 * baseColor;
+    // diffuse
+    vec3 lightDir = sunDirection.xyz;
+    float diff = max(dot(lightDir, norm), 0.0);
+    vec3 diffuse = vec3(diff);
+    // specular
+    vec3 viewDir = normalize(cameraPos.xyz - worldPos);
+    float spec = 0.0;
+    vec3 halfwayDir = normalize(lightDir + cameraDir.xyz);
+    spec = pow(max(dot(norm, halfwayDir), 0.0), 64.0);
+    vec3 specular = vec3(spec);
+    // calculate shadow
+    float shadow = 0;
+    if (shadowIntensity != 0) shadow = ShadowCalculation(posLightSpace, shadowTexture, norm, lightDir) * shadowIntensity;
+    return (ambient + (1.0 - shadow) * (diffuse + specular)) * baseColor;
+}
+
+#endif

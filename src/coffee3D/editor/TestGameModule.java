@@ -61,7 +61,7 @@ public class TestGameModule extends IEngineModule {
 
     @Override
     public void DrawHUD() {
-        //StatHelper.DrawStats(_rootScene);
+        StatHelper.DrawStats(_rootScene);
 
         /*
         ImGui.image(AssetManager.<Texture2D>FindAsset("defaultTexture").getTextureID(), 50, 50);

@@ -12,6 +12,7 @@ public class RenderSceneProperties extends SceneProperty {
     public float sunPower = 1;
     public Quaternionf sunOrientation;
     private static final Vector3f zAxis = new Vector3f(0, 0, -1);
+    public float shadowIntensity = 1;
 
     public Vector3f getSunVector() {
         if (sunOrientation == null) {

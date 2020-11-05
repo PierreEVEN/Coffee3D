@@ -11,7 +11,9 @@ public class MainGame {
         EngineSettings.MSAA_SAMPLES = 8;
         EngineSettings.ENABLE_DOUBLE_BUFFERING = true;
         EngineSettings.TRANSPARENT_FRAMEBUFFER = false;
-        //EngineSettings.DEFAULT_MAP_NAME = "islandWorld";
+        EngineSettings.ENABLE_PICKING = false;
+        EngineSettings.ENABLE_SHADOWS = true;
+        EngineSettings.ENABLE_POSTPROCESSING = true;
 
         Window.GetPrimaryWindow().run(new TestGameModule());
     }

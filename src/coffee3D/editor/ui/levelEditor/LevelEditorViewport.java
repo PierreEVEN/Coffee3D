@@ -63,6 +63,10 @@ public class LevelEditorViewport extends SceneViewport implements IInputListener
                 });
                 ImGui.endMenu();
             }
+            if (ImGui.beginMenu("debug")) {
+                if (ImGui.button(getScene().isFrustumFrozen() ? "unfreeze frustum culling" : "freeze frustum culling")) getScene().freezeFrustum(!getScene().isFrustumFrozen());
+                ImGui.endMenu();
+            }
             if (ImGui.beginMenu("window")) {
 
                 if (ImGui.menuItem("stats")) new StatWindow(_sceneContext, "statistics");

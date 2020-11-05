@@ -1,3 +1,5 @@
+#ifndef NOISES_GLSL
+#define NOISES_GLSL
 
 float rand(vec2 n) {
     return fract(sin(dot(n, vec2(12.9898, 4.1414))) * 43758.5453);
@@ -28,3 +30,4 @@ float noise(vec3 p){
 
     return o4.y * d.y + o4.x * (1.0 - d.y);
 }
+#endif

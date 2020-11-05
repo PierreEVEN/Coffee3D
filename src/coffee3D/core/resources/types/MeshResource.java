@@ -125,9 +125,13 @@ public class MeshResource extends GraphicResource {
 
     public void unload() {}
 
+    private static MeshResource lastMesh;
     public void use(Scene context) {
-        glBindVertexArray(_meshVao);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _meshEbo);
+        if (lastMesh != this) {
+            lastMesh = this;
+            glBindVertexArray(_meshVao);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _meshEbo);
+        }
         glDrawElements(GL_TRIANGLES, _indices.length, GL_UNSIGNED_INT, 0);
     }
 }

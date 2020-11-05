@@ -1,3 +1,6 @@
+#ifndef UNIFORM_STRUCTURE_GLSL
+#define UNIFORM_STRUCTURE_GLSL
+
 layout (std140) uniform shader_data
 {
     mat4 viewMatrix;
@@ -7,4 +10,6 @@ layout (std140) uniform shader_data
     vec4 cameraDir;
     vec4 sunDirection;
     float time;
+    float shadowIntensity;
 };
+#endif

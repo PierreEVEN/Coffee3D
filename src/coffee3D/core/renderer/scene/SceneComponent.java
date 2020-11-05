@@ -349,4 +349,9 @@ public class SceneComponent implements Serializable {
     public SceneComponent getParent() {
         return _parent;
     }
+
+    private int _componentIndex;
+
+    public void setComponentIndex(int index) { _componentIndex = index; }
+    public int getComponentIndex() { return _componentIndex; }
 }

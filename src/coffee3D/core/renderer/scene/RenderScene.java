@@ -10,13 +10,15 @@ import coffee3D.core.resources.factories.MeshFactory;
 import coffee3D.core.resources.types.MeshResource;
 import coffee3D.core.types.TypeHelper;
 import coffee3D.core.types.Vertex;
+import org.joml.FrustumIntersection;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 
-import java.awt.*;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.LinkedList;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
@@ -35,21 +37,28 @@ public class RenderScene extends Scene {
     private final ByteBuffer _pickOutputBuffer;
     private SceneComponent _lastHitComponent = null;
     private final Matrix4f lightSpaceMatrix = new Matrix4f().identity();
+    private final FrustumIntersection _frustum = new FrustumIntersection();
+    private final LinkedList<SceneComponent> frustumDrawList = new LinkedList<>();
+
 
     private boolean enablePicking;
     private boolean enableShadows;
     private boolean enablePostProcess;
     private boolean bFullScreen;
+    private boolean freezeFrustum = false;
 
     MeshResource test;
+
+    public void freezeFrustum(boolean bFreeze) { freezeFrustum = bFreeze; }
+    public boolean isFrustumFrozen() { return freezeFrustum; }
 
     public RenderScene(boolean fullscreen) {
         super();
 
 
-        enablePicking = true;
-        enableShadows = true;
-        enablePostProcess = true;
+        enablePicking = EngineSettings.ENABLE_PICKING;
+        enableShadows = EngineSettings.ENABLE_SHADOWS;
+        enablePostProcess = EngineSettings.ENABLE_POSTPROCESSING;
         bFullScreen = fullscreen;
 
         // Buffers
@@ -75,10 +84,49 @@ public class RenderScene extends Scene {
         test = MeshFactory.FromResources("screenQuadMesh" + truc++, vertices, triangles);
     }
     private static int truc = 0;
-    @Override
+
+
+    public void buildFrustumList() {
+        if (freezeFrustum) return;
+        frustumDrawList.clear();
+
+        _frustum.set(getProjection(getFbWidth(), getFbHeight(), getCamera()).mul(getCamera().getViewMatrix()));
+        ArrayList<SceneComponent> components = getComponents();
+        for (int i = 0; i < components.size(); ++i) {
+            SceneComponent component = components.get(i);
+            component.setComponentIndex(i);
+            if (_frustum.testSphere(component.getBound().position, component.getBound().radius)) {
+                frustumDrawList.add(component);
+            }
+        }
+    }
+
+
+    public void drawAllComponents() {
+        for (SceneComponent component : getComponents()) component.drawInternal(this);
+    }
+
+    public void drawFrustrumComponents() {
+        if (RenderUtils.RENDER_MODE == RenderMode.Select) {
+            for (SceneComponent component : frustumDrawList) {
+                RenderUtils.getPickMaterialDrawList()[0].use(this);
+                RenderUtils.getPickMaterialDrawList()[0].getResource().setIntParameter("pickId", component.getComponentIndex() + 1);
+                RenderUtils.CheckGLErrors();
+                component.drawInternal(this);
+            }
+        }
+        else {
+            for (SceneComponent component : frustumDrawList) component.drawInternal(this);
+        }
+    }
+
+
     public void renderScene() {
         if (bFullScreen && _sceneBuffer != null) _sceneBuffer.resizeFramebuffer(Window.GetPrimaryWindow().getPixelWidth(), Window.GetPrimaryWindow().getPixelHeight());
         if (getFbWidth() <= 0 || getFbHeight() <= 0) return;
+
+        // QUERY RENDERED COMPONENTS
+        buildFrustumList();
 
         // CONTEXT INITIALIZATION
         _sceneUbo.use(this, getFbWidth(), getFbHeight(), getCamera());
@@ -91,7 +139,7 @@ public class RenderScene extends Scene {
             glEnable(GL_CULL_FACE);
             //glCullFace(GL_BACK);
             updateLightMatrix();
-            super.renderScene();
+            drawAllComponents();
         }
 
         // COLOR RENDERING
@@ -110,7 +158,7 @@ public class RenderScene extends Scene {
         glCullFace(GL_FRONT);
         glFrontFace(GL_CW);
         glPolygonMode( GL_FRONT_AND_BACK, Window.GetPrimaryWindow().getDrawMode());
-        super.renderScene();
+        drawFrustrumComponents();
         glPolygonMode( GL_FRONT_AND_BACK, GL_FILL);
 
         // POST PROCESS RENDERING
@@ -142,15 +190,15 @@ public class RenderScene extends Scene {
     }
 
     public void updateLightMatrix() {
-        float shadowRadius = 50;
         float near_plane = 1f, far_plane = 100;
+        float shadowRadius = far_plane / 2;
 
         Matrix4f lightProjection = TypeHelper.getMat4().ortho(-shadowRadius, shadowRadius, -shadowRadius, shadowRadius, near_plane, far_plane);
 
         Vector3f lightDirection = ((RenderSceneProperties)_sceneProperties).getSunVector();
 
         Matrix4f lightView = TypeHelper.getMat4().lookAt(
-                TypeHelper.getVector3(lightDirection).mul(50),
+                TypeHelper.getVector3(lightDirection).mul(far_plane / 2),
                 TypeHelper.getVector3(0, 0, 0),
                 TypeHelper.getVector3(0, 0, 1));
 
@@ -178,7 +226,7 @@ public class RenderScene extends Scene {
                 TypeHelper.getMat4().identity().lookAt(camWorldPosition, TypeHelper.getVector3(camWorldPosition).add(dir), getCamera().getUpVector()));
 
         RenderUtils.CheckGLErrors();
-        super.renderScene();
+        drawFrustrumComponents();
         RenderUtils.CheckGLErrors();
 
         glReadPixels(0, 0, 1, 1,  GL_RGB, GL_UNSIGNED_BYTE, _pickOutputBuffer);

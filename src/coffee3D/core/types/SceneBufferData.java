@@ -27,6 +27,7 @@ public class SceneBufferData {
     public Vector3f cameraDirection;
     public Vector3f sunVector;
     public float time;
+    public float shadowIntensity;
 
     public static int GetByteSize() { return GetFloatSize() * 4; }
 
@@ -37,7 +38,8 @@ public class SceneBufferData {
         4 + // cam pos
         4 + // cam dir
         4 + //sun
-        1; // time
+        1 + //time
+        1; // shadow intensity
     }
 
     public FloatBuffer serializeData() {
@@ -80,8 +82,11 @@ public class SceneBufferData {
         _bufferByteData.put(sunVector.z);
         _bufferByteData.put(0);
 
-        // Time
+        // time
         _bufferByteData.put(time);
+
+        // shadow intensity
+        _bufferByteData.put(shadowIntensity);
 
         _bufferByteData.flip();
         return _bufferByteData;
