@@ -2,6 +2,7 @@
 #define LIGHTING_GLSL
 
 #include "noises.glsl";
+#include "texture.glsl";
 
 #define MIN_LIGHTING 0
 #define AMBIANT_INTENSITY .3
@@ -28,6 +29,7 @@ vec4 lightColor(vec4 sourceColor, vec3 normal, vec3 sunDirection, vec3 pos) {
 
 float ShadowCalculation(vec4 fragPosLightSpace, sampler2D shadowTexture, vec3 normal, vec3 lightDir)
 {
+    float biasValue = 0.0035;
 
 
     // perform perspective divide
@@ -41,19 +43,22 @@ float ShadowCalculation(vec4 fragPosLightSpace, sampler2D shadowTexture, vec3 no
     float currentDepth = projCoords.z;
 
     // check whether current frag pos is in shadow
-    float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);  ;
+    float bias = max(biasValue * (1.0 - dot(normal, lightDir)), biasValue / 10);  ;
 
     float shadow = 0.0;
+
+    const int texelQuality = 1;
+
     vec2 texelSize = 1.0 / textureSize(shadowTexture, 0);
-    for(int x = -1; x <= 1; ++x)
+    for(int x = -texelQuality; x <= texelQuality; ++x)
     {
-        for(int y = -1; y <= 1; ++y)
+        for(int y = -texelQuality; y <= texelQuality; ++y)
         {
             float pcfDepth = texture(shadowTexture, projCoords.xy + vec2(x, y) * texelSize).r;
             shadow += currentDepth - bias > pcfDepth  ? 1.0 : 0.0;
         }
     }
-    shadow /= 9.0;
+    shadow /= (2 * texelQuality + 1) * (2 * texelQuality + 1);
 
 
     return shadow;

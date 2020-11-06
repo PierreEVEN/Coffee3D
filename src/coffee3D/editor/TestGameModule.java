@@ -61,13 +61,13 @@ public class TestGameModule extends IEngineModule {
 
     @Override
     public void DrawHUD() {
-        StatHelper.DrawStats(_rootScene);
+        //StatHelper.DrawStats(_rootScene);
 
         /*
-        ImGui.image(AssetManager.<Texture2D>FindAsset("defaultTexture").getTextureID(), 50, 50);
+        ImGui.image(AssetManager.<Texture2D>FindAsset("whiteTexture").getTextureID(), 50, 50);
 
-        int gridTexture = AssetManager.<Texture2D>FindAsset("defaultTexture").getTextureID();
-        int grassTexture = AssetManager.<Texture2D>FindAsset("defaultTexture").getTextureID();
+        int gridTexture = AssetManager.<Texture2D>FindAsset("whiteTexture").getTextureID();
+        int grassTexture = AssetManager.<Texture2D>FindAsset("whiteTexture").getTextureID();
 
         if (HudUtils.BeginContainer(NodeAnchor.Get(.05f, .1f, .95f, .95f), PixelOffset.DEFAULT)) {
 
@@ -106,6 +106,8 @@ public class TestGameModule extends IEngineModule {
 
         }
         HudUtils.EndContainer();
-        */
+
+         */
+
     }
 }

@@ -4,6 +4,8 @@ import coffee3D.core.io.log.Log;
 import coffee3D.core.renderer.scene.RenderScene;
 import coffee3D.core.ui.subWindows.SubWindow;
 import imgui.ImGui;
+import imgui.ImGuiOnceUponAFrame;
+import imgui.flag.ImGuiWindowFlags;
 
 public class SceneViewport extends SubWindow {
 
@@ -26,7 +28,7 @@ public class SceneViewport extends SubWindow {
 
         _sceneContext.setResolution((int)ImGui.getContentRegionAvailX(), (int)ImGui.getContentRegionAvailY());
 
-        if (ImGui.beginChild("windowContent")) {
+        if (ImGui.beginChild("windowContent", ImGui.getContentRegionAvailX(), ImGui.getContentRegionAvailY(), false, ImGuiWindowFlags.NoInputs)) {
             _sceneContext.setPosition((int) ImGui.getWindowPosX(), (int) ImGui.getWindowPosY());
             ImGui.image(
                     _sceneContext.getPostProcessBuffer() == null ? _sceneContext.getColorFrameBuffer().getColorTexture() : _sceneContext.getPostProcessBuffer().getColorTexture(),

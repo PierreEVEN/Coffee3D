@@ -1,5 +1,6 @@
 package coffee3D.core.ui.subWindows;
 
+import coffee3D.core.io.log.Log;
 import coffee3D.core.renderer.Window;
 import imgui.ImGui;
 import imgui.ImGuiIO;
@@ -17,6 +18,7 @@ public abstract class SubWindow {
     protected boolean bHasMenuBar = false;
     private float _wPosX = 0, _wPosY = 0, _wSizeX = 0, _wSizeY = 0;
     private boolean _bCanDisplay;
+    private boolean _bIsHovered;
 
 
     public SubWindow(String windowName) {
@@ -42,6 +44,8 @@ public abstract class SubWindow {
                 _wSizeY = ImGui.getWindowSizeY();
                 _bCanDisplay = true;
                 draw();
+                _bIsHovered = ImGui.isWindowHovered();
+
             }
             else {
                 _bCanDisplay = false;
@@ -59,11 +63,12 @@ public abstract class SubWindow {
         }
     }
 
+
     public boolean isMouseInsideWindow() {
         float posX = (float) Window.GetPrimaryWindow().getCursorPosX();
         float posY = (float) Window.GetPrimaryWindow().getCursorPosY();
         if (posX < _wPosX || posY < _wPosY) return false;
         if (posX > _wPosX + _wSizeX || posY > _wPosY + _wSizeY) return false;
-        return _bCanDisplay;
+        return _bCanDisplay && _bIsHovered;
     }
 }

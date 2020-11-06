@@ -48,7 +48,5 @@ public class World extends Asset {
             _linkedScene.save();
         }
         super.save();
-
-        Random test;
     }
 }

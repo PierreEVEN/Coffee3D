@@ -57,12 +57,23 @@ public class Scene {
     }
 
     public static Matrix4f getProjection(float width, float height, Camera camera) {
-        return TypeHelper.getMat4().identity().perspective(
-                (float) Math.toRadians(camera.getFieldOfView()),
-                width / height,
-                camera.getNearClipPlane(),
-                camera.getFarClipPlane()
-        );
+        if (camera.enablePerspective()) {
+            return TypeHelper.getMat4().identity().perspective(
+                    (float) Math.toRadians(camera.getFieldOfView()),
+                    width / height,
+                    camera.getNearClipPlane(),
+                    camera.getFarClipPlane()
+            );
+        }
+        else {
+
+            float near_plane = 1f, far_plane = 100;
+            float shadowRadius = far_plane / 2;
+
+            Matrix4f lightProjection = TypeHelper.getMat4().ortho(-shadowRadius, shadowRadius, -shadowRadius, shadowRadius, near_plane, far_plane);
+            return lightProjection;
+
+        }
     }
 
     public AssetReference<World> getSource() {

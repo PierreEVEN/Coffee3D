@@ -17,7 +17,7 @@ public class TopViewController extends IGameController {
     private float wantedYaw = 0;
     private float pitch = 40;
     private Vector2f currentSpeed;
-    private float _speed = 5f;
+    private float _speed = 200f;
     private float _mouseSensitivity = .18f;
     private final Vector3f targetPosition;
     private final Vector3f cameraPosition;
@@ -39,10 +39,10 @@ public class TopViewController extends IGameController {
         currentSpeed.mul(Math.max(0, 1 - (deltaTime * 10)));
 
         keyboardMovements(deltaTime, movementSpeed);
-        mouseMovements(deltaTime, movementSpeed * 1.5f);
+        mouseMovements(movementSpeed * 1.5f);
 
         yaw = Interpolation.FInterpTo(yaw, wantedYaw, 10);
-        pitch = Interpolation.FInterpTo(pitch, Math.max(10, Math.min(40, distance * .75f + 10)), 5);
+        pitch = Interpolation.FInterpTo(pitch, Math.max(20, Math.min(40, distance * .75f + 10)), 5);
         distance = Interpolation.FInterpTo(distance, wantedDistance, 10);
 
         getScene().getCamera().setPitchInput(pitch);
@@ -57,12 +57,14 @@ public class TopViewController extends IGameController {
 
     }
 
-    private void mouseMovements(float deltaTime, float movementSpeed) {
+    private void mouseMovements(float movementSpeed) {
 
         float distLeft = getScene().getCursorPosX();
         float distTop = getScene().getCursorPosY();
         float distRight = getScene().getFbWidth() - distLeft;
         float distBottom = getScene().getFbHeight() - distTop;
+
+        if (distLeft < 0 || distBottom < 0 ||distTop < 0 || distRight < 0) return;
 
         if (distRight < borderDetection) {
             currentSpeed.y += movementSpeed * Math.min(1, (1 - distRight / borderDetection));
@@ -110,12 +112,12 @@ public class TopViewController extends IGameController {
         Vector3f forward = TypeHelper.getVector3(getScene().getCamera().getForwardVector());
         forward.z = 0;
         forward.normalize();
-        forward.mul(currentSpeed.x);
+        forward.mul(currentSpeed.x * deltaTime);
 
         Vector3f right = TypeHelper.getVector3(getScene().getCamera().getRightVector());
         right.z = 0;
         right.normalize();
-        right.mul(currentSpeed.y);
+        right.mul(currentSpeed.y * deltaTime);
 
         targetPosition.add(forward);
         targetPosition.add(right);
@@ -140,6 +142,6 @@ public class TopViewController extends IGameController {
     public void scrollCallback(double xOffset, double yOffset) {
         if (yOffset != 0) wantedDistance *= (-yOffset) / 4 + 1;
         if (wantedDistance > 200) wantedDistance = 200;
-        if (wantedDistance < 1) wantedDistance = 1;
+        if (wantedDistance < 5) wantedDistance = 5;
     }
 }
