@@ -7,8 +7,6 @@ import coffee3D.core.renderer.scene.Scene;
 import coffee3D.core.assets.types.StaticMesh;
 import coffee3D.core.renderer.scene.SceneComponent;
 import coffee3D.core.types.SphereBound;
-import coffee3D.core.types.TypeHelper;
-import org.joml.FrustumIntersection;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -22,6 +20,7 @@ public class StaticMeshComponent extends SceneComponent {
     private transient SphereBound _componentBound;
     protected AssetReference<MaterialInterface>[] _materialOverride;
     private MaterialInterface[] _materialList;
+    private final static transient Vector3f _boundScale = new Vector3f();
 
     public StaticMeshComponent(StaticMesh mesh, Vector3f position, Quaternionf rotation, Vector3f scale) {
         super(position, rotation, scale);
@@ -51,15 +50,15 @@ public class StaticMeshComponent extends SceneComponent {
 
         // Select material drawList
         switch (RenderUtils.RENDER_MODE) {
-            case Select -> _mesh.get().setMaterialList(RenderUtils.getPickMaterialDrawList());
-            case Shadow -> _mesh.get().setMaterialList(RenderUtils.getShadowDrawList());
-            case Color -> {
+            case Select : _mesh.get().setMaterialList(RenderUtils.getPickMaterialDrawList()); break;
+            case Shadow : _mesh.get().setMaterialList(RenderUtils.getShadowDrawList()); break;
+            case Color : {
                 for (int i = 0; i < _materialList.length; ++i) {
                     if (_materialOverride[i].get() != null) _materialList[i] = _materialOverride[i].get();
                     else _materialList[i] = _mesh.get().getMaterials()[i];
                 }
                 _mesh.get().setMaterialList(_materialList);
-            }
+            } break;
         }
 
         // Render mesh
@@ -99,11 +98,10 @@ public class StaticMeshComponent extends SceneComponent {
         if (_mesh.get() == null) return super.getBound();
         if (_componentBound == null) _componentBound = new SphereBound();
         _componentBound.radius = _mesh.get().getBound().radius;
-        _componentBound.position = TypeHelper.getVector3(_mesh.get().getBound().position);
+        _componentBound.position.set(_mesh.get().getBound().position);
         getWorldTransformationMatrix().transformPosition(_componentBound.position);
-        Vector3f scale = TypeHelper.getVector3();
-        getWorldTransformationMatrix().getScale(scale);
-        _componentBound.radius *= Math.max(scale.x, Math.max(scale.y, scale.z));
+        getWorldTransformationMatrix().getScale(_boundScale);
+        _componentBound.radius *= Math.max(_boundScale.x, Math.max(_boundScale.y, _boundScale.z));
         return _componentBound;
     }
 }

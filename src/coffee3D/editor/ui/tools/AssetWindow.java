@@ -4,6 +4,7 @@ import coffee3D.core.assets.Asset;
 import coffee3D.core.assets.AssetManager;
 import coffee3D.core.assets.types.MaterialInterface;
 import coffee3D.core.assets.types.StaticMesh;
+import coffee3D.core.io.log.Log;
 import coffee3D.core.renderer.scene.*;
 import coffee3D.core.renderer.scene.Components.StaticMeshComponent;
 import coffee3D.core.types.Color;
@@ -31,7 +32,6 @@ public class AssetWindow extends SubWindow {
         _editedAsset = asset;
         newAssetName = new ImString(_editedAsset.getName());
         if (newAssetName.getBufferSize() < 100) newAssetName.resize(100);
-
     }
 
     @Override
@@ -65,8 +65,6 @@ public class AssetWindow extends SubWindow {
                 _editedAsset.updateName(newAssetName.get());
             }
         }
-
-
 
         _editedAsset.drawDetailedContent();
         StructureReader.WriteObj(_editedAsset, _editedAsset.getName());
@@ -106,6 +104,12 @@ public class AssetWindow extends SubWindow {
             _thumbnailScene.renderScene();
             ImGui.image(_thumbnailScene.getColorFrameBuffer().getColorTexture(), sizeX, sizeX, 0, 1, 1, 0);
         }
+    }
 
+    @Override
+    public void close() {
+        super.close();
+        if (_thumbnailScene != null) _thumbnailScene.delete();
+        _thumbnailScene = null;
     }
 }

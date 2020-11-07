@@ -27,9 +27,9 @@ public class EditorModule extends IEngineModule {
     @Override
     public void LoadResources() {
         /* Load default font */
-        ImGuiImplementation.Get().addFont(EngineSettings.ENGINE_ASSET_PATH + "/assets/fonts/roboto/Roboto-Medium.ttf", 60);
+        ImGuiImplementation.Get().addFont(EngineSettings.ENGINE_ASSET_PATH + "/assets/fonts/roboto/Roboto-Medium.ttf", 40);
         ImGuiIO io = ImGui.getIO();
-        io.setFontGlobalScale(0.4f);
+        io.setFontGlobalScale(0.5f);
     }
 
     @Override

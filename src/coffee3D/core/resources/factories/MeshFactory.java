@@ -60,9 +60,9 @@ public class MeshFactory {
         Matrix4f transform = fromAiMatrix(node.mTransformation());
 
         switch (zAxis) {
-            case ZUp -> {}
-            case YUp -> transform.mul(zMatrixY);
-            case YDown -> transform.mul(zMatrixMY);
+            case ZUp : {} break;
+            case YUp : transform.mul(zMatrixY); break;
+            case YDown : transform.mul(zMatrixMY); break;
         }
 
         ArrayList<MeshResource> meshes = processNode(resourceName, node, transform, aiScene.mMeshes());

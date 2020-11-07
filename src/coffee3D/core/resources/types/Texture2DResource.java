@@ -10,20 +10,20 @@ import static org.lwjgl.opengl.GL30.*;
  */
 public class Texture2DResource extends TextureResource {
 
-    private final int _width;
-    private final int _height;
-    private final int[] _data;
+    private final int _width, _height;
+    private int[] _data;
 
     public Texture2DResource(String resourceName, int[] data, int width, int height, boolean bLinearFilter) {
         super(resourceName, bLinearFilter);
         _data = data;
         _width = width;
         _height = height;
+
+        _textureHandle = glGenTextures();
     }
 
     @Override
     public void load() {
-        _textureHandle = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, _textureHandle);
         // Texture wrapping mode
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -39,6 +39,8 @@ public class Texture2DResource extends TextureResource {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _width, _height, 0, GL_RGBA, GL_UNSIGNED_BYTE, _data);
         glGenerateMipmap(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, 0);
+
+        _data = null;
     }
 
     @Override

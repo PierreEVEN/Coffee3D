@@ -7,7 +7,9 @@ import coffee3D.core.renderer.RenderUtils;
 import coffee3D.core.renderer.scene.Components.Camera;
 import coffee3D.core.renderer.Window;
 import coffee3D.core.resources.factories.MeshFactory;
+import coffee3D.core.resources.types.Framebuffer;
 import coffee3D.core.resources.types.MeshResource;
+import coffee3D.core.resources.types.SceneUniformBuffer;
 import coffee3D.core.types.TypeHelper;
 import coffee3D.core.types.Vertex;
 import org.joml.FrustumIntersection;
@@ -32,13 +34,14 @@ public class RenderScene extends Scene {
     private final Framebuffer _pickBuffer;
     private final Framebuffer _postProcessBuffer;
     private final Framebuffer _shadowBuffer;
-    private final SceneStaticBuffer _sceneUbo;
+    private final SceneUniformBuffer _sceneUbo;
     private final Camera _camera;
     private final ByteBuffer _pickOutputBuffer;
     private SceneComponent _lastHitComponent = null;
     private final Matrix4f lightSpaceMatrix = new Matrix4f().identity();
     private final FrustumIntersection _frustum = new FrustumIntersection();
     private final LinkedList<SceneComponent> frustumDrawList = new LinkedList<>();
+    private static MeshResource _viewportQuadMesh;
 
 
     private boolean enablePicking;
@@ -46,8 +49,6 @@ public class RenderScene extends Scene {
     private boolean enablePostProcess;
     private boolean bFullScreen;
     private boolean freezeFrustum = false;
-
-    MeshResource test;
 
     public void freezeFrustum(boolean bFreeze) { freezeFrustum = bFreeze; }
     public boolean isFrustumFrozen() { return freezeFrustum; }
@@ -62,29 +63,28 @@ public class RenderScene extends Scene {
         bFullScreen = fullscreen;
 
         // Buffers
-        _sceneBuffer = !fullscreen || enablePostProcess ? new Framebuffer(0, 0, true, true) : null;
-        _postProcessBuffer = !fullscreen && enablePostProcess ? new Framebuffer(0,0, true, false) : null;
-        _shadowBuffer = enableShadows ? new Framebuffer(4096, 4096, false, true) : null;
-        _pickBuffer = enablePicking ? new Framebuffer(1, 1, true, true) : null;
+        _sceneBuffer = !fullscreen || enablePostProcess ? new Framebuffer("colorBuffer_" + TypeHelper.MakeGlobalUid(), 0, 0, true, true) : null;
+        _postProcessBuffer = !fullscreen && enablePostProcess ? new Framebuffer("postProcessBuffer_" + TypeHelper.MakeGlobalUid(), 0,0, true, false) : null;
+        _shadowBuffer = enableShadows ? new Framebuffer("shadowBuffer_" + TypeHelper.MakeGlobalUid(), 4096, 4096, false, true) : null;
+        _pickBuffer = enablePicking ? new Framebuffer("pickBuffer_" + TypeHelper.MakeGlobalUid(), 1, 1, true, true) : null;
 
         _sceneProperties = new RenderSceneProperties();
-        _sceneUbo = new SceneStaticBuffer();
+        _sceneUbo = new SceneUniformBuffer("SceneBuffer_" + TypeHelper.MakeGlobalUid());
         _sceneUbo.load();
         _camera = new Camera();
         _pickOutputBuffer = BufferUtils.createByteBuffer(3);
 
-
-        Vertex[] vertices = new Vertex[] {
-                new Vertex(new Vector3f(-1, -1, 0), new Vector2f(0, 0)),
-                new Vertex(new Vector3f(1, -1, 0), new Vector2f(1, 0)),
-                new Vertex(new Vector3f(1, 1, 0), new Vector2f(1, 1)),
-                new Vertex(new Vector3f(-1, 1, 0), new Vector2f(0, 1)),
-        };
-        int[] triangles = new int[] { 0, 1, 2, 0, 2, 3 };
-        test = MeshFactory.FromResources("screenQuadMesh" + truc++, vertices, triangles);
+        if (_viewportQuadMesh == null) {
+            Vertex[] vertices = new Vertex[]{
+                    new Vertex(new Vector3f(-1, -1, 0), new Vector2f(0, 0)),
+                    new Vertex(new Vector3f(1, -1, 0), new Vector2f(1, 0)),
+                    new Vertex(new Vector3f(1, 1, 0), new Vector2f(1, 1)),
+                    new Vertex(new Vector3f(-1, 1, 0), new Vector2f(0, 1)),
+            };
+            int[] triangles = new int[]{0, 1, 2, 0, 2, 3};
+            _viewportQuadMesh = MeshFactory.FromResources("screenQuadMesh", vertices, triangles);
+        }
     }
-    private static int truc = 0;
-
 
     public void buildFrustumList() {
         if (freezeFrustum) return;
@@ -135,7 +135,7 @@ public class RenderScene extends Scene {
         // SHADOW RENDERING
         if (enableShadows) {
             RenderUtils.RENDER_MODE = RenderMode.Shadow;
-            _shadowBuffer.bindAndReset(null);
+            _shadowBuffer.use(true, null);
             glEnable(GL_CULL_FACE);
             //glCullFace(GL_BACK);
             updateLightMatrix();
@@ -149,7 +149,7 @@ public class RenderScene extends Scene {
             Framebuffer.BindBackBuffer(EngineSettings.TRANSPARENT_FRAMEBUFFER ? null : ((RenderSceneProperties) _sceneProperties)._backgroundColor);
         }
         else {
-            _sceneBuffer.bindAndReset(EngineSettings.TRANSPARENT_FRAMEBUFFER ? null : ((RenderSceneProperties) _sceneProperties)._backgroundColor);
+            _sceneBuffer.use(true, EngineSettings.TRANSPARENT_FRAMEBUFFER ? null : ((RenderSceneProperties) _sceneProperties)._backgroundColor);
         }
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_MULTISAMPLE);
@@ -162,7 +162,7 @@ public class RenderScene extends Scene {
         glPolygonMode( GL_FRONT_AND_BACK, GL_FILL);
 
         // POST PROCESS RENDERING
-        if (enablePostProcess && (bFullScreen ? Framebuffer.BindBackBuffer(null) : _postProcessBuffer.bindAndReset(null))) {
+        if (enablePostProcess && (bFullScreen ? Framebuffer.BindBackBuffer(null) : _postProcessBuffer.use(true,null))) {
             RenderUtils.getPostProcessMaterial().use(this);
             RenderUtils.getPostProcessMaterial().getResource().setIntParameter("colorTexture", 0);
             glActiveTexture(GL_TEXTURE0);
@@ -170,14 +170,14 @@ public class RenderScene extends Scene {
             RenderUtils.getPostProcessMaterial().getResource().setIntParameter("depthTexture", 1);
             glActiveTexture(GL_TEXTURE0 + 1);
             glBindTexture(GL_TEXTURE_2D, _sceneBuffer.getDepthStencilTexture());
-            test.use(this);
+            _viewportQuadMesh.use(this);
             RenderUtils.CheckGLErrors();
         }
 
         // PICK BUFFER RENDERING
         if (enablePicking) {
             RenderUtils.RENDER_MODE = RenderMode.Select;
-            _pickBuffer.bindAndReset(null);
+            _pickBuffer.use(true, null);
             glEnable(GL_DEPTH_TEST);
             glDisable(GL_MULTISAMPLE);
             glEnable(GL_CULL_FACE);
@@ -217,13 +217,13 @@ public class RenderScene extends Scene {
     public Camera getCamera() { return _camera; }
 
     public void drawPickBuffer() {
-        Vector3f dir = TypeHelper.getVector3();
-        getCursorSceneDirection(dir);
+        Vector3f cursorSceneDirection = TypeHelper.getVector3();
+        getCursorSceneDirection(cursorSceneDirection);
 
         Vector3f camWorldPosition = getCamera().getWorldPosition();
 
         _sceneUbo.use(this, _pickBuffer.getWidth(), _pickBuffer.getHeight(), getCamera(),
-                TypeHelper.getMat4().identity().lookAt(camWorldPosition, TypeHelper.getVector3(camWorldPosition).add(dir), getCamera().getUpVector()));
+                TypeHelper.getMat4().identity().lookAt(camWorldPosition, TypeHelper.getVector3(camWorldPosition).add(cursorSceneDirection), getCamera().getUpVector()));
 
         RenderUtils.CheckGLErrors();
         drawFrustrumComponents();
@@ -270,8 +270,16 @@ public class RenderScene extends Scene {
     }
 
     public void setPosition(int x, int y) {
-        if (_sceneBuffer != null) _sceneBuffer.updateDrawPosition(x, y);
-        if (_postProcessBuffer != null) _postProcessBuffer.updateDrawPosition(x, y);
+        if (_sceneBuffer != null) _sceneBuffer.updateDrawOffset(x, y);
+        if (_postProcessBuffer != null) _postProcessBuffer.updateDrawOffset(x, y);
     }
 
+    @Override
+    public void delete() {
+        super.delete();
+        if (_sceneBuffer != null) _sceneBuffer.delete();
+        if (_pickBuffer != null) _pickBuffer.delete();
+        if (_postProcessBuffer != null) _postProcessBuffer.delete();
+        if (_shadowBuffer != null) _shadowBuffer.delete();
+    }
 }

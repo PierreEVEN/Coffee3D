@@ -92,7 +92,7 @@ public class AssetManager {
                 Optional<String> extension = Optional.ofNullable(subFile.getName())
                         .filter(f -> f.contains("."))
                         .map(f -> f.substring(subFile.getName().lastIndexOf(".") + 1));
-                if (extension.isEmpty()) continue;
+                if (!extension.isPresent()) continue;
                 if (extension.get().equals("asset")) {
                     scannedAssets.add(subFile);
                 }

@@ -97,13 +97,13 @@ public class RenderUtils {
         {
             String errorCode;
             switch (errCode) {
-                case GL_INVALID_ENUM -> errorCode = "GL_INVALID_ENUM";
-                case GL_INVALID_VALUE -> errorCode = "GL_INVALID_VALUE";
-                case GL_INVALID_OPERATION -> errorCode = "GL_INVALID_OPERATION";
-                case GL_STACK_OVERFLOW -> errorCode = "GL_STACK_OVERFLOW";
-                case GL_STACK_UNDERFLOW -> errorCode = "GL_STACK_UNDERFLOW";
-                case GL_OUT_OF_MEMORY -> errorCode = "GL_OUT_OF_MEMORY";
-                default -> errorCode = "unknown : " + Integer.toHexString(errCode);
+                case GL_INVALID_ENUM : errorCode = "GL_INVALID_ENUM"; break;
+                case GL_INVALID_VALUE : errorCode = "GL_INVALID_VALUE"; break;
+                case GL_INVALID_OPERATION : errorCode = "GL_INVALID_OPERATION"; break;
+                case GL_STACK_OVERFLOW : errorCode = "GL_STACK_OVERFLOW"; break;
+                case GL_STACK_UNDERFLOW : errorCode = "GL_STACK_UNDERFLOW"; break;
+                case GL_OUT_OF_MEMORY : errorCode = "GL_OUT_OF_MEMORY"; break;
+                default : errorCode = "unknown : " + Integer.toHexString(errCode); break;
             }
             Log.Fail("GL error : " + errorCode);
         }

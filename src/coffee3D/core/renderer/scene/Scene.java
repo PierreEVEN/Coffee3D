@@ -85,6 +85,12 @@ public class Scene {
         _components.clear();
     }
 
+    public void delete() {
+        _source.set(null);
+        _sceneProperties = null;
+        clear();
+    }
+
     public void load(World source) {
         clear();
         if (source == null || source.getSourcePath() == null || !source.getSourcePath().exists()) return;

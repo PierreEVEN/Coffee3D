@@ -61,9 +61,9 @@ public class TestGameModule extends IEngineModule {
 
     @Override
     public void DrawHUD() {
-        //StatHelper.DrawStats(_rootScene);
+        StatHelper.DrawStats(_rootScene);
 
-        /*
+
         ImGui.image(AssetManager.<Texture2D>FindAsset("whiteTexture").getTextureID(), 50, 50);
 
         int gridTexture = AssetManager.<Texture2D>FindAsset("whiteTexture").getTextureID();
@@ -103,11 +103,10 @@ public class TestGameModule extends IEngineModule {
                     ((float)Math.sin(GLFW.glfwGetTime()) + 1) / 2,
                     true
             );
-
         }
         HudUtils.EndContainer();
 
-         */
+
 
     }
 }

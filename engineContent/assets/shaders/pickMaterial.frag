@@ -11,5 +11,5 @@ void main()
     int green = (pickId & 0x0000FF00) >> 8;
     int blue = (pickId & 0x00FF0000) >> 16;
     int alpha = (pickId & 0xFF000000) >> 24;
-    outputColor = vec4(red / 255f, green / 255f, blue / 255f, alpha / 255f);
+    outputColor = vec4(red / 255.f, green / 255.f, blue / 255.f, alpha / 255.f);
 }

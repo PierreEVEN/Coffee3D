@@ -34,33 +34,23 @@ public class GlfwInputHandler
     }
 
     private static void keyCallback(int keycode, int scancode, int action, int mods) {
-        for (IInputListener listener : _listeners) {
-            listener.keyCallback(keycode, scancode, action, mods);
-        }
+        for (int i = _listeners.size() - 1; i >= 0; --i) _listeners.get(i).keyCallback(keycode, scancode, action, mods);
     }
 
     private static void charCallback(int chr) {
-        for (IInputListener listener : _listeners) {
-            listener.charCallback(chr);
-        }
+        for (int i = _listeners.size() - 1; i >= 0; --i) _listeners.get(i).charCallback(chr);
     }
 
     private static void mouseButtonCallback(int button, int action, int mods) {
-        for (IInputListener listener : _listeners) {
-            listener.mouseButtonCallback(button, action, mods);
-        }
+        for (int i = _listeners.size() - 1; i >= 0; --i) _listeners.get(i).mouseButtonCallback(button, action, mods);
     }
 
     private static void scrollCallback(double xOffset, double yOffset) {
-        for (IInputListener listener : _listeners) {
-            listener.scrollCallback(xOffset, yOffset);
-        }
+        for (int i = _listeners.size() - 1; i >= 0; --i) _listeners.get(i).scrollCallback(xOffset, yOffset);
     }
 
     private static void cursorPosCallback(double x, double y) {
-        for (IInputListener listener : _listeners) {
-            listener.cursorPosCallback(x, y);
-        }
+        for (int i = _listeners.size() - 1; i >= 0; --i) _listeners.get(i).cursorPosCallback(x, y);
     }
 
     /**

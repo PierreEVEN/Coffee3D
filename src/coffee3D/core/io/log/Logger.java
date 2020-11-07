@@ -1,5 +1,6 @@
 package coffee3D.core.io.log;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -20,8 +21,9 @@ class Logger {
 
     private Logger() {
         try {
-            if (!Files.exists(Path.of("./saved/logs"), LinkOption.NOFOLLOW_LINKS)) {
-                Files.createDirectories(Path.of("./saved/logs"));
+            File logPath = new File("./saved/logs");
+            if (!logPath.exists()) {
+                logPath.mkdir();
             }
 
             _logWriter = new FileWriter("./saved/logs/last.log");

@@ -23,6 +23,11 @@ public abstract class GraphicResource {
      */
     public abstract void unload();
 
+    public final void delete() {
+        unload();
+        ResourceManager.UnRegisterResource(this);
+    }
+
     /**
      * Draw item to desired scene
      * @param context scene context

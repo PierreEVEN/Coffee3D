@@ -50,7 +50,7 @@ public abstract class AssetImporter extends SubWindow {
         if (ImGui.button(_selectedSource == null ? "pick file" : _selectedSource.getPath())) {
             new FileBrowser("Select asset file", _extensionFilter, _selectedSource, (file) -> {
                 _selectedSource = file;
-                if (_targetFileName.get().equals("")) {
+                if (_targetFileName.get().equals("") && _selectedSource != null) {
                     _targetFileName.set(_selectedSource.getName().replaceFirst("[.][^.]+$", ""));
                 }
                 onSourceChanged();

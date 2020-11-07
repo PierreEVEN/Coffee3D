@@ -64,7 +64,7 @@ public class FileBrowser extends SubWindow {
                 .filter(f -> f.contains("."))
                 .map(f -> f.substring(file.getName().lastIndexOf(".") + 1));
 
-        if (extension.isEmpty()) return false;
+        if (!extension.isPresent()) return false;
         if (_desiredExtensions == null) return true;
         for (String ext : _desiredExtensions) {
             if (extension.get().equals(ext)) return true;

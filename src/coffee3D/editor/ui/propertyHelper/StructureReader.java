@@ -76,7 +76,7 @@ public class StructureReader {
             if (field.getType().isArray())
             {
                 Object[] tab = (Object[]) field.get(obj);
-                if (ImGui.treeNode(nodeName)) {
+                if (ImGui.collapsingHeader(nodeName)) {
                     for (int i = 0; i < tab.length; ++i) {
                         Object result = WriteObj(tab[i], "##[" + i + "]" + nodeName, true);
                         if (result != null) {
@@ -87,7 +87,6 @@ public class StructureReader {
                             }
                         }
                     }
-                    ImGui.treePop();
                 }
             }
             else if (field.getType().isEnum()) {

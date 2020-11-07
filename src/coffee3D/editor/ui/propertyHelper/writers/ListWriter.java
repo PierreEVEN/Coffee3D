@@ -12,9 +12,9 @@ public class ListWriter<T>  extends FieldWriter {
     @Override
     protected Object draw(String field, Object object) throws IllegalAccessException {
 
-        if (ImGui.treeNode(field)) {
+        if (ImGui.collapsingHeader(field)) {
             ArrayList<T> array = (ArrayList) object;
-            if (ImGui.beginChild("child_" + field, ImGui.getContentRegionAvailX(), 100)) {
+            if (ImGui.beginChild("child_" + field, ImGui.getContentRegionAvailX(), array.size() * 40)) {
                 int removedItem = -1;
                 for (int i = 0; i < array.size(); ++i) {
                     if (array.size() > 0) {
@@ -39,7 +39,6 @@ public class ListWriter<T>  extends FieldWriter {
                 }
             }
             ImGui.endChild();
-            ImGui.treePop();
         }
 
 

@@ -24,7 +24,9 @@ public class ResourceManager {
     }
 
     public static void UnRegisterResource(GraphicResource resource) {
-        if (resource != null) _resources.remove(resource.toString(), resource);
+        if (resource != null) {
+            _resources.remove(resource.toString());
+        }
     }
 
     /**

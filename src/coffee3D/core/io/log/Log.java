@@ -36,10 +36,10 @@ public class Log {
     public static void Print(String message, LogVerbosity verbosity) {
         String color = ANSI_WHITE;
         switch (verbosity) {
-            case DISPLAY -> color = ANSI_CYAN;
-            case WARNING -> color = ANSI_YELLOW;
-            case ERROR -> color = ANSI_RED;
-            case FAIL -> color = ANSI_PURPLE;
+            case DISPLAY : color = ANSI_CYAN; break;
+            case WARNING : color = ANSI_YELLOW; break;
+            case ERROR : color = ANSI_RED; break;
+            case FAIL : color = ANSI_PURPLE; break;
         }
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yy:HH:mm:ss");
         Logger.Get().print("[" + dtf.format(LocalDateTime.now()) + "] " + message, color, verbosity);

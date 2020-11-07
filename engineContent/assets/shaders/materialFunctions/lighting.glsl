@@ -29,14 +29,13 @@ vec4 lightColor(vec4 sourceColor, vec3 normal, vec3 sunDirection, vec3 pos) {
 
 float ShadowCalculation(vec4 fragPosLightSpace, sampler2D shadowTexture, vec3 normal, vec3 lightDir)
 {
-    float biasValue = 0.0035;
-
+    float biasValue = 0.005;
 
     // perform perspective divide
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
     // transform to [0,1] range
     projCoords = projCoords * 0.5 + 0.5;
-    if (projCoords.z > 1) return 0;
+    if (projCoords.z > 1) return 0.f;
     // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
     float closestDepth = texture(shadowTexture, projCoords.xy).r;
     // get depth of current fragment from light's perspective

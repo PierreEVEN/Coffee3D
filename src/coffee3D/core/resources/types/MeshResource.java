@@ -1,5 +1,6 @@
 package coffee3D.core.resources.types;
 
+import coffee3D.core.io.log.Log;
 import coffee3D.core.renderer.scene.Scene;
 import coffee3D.core.resources.GraphicResource;
 import coffee3D.core.types.SphereBound;
@@ -8,6 +9,7 @@ import coffee3D.core.types.Vertex;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 
+import java.lang.reflect.Type;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
@@ -18,96 +20,78 @@ import static org.lwjgl.opengl.GL46.*;
  */
 public class MeshResource extends GraphicResource {
 
-    private final Vertex[] _vertices;
-    private final int[] _indices;
-
-    private int _meshVao, _meshEbo;
-
-    private SphereBound _bound;
-
+    private static MeshResource _lastDrawnMesh;
+    private final int _meshVao, _meshEbo, _meshVbo, _indexCount;
+    private final SphereBound _bound;
+    private FloatBuffer _vertexBuffer;
+    private IntBuffer _indexBuffer;
 
     public MeshResource(String resourceName, Vertex[] vertices, int[] indices) {
         super(resourceName);
-        _vertices = vertices;
-        _indices = indices;
+        _meshVbo = glGenBuffers();
+        _meshEbo = glGenBuffers();
+        _meshVao = glGenVertexArrays();
+
+        // Generate vertex cpu buffer
+        final float[] serializedVertices = new float[TypeHelper.GetStructFloatSize(Vertex.class) * vertices.length];
+        TypeHelper.SerializeStructure(vertices, serializedVertices);
+
+        _vertexBuffer = BufferUtils.createFloatBuffer(serializedVertices.length);
+        _vertexBuffer.put(serializedVertices);
+        _vertexBuffer.flip();
+
+        // Generate index cpu buffer
+        _indexCount = indices.length;
+        _indexBuffer = BufferUtils.createIntBuffer(_indexCount);
+        _indexBuffer.put(indices);
+        _indexBuffer.flip();
+
+        _bound = new SphereBound();
+        buildBounds(vertices);
     }
 
     public void load() {
 
-        // Generate vertex buffer
-        float[] serializedVertices = SerializeVertexArray(_vertices);
-        FloatBuffer verticesBuffer = BufferUtils.createFloatBuffer(serializedVertices.length);
-        verticesBuffer.put(serializedVertices);
-        verticesBuffer.flip();
-
-        // Generate index buffer
-        IntBuffer indexData = BufferUtils.createIntBuffer(_indices.length);
-        indexData.put(_indices);
-        indexData.flip();
-
-
-        // Generate and load vertex buffer
-        _meshVao = glGenVertexArrays();
+        // Generate and load gpu vertex buffer
+        int vertexSize = TypeHelper.GetStructByteSize(Vertex.class);
         glBindVertexArray(_meshVao);
-        int vbo = glGenBuffers();
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, verticesBuffer, GL_STATIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, _meshVbo);
+        glBufferData(GL_ARRAY_BUFFER, _vertexBuffer, GL_STATIC_DRAW);
         glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, false, Vertex.GetByteSize(), 0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, false, vertexSize, 0);
         glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 2, GL_FLOAT, false, Vertex.GetByteSize(), 3 * 4);
+        glVertexAttribPointer(1, 2, GL_FLOAT, false, vertexSize, 3 * 4);
         glEnableVertexAttribArray(2);
-        glVertexAttribPointer(2, 3, GL_FLOAT, false, Vertex.GetByteSize(), 3 * 4 + 2 * 4);
+        glVertexAttribPointer(2, 3, GL_FLOAT, false, vertexSize, 3 * 4 + 2 * 4);
         glEnableVertexAttribArray(3);
-        glVertexAttribPointer(3, 4, GL_FLOAT, false, Vertex.GetByteSize(), 3 * 4 + 2 * 4 + 3 * 4);
+        glVertexAttribPointer(3, 4, GL_FLOAT, false, vertexSize, 3 * 4 + 2 * 4 + 3 * 4);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
-
         glBindVertexArray(0);
 
         // Generate and load index buffer
-        _meshEbo = glGenBuffers();
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _meshEbo);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexData, GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer, GL_STATIC_DRAW);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+        _vertexBuffer = null;
+        _indexBuffer = null;
     }
 
-    public static float[] SerializeVertexArray(Vertex[] vertices) {
-        float[] data = new float[vertices.length * Vertex.GetFloatSize()];
-        for (int i = 0; i < vertices.length; ++i) {
-            // position
-            data[i * Vertex.GetFloatSize()] = vertices[i].position.x;
-            data[i * Vertex.GetFloatSize() + 1] = vertices[i].position.y;
-            data[i * Vertex.GetFloatSize() + 2] = vertices[i].position.z;
-
-            // texCoords
-            data[i * Vertex.GetFloatSize() + 3] = vertices[i].texCoords.x;
-            data[i * Vertex.GetFloatSize() + 4] = vertices[i].texCoords.y;
-
-            // normal
-            data[i * Vertex.GetFloatSize() + 5] = vertices[i].normals.x;
-            data[i * Vertex.GetFloatSize() + 6] = vertices[i].normals.y;
-            data[i * Vertex.GetFloatSize() + 7] = vertices[i].normals.z;
-
-            // color
-            data[i * Vertex.GetFloatSize() + 8] = vertices[i].vertexColor.x;
-            data[i * Vertex.GetFloatSize() + 9] = vertices[i].vertexColor.y;
-            data[i * Vertex.GetFloatSize() + 10] = vertices[i].vertexColor.z;
-            data[i * Vertex.GetFloatSize() + 11] = vertices[i].vertexColor.w;
-        }
-
-        return data;
+    public void unload() {
+        glDeleteVertexArrays(_meshVao);
+        glDeleteBuffers(_meshEbo);
+        glDeleteBuffers(_meshVbo);
     }
 
-    private void rebuildBound() {
-        if (_bound == null) _bound = new SphereBound();
+    private void buildBounds(Vertex[] vertices) {
         _bound.position.zero();
         Vector3f temp = TypeHelper.getVector3();
-        for (Vertex vert : _vertices) {
+        for (Vertex vert : vertices) {
             _bound.position.add(vert.position);
         }
-        _bound.position.div(_vertices.length);
+        _bound.position.div(vertices.length);
         _bound.radius = 0f;
-        for (Vertex vert : _vertices) {
+        for (Vertex vert : vertices) {
             temp.x = vert.position.x;
             temp.y = vert.position.y;
             temp.z = vert.position.z;
@@ -118,20 +102,16 @@ public class MeshResource extends GraphicResource {
         }
     }
 
-    public SphereBound getBound() {
-        if (_bound == null) rebuildBound();
+    public SphereBound getStaticBounds() {
         return _bound;
     }
 
-    public void unload() {}
-
-    private static MeshResource lastMesh;
     public void use(Scene context) {
-        if (lastMesh != this) {
-            lastMesh = this;
+        if (_lastDrawnMesh != this) {
+            _lastDrawnMesh = this;
             glBindVertexArray(_meshVao);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _meshEbo);
         }
-        glDrawElements(GL_TRIANGLES, _indices.length, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, _indexCount, GL_UNSIGNED_INT, 0);
     }
 }

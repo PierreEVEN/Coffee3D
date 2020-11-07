@@ -5,10 +5,12 @@ import coffee3D.core.assets.AssetManager;
 import coffee3D.core.io.log.Log;
 import coffee3D.core.io.settings.EngineSettings;
 import coffee3D.core.ui.subWindows.SubWindow;
+import coffee3D.editor.EditorModule;
 import coffee3D.editor.ui.assets.EditorAssetUtils;
 import imgui.ImGui;
 import imgui.flag.ImGuiTreeNodeFlags;
 import imgui.type.ImBoolean;
+import imgui.type.ImString;
 
 import java.awt.*;
 import java.io.File;
@@ -20,6 +22,7 @@ public class ContentBrowser extends SubWindow {
     private boolean _bSetColumnWidth = false;
     private ImBoolean _bShowAllContent = new ImBoolean(false);
     private File _selectedFile;
+    private final ImString searchString = new ImString("", 256);
 
     private final ArrayList<Class> _filters = new ArrayList<>();
     private final ImBoolean _filterBool = new ImBoolean();
@@ -35,11 +38,24 @@ public class ContentBrowser extends SubWindow {
     @Override
     protected void draw() {
 
-        drawFilters();
+        if (ImGui.button("Create")) {
+
+        }
+
+        ImGui.sameLine();
+
+        if (ImGui.button("Save All")) EditorModule.SaveAll();
+
+
         ImGui.separator();
 
         drawHierarchy();
         ImGui.nextColumn();
+
+        ImGui.inputText("##searchBox", searchString);
+
+        drawFilters();
+        ImGui.dummy(0, 5);
 
         if (ImGui.beginChild("contentAssets")) {
 
@@ -48,15 +64,11 @@ public class ContentBrowser extends SubWindow {
             int widthItems = (int) (sizeX / 80);
             ImGui.columns(Math.max(widthItems, 1), "", false);
 
-
-
             for (Class key : AssetManager.GetAssetMap().keySet()) {
 
                 for (Asset elem : AssetManager.GetAssetMap().get(key)) {
 
-                    if (!_filters.isEmpty() && !_filters.contains(elem.getClass())) continue;
-
-
+                    if (!_filters.isEmpty() && !_filters.contains(elem.getClass()) || (!searchString.get().equals("") && !elem.getName().contains(searchString.get()))) continue;
                     if (elem.getSavePath() != null && (_bShowAllContent.get() || isInDirectoryRecursive(elem.getSavePath(), _selectedFile))) {
                         EditorAssetUtils.DrawAssetThumbnail(elem);
                         ImGui.nextColumn();

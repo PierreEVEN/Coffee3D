@@ -1,16 +1,17 @@
 package coffee3D.core.ui.subWindows;
 
-import coffee3D.core.io.log.Log;
+import coffee3D.core.io.inputs.GlfwInputHandler;
+import coffee3D.core.io.inputs.IInputListener;
 import coffee3D.core.renderer.Window;
 import imgui.ImGui;
-import imgui.ImGuiIO;
 import imgui.flag.ImGuiWindowFlags;
 import imgui.type.ImBoolean;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class SubWindow {
+public abstract class SubWindow implements IInputListener {
 
     private static List<SubWindow> _windows;
     private ImBoolean _bDisplay;
@@ -19,6 +20,7 @@ public abstract class SubWindow {
     private float _wPosX = 0, _wPosY = 0, _wSizeX = 0, _wSizeY = 0;
     private boolean _bCanDisplay;
     private boolean _bIsHovered;
+    private boolean _bIsDocked;
 
 
     public SubWindow(String windowName) {
@@ -26,12 +28,14 @@ public abstract class SubWindow {
         if (_windows == null) _windows = new ArrayList<>();
         _windows.add(this);
         _windowName = windowName;
+        GlfwInputHandler.AddListener(this);
     }
 
     protected abstract void draw();
 
     private final void drawInternal() {
         if (!_bDisplay.get()) {
+            close();
             _windows.remove(this);
             return;
         }
@@ -45,7 +49,7 @@ public abstract class SubWindow {
                 _bCanDisplay = true;
                 draw();
                 _bIsHovered = ImGui.isWindowHovered();
-
+                _bIsDocked = ImGui.isWindowDocked();
             }
             else {
                 _bCanDisplay = false;
@@ -54,7 +58,10 @@ public abstract class SubWindow {
         }
     }
 
-    public void close() { _bDisplay.set(false); }
+    public void close() {
+        _bDisplay.set(false);
+        GlfwInputHandler.UnbindListener(this);
+    }
 
     public static void DrawWindows() {
         if (_windows == null) return;
@@ -70,5 +77,40 @@ public abstract class SubWindow {
         if (posX < _wPosX || posY < _wPosY) return false;
         if (posX > _wPosX + _wSizeX || posY > _wPosY + _wSizeY) return false;
         return _bCanDisplay && _bIsHovered;
+    }
+
+    public float getWindowPosX() { return _wPosX; }
+    public float getWindowPosY() { return _wPosY; }
+    public float getWindowSizeX() { return _wSizeX; }
+    public float getWindowSizeY() { return _wSizeY; }
+
+    @Override
+    public void keyCallback(int keycode, int scancode, int action, int mods) {
+        if (!isMouseInsideWindow()) return;
+        if (action == GLFW.GLFW_PRESS) {
+            if (keycode == GLFW.GLFW_KEY_ESCAPE) {
+                if (!_bIsDocked) close();
+            }
+        }
+    }
+
+    @Override
+    public void charCallback(int chr) {
+
+    }
+
+    @Override
+    public void mouseButtonCallback(int button, int action, int mods) {
+
+    }
+
+    @Override
+    public void scrollCallback(double xOffset, double yOffset) {
+
+    }
+
+    @Override
+    public void cursorPosCallback(double x, double y) {
+
     }
 }

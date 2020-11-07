@@ -19,125 +19,96 @@ import static org.lwjgl.opengl.GL46.*;
  */
 public class MaterialResource extends GraphicResource {
 
-    /**
-     * material handle ID
-     */
-    private int _materialHandle;
+    private static MaterialResource _lastMaterialResource;
+    private final int _materialHandle;
+    private String _compilationMessage = null;
+    private String _vertexData;
+    private String _fragmentData;
 
-    /**
-     * vertex shader data
-     */
-    private final String _vertexData;
-
-    /**
-     * fragment shader data
-     */
-    private final String _fragmentData;
-
-    private boolean _bSuccessfullyCompiled = true;
-
-    public boolean hasErrors() { return !_bSuccessfullyCompiled; }
-
-    /**
-     * linked textures
-     */
-    private final TextureResource[] _textures;
-
-    public MaterialResource(String resourceName, String vertexData, String fragmentData, TextureResource[] textures) {
+    public MaterialResource(String resourceName, String vertexData, String fragmentData) {
         super(resourceName);
         _vertexData = vertexData;
         _fragmentData = fragmentData;
-        _textures = textures;
+        _materialHandle = glCreateProgram();
     }
 
     @Override
     public void load() {
-        int vertexShaderId, fragmentShaderId;
+        _compilationMessage = null;
 
+        int vertexShaderId, fragmentShaderId;
         vertexShaderId = glCreateShader(GL_VERTEX_SHADER);
         fragmentShaderId = glCreateShader(GL_FRAGMENT_SHADER);
 
+        // LOAD AND COMPILE SOURCES
         glShaderSource(vertexShaderId, _vertexData);
         glShaderSource(fragmentShaderId, _fragmentData);
-
+        _vertexData = null;
+        _fragmentData = null;
         glCompileShader(vertexShaderId);
         glCompileShader(fragmentShaderId);
-
         if (glGetShaderi(vertexShaderId, GL_COMPILE_STATUS) == 0) {
-            Log.Warning("Error compiling vertex Shader code " + toString() + " : " + glGetShaderInfoLog(vertexShaderId, 1024));
-            _bSuccessfullyCompiled = false;
+            String error = "Error compiling vertex Shader code " + toString() + " : " + glGetShaderInfoLog(vertexShaderId);
+            Log.Warning(error);
+            _compilationMessage += error + '\n';
         }
         if (glGetShaderi(fragmentShaderId, GL_COMPILE_STATUS) == 0) {
-            Log.Warning("Error compiling fragment Shader code " + toString() + " : " + glGetShaderInfoLog(fragmentShaderId, 1024));
-            _bSuccessfullyCompiled = false;
+            String error = "Error compiling fragment Shader code " + toString() + " : " + glGetShaderInfoLog(fragmentShaderId);
+            Log.Warning(error);
+            _compilationMessage += error + '\n';
         }
 
-        _materialHandle = glCreateProgram();
-
+        // LINK AND CLEANUP COMPILED SOURCES
         glAttachShader(_materialHandle, vertexShaderId);
         glAttachShader(_materialHandle, fragmentShaderId);
-
         glLinkProgram(_materialHandle);
-
         glDetachShader(_materialHandle, vertexShaderId);
         glDetachShader(_materialHandle, fragmentShaderId);
         glDeleteShader(vertexShaderId);
         glDeleteShader(fragmentShaderId);
 
+        // CHECK ERRORS
         int uniformBlockIndexRed = glGetUniformBlockIndex(_materialHandle, "shader_data");
         if (uniformBlockIndexRed < 0) {
-            _bSuccessfullyCompiled = false;
-            Log.Error("Error linking shader " + toString() + " : cannot find shader_data block index");
+            String error = "Error linking shader " + toString() + " : cannot find shader_data block index";
+            Log.Error(error);
+            _compilationMessage += error + '\n';
         }
         glUniformBlockBinding(_materialHandle, uniformBlockIndexRed, 0);
 
-        if (hasErrors()) {
-            ResourceManager.UnRegisterResource(this);
-        }
+        if (getErrors() != null) ResourceManager.UnRegisterResource(this);
         RenderUtils.CheckGLErrors();
     }
 
-    public int getProgramHandle() { return _materialHandle; }
-
     @Override
-    public void unload() { glDeleteProgram(_materialHandle); }
+    public void unload() {
+        glDeleteProgram(_materialHandle);
+    }
 
-    private static MaterialResource _lastMaterial;
     @Override
     public void use(Scene context) {
-        if (_lastMaterial != this) {
-            _lastMaterial = this;
+        if (_lastMaterialResource != this) {
+            _lastMaterialResource = this;
             glUseProgram(_materialHandle);
         }
     }
 
-    /**
-     * set material int parameter from parameter name
-     * @param parameterName name
-     * @param value         value
-     */
+    public int getProgramHandle() { return _materialHandle; }
+
+    public String getErrors() { return _compilationMessage; }
+
     public void setIntParameter(String parameterName, int value) {
         int matHandle = glGetUniformLocation(_materialHandle, parameterName);
         if (matHandle < 0) return;
         glUniform1i(matHandle, value);
     }
 
-    /**
-     * set material float parameter from parameter name
-     * @param parameterName name
-     * @param value         value
-     */
     public void setFloatParameter(String parameterName, float value) {
         int matHandle = glGetUniformLocation(_materialHandle, parameterName);
         if (matHandle < 0) return;
         glUniform1f(matHandle, value);
     }
 
-    /**
-     * set material int parameter from parameter name
-     * @param parameterName name
-     * @param value         value
-     */
     public void setMatrixParameter(String parameterName, Matrix4f value) {
         int matHandle = glGetUniformLocation(_materialHandle, parameterName);
         if (matHandle < 0) return;

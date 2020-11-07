@@ -26,7 +26,7 @@ public class StaticMesh extends Asset {
     protected ArrayList<AssetReference<MaterialInterface>> _materials;
     private transient MaterialInterface[] materialRefs = new MaterialInterface[0];
     private transient Matrix4f _modelMatrix;
-    private transient static final Color meshColor = new Color(106/255f, 219/255f, 228/255f, 1);
+    private transient static final Color meshColor = new Color(0/255f, 255/255f, 255/255f, 1);
     private transient SphereBound _meshBound;
     private static final String[] meshExtensions = new String[] {"fbx", "obj", "FBX"};
     private transient MaterialInterface[] _materialDrawList;
@@ -133,12 +133,12 @@ public class StaticMesh extends Asset {
 
         if (_sections != null) {
             for (MeshResource section : _sections) {
-                _meshBound.position.add(section.getBound().position);
+                _meshBound.position.add(section.getStaticBounds().position);
             }
             _meshBound.position.div(_sections.length);
 
             for (MeshResource section : _sections) {
-                float radius = _meshBound.position.distance(section.getBound().position) + section.getBound().radius;
+                float radius = _meshBound.position.distance(section.getStaticBounds().position) + section.getStaticBounds().radius;
                 if (radius > _meshBound.radius) {
                     _meshBound.radius = radius;
                 }
@@ -155,11 +155,11 @@ public class StaticMesh extends Asset {
     public void drawBound(Scene context) {
         if (_sections != null) {
             for (int i = 0; i < _sections.length; ++i) {
-                Vector3f pos = TypeHelper.getVector3(_sections[i].getBound().position);
+                Vector3f pos = TypeHelper.getVector3(_sections[i].getStaticBounds().position);
                 _modelMatrix.transformPosition(pos);
                 Vector3f scale = TypeHelper.getVector3();
                 _modelMatrix.getScale(scale);
-                DebugRenderer.DrawDebugSphere(context, pos, _sections[i].getBound().radius * Math.max(scale.x, Math.max(scale.y, scale.z)), 20, Color.GREEN);
+                DebugRenderer.DrawDebugSphere(context, pos, _sections[i].getStaticBounds().radius * Math.max(scale.x, Math.max(scale.y, scale.z)), 20, Color.GREEN);
             }
             Vector3f myPos = TypeHelper.getVector3(getBound().position);
             Vector3f myScale = TypeHelper.getVector3();

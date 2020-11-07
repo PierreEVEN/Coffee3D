@@ -1,5 +1,6 @@
 package coffee3D.core.renderer.scene;
 
+import coffee3D.core.io.log.Log;
 import coffee3D.core.types.Color;
 import coffee3D.core.types.TypeHelper;
 import org.joml.Quaternionf;
@@ -21,6 +22,7 @@ public class RenderSceneProperties extends SceneProperty {
         }
         Vector3f sunVector = TypeHelper.getVector3();
         sunOrientation.positiveY(sunVector);
+
         return sunVector.mul((float) (sunPower * -1 * (Math.max(0, sunVector.dot(zAxis) + .5))));
     }
 }

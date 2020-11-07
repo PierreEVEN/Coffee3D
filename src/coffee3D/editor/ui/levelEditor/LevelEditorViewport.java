@@ -38,7 +38,7 @@ enum MovementDirection {
 }
 
 
-public class LevelEditorViewport extends SceneViewport implements IInputListener {
+public class LevelEditorViewport extends SceneViewport {
 
     private ComponentInspector _inspector;
     private MovementDirection _currentMovementDirection;
@@ -49,7 +49,6 @@ public class LevelEditorViewport extends SceneViewport implements IInputListener
         bHasMenuBar = true;
         new LevelProperties(getScene(), "Level properties");
         new SceneOutliner(this, "Scene outliner");
-        GlfwInputHandler.AddListener(this);
         _currentMovementDirection = MovementDirection.None;
     }
 
@@ -64,7 +63,7 @@ public class LevelEditorViewport extends SceneViewport implements IInputListener
                 ImGui.endMenu();
             }
             if (ImGui.beginMenu("debug")) {
-                if (ImGui.button(getScene().isFrustumFrozen() ? "unfreeze frustum culling" : "freeze frustum culling")) getScene().freezeFrustum(!getScene().isFrustumFrozen());
+                if (ImGui.menuItem(getScene().isFrustumFrozen() ? "unfreeze frustum culling" : "freeze frustum culling")) getScene().freezeFrustum(!getScene().isFrustumFrozen());
                 ImGui.endMenu();
             }
             if (ImGui.beginMenu("window")) {
@@ -117,40 +116,40 @@ public class LevelEditorViewport extends SceneViewport implements IInputListener
         if (!isMouseInsideWindow()) return;
         if (action == GLFW.GLFW_PRESS) {
             switch (keycode) {
-                case GLFW.GLFW_KEY_ESCAPE -> {
+                case GLFW.GLFW_KEY_ESCAPE : {
                     if (getEditedComponent() != null) editComponent(null);
                     else Window.GetPrimaryWindow().switchCursor();
-                }
-                case GLFW.GLFW_KEY_S -> {
+                } break;
+                case GLFW.GLFW_KEY_S : {
                     if (mods == GLFW.GLFW_MOD_CONTROL) {
                         _sceneContext.save();
                     }
-                }
-                case GLFW.GLFW_KEY_G -> {
+                } break;
+                case GLFW.GLFW_KEY_G : {
                     if (_currentMovementDirection == MovementDirection.NoAxis) {
                         _currentMovementDirection = null;
                     }
                     else {
                         _currentMovementDirection = MovementDirection.NoAxis;
                     }
-                }
-                case GLFW.GLFW_KEY_X -> beginMovement(MovementDirection.X);
-                case GLFW.GLFW_KEY_Y -> beginMovement(MovementDirection.Y);
-                case GLFW.GLFW_KEY_W -> beginMovement(MovementDirection.Z);
-                case GLFW.GLFW_KEY_F -> {
+                } break;
+                case GLFW.GLFW_KEY_X : beginMovement(MovementDirection.X); break;
+                case GLFW.GLFW_KEY_Y : beginMovement(MovementDirection.Y); break;
+                case GLFW.GLFW_KEY_W : beginMovement(MovementDirection.Z); break;
+                case GLFW.GLFW_KEY_F : {
                     if (getEditedComponent() != null) _sceneContext.getCamera().setRelativePosition(new Vector3f(_sceneContext.getCamera().getForwardVector()).mul(getEditedComponent().getBound().radius * -3).add(getEditedComponent().getRelativePosition()));
                 }
-                case GLFW.GLFW_KEY_C -> {
+                case GLFW.GLFW_KEY_C : {
                     if (mods == GLFW.GLFW_MOD_CONTROL) {
                         copySelected();
                     }
-                }
-                case GLFW.GLFW_KEY_V -> {
+                } break;
+                case GLFW.GLFW_KEY_V : {
                     if (mods == GLFW.GLFW_MOD_CONTROL) {
                         pastSelected();
                     }
-                }
-                case GLFW.GLFW_KEY_D -> {
+                } break;
+                case GLFW.GLFW_KEY_D : {
                     if (mods == GLFW.GLFW_MOD_ALT) {
                         copySelected();
                         SceneComponent lastParent = getEditedComponent().getParent();
@@ -160,8 +159,8 @@ public class LevelEditorViewport extends SceneViewport implements IInputListener
                             _currentMovementDirection = MovementDirection.NoAxis;
                         }
                     }
-                }
-                case GLFW.GLFW_KEY_DELETE -> deleteSelected();
+                } break;
+                case GLFW.GLFW_KEY_DELETE : deleteSelected(); break;
             }
         }
     }
@@ -199,9 +198,9 @@ public class LevelEditorViewport extends SceneViewport implements IInputListener
             float delta = (float) IEngineModule.Get().GetController().getCursorDeltaX();
             if (GLFW.glfwGetKey(Window.GetPrimaryWindow().getGlfwWindowHandle(), GLFW.GLFW_KEY_LEFT_ALT) == GLFW.GLFW_PRESS) delta /= 10;
             switch (_currentMovementDirection) {
-                case X -> getEditedComponent().getRelativePosition().x += delta;
-                case Y -> getEditedComponent().getRelativePosition().y += delta;
-                case Z -> getEditedComponent().getRelativePosition().z += delta;
+                case X : getEditedComponent().getRelativePosition().x += delta; break;
+                case Y : getEditedComponent().getRelativePosition().y += delta; break;
+                case Z : getEditedComponent().getRelativePosition().z += delta; break;
             }
         }
     }
@@ -292,4 +291,8 @@ public class LevelEditorViewport extends SceneViewport implements IInputListener
         return null;
     }
 
+    public boolean isMouseInsideWindow() {
+        if ((float) Window.GetPrimaryWindow().getCursorPosY() - 35 < getWindowPosY()) return false;
+        return super.isMouseInsideWindow();
+    }
 }

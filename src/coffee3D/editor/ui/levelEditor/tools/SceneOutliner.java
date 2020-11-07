@@ -13,7 +13,7 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 
-public class SceneOutliner extends SubWindow implements IInputListener {
+public class SceneOutliner extends SubWindow {
     private final Scene _parentScene;
     private final LevelEditorViewport _parentViewport;
     private int _currentNodeIndex = 0;
@@ -23,7 +23,6 @@ public class SceneOutliner extends SubWindow implements IInputListener {
         super(windowName);
         _parentScene = parentViewport.getScene();
         _parentViewport = parentViewport;
-        GlfwInputHandler.AddListener(this);
     }
 
     private void drawNode(SceneComponent comp) {
@@ -85,28 +84,28 @@ public class SceneOutliner extends SubWindow implements IInputListener {
         if (!isMouseInsideWindow()) return;
         if (action == GLFW.GLFW_PRESS) {
             switch (keycode) {
-                case GLFW.GLFW_KEY_ESCAPE -> _parentViewport.editComponent(null);
-                case GLFW.GLFW_KEY_UP -> {
+                case GLFW.GLFW_KEY_ESCAPE : _parentViewport.editComponent(null); break;
+                case GLFW.GLFW_KEY_UP : {
                     int lastComp = _drawedComponents.indexOf(_parentViewport.getEditedComponent());
                     if (lastComp > 0) _parentViewport.editComponent(_drawedComponents.get(lastComp - 1));
-                }
-                case GLFW.GLFW_KEY_DOWN -> {
+                } break;
+                case GLFW.GLFW_KEY_DOWN : {
                     int lastComp = _drawedComponents.indexOf(_parentViewport.getEditedComponent());
                     if (lastComp + 1 < _drawedComponents.size()) _parentViewport.editComponent(_drawedComponents.get(lastComp + 1));
-                }
-                case GLFW.GLFW_KEY_C -> {
+                } break;
+                case GLFW.GLFW_KEY_C : {
                     if (mods == GLFW.GLFW_MOD_CONTROL) {
                         _parentViewport.copySelected();
                     }
-                }
-                case GLFW.GLFW_KEY_V -> {
+                } break;
+                case GLFW.GLFW_KEY_V : {
                     if (mods == GLFW.GLFW_MOD_CONTROL) {
                         _parentViewport.pastSelected();
                     }
-                }
-                case GLFW.GLFW_KEY_DELETE -> {
+                } break;
+                case GLFW.GLFW_KEY_DELETE : {
                     _parentViewport.deleteSelected();
-                }
+                } break;
             }
         }
     }

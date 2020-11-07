@@ -30,6 +30,7 @@ public class Window {
     private long _glfwWindowHandle;
     private double _deltaTime;
     private double _lastFrameTime;
+    private double _frameDuration;
     private boolean _bDisplayCursor;
     private IEngineModule _engineModule;
     private int _drawMode;
@@ -90,6 +91,11 @@ public class Window {
             }
         });
 
+        //Cleanup memory
+        TypeHelper.ClearMemory();
+        System.gc();
+
+
         Log.Display("Start render loop");
         renderLoop();
 
@@ -114,20 +120,19 @@ public class Window {
      */
     private void renderLoop() {
         while (!glfwWindowShouldClose(_glfwWindowHandle)) {
-            // Poll inputs
-            glfwPollEvents();
 
+            //Handle inputs
             if (_engineModule.GetController() == null) Log.Fail("Internal error : Controller is null");
             _engineModule.GetController().update();
+
+            glfwPollEvents();
 
             // Draw frame
             drawFrame();
         }
     }
 
-
     private void drawFrame() {
-
         TypeHelper.nextFrame();
 
         // Update delta time
@@ -149,6 +154,8 @@ public class Window {
         SubWindow.DrawWindows();
         ImGui.render();
         ImGuiImplementation.Get().render();
+
+        _frameDuration = GLFW.glfwGetTime() - _lastFrameTime;
 
         glfwSwapBuffers(_glfwWindowHandle);
         RenderUtils.CheckGLErrors();
@@ -207,6 +214,8 @@ public class Window {
 
     public double getDeltaTime() { return _deltaTime; }
 
+    public double getFrameDuration() { return _frameDuration; }
+
     public void switchCursor() {
         showCursor(!_bDisplayCursor);
     }
@@ -228,8 +237,6 @@ public class Window {
             glfwSetInputMode(_glfwWindowHandle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         }
     }
-
-
 
     private static final double[] _cursorPosX = {0}, _cursorPosY = {0};
 

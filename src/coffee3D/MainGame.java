@@ -7,7 +7,7 @@ import coffee3D.editor.TestGameModule;
 public class MainGame {
 
     public static void main(String[] args) {
-        EngineSettings.FULLSCREEN_MODE = true;
+        EngineSettings.FULLSCREEN_MODE = false;
         EngineSettings.MSAA_SAMPLES = 8;
         EngineSettings.ENABLE_DOUBLE_BUFFERING = true;
         EngineSettings.TRANSPARENT_FRAMEBUFFER = false;

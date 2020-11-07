@@ -13,6 +13,7 @@ public class DefaultController extends IGameController {
     private final Vector3f currentSpeed = new Vector3f().zero();
     private boolean _enableCameraMovements = true;
     public void enableCameraMovements(boolean bEnable) { _enableCameraMovements = bEnable; }
+    private boolean _bWasLastFrameCapturing;
 
     public DefaultController(RenderScene scene) {
         super(scene);
@@ -45,7 +46,14 @@ public class DefaultController extends IGameController {
     @Override
     public void cursorPosCallback(double x, double y) {
         super.cursorPosCallback(x, y);
-        if (!Window.GetPrimaryWindow().captureMouse() || !_enableCameraMovements) return;
+        if (!Window.GetPrimaryWindow().captureMouse() || !_enableCameraMovements) {
+            _bWasLastFrameCapturing = false;
+            return;
+        }
+        if (!_bWasLastFrameCapturing) {
+            _bWasLastFrameCapturing = true;
+            return;
+        }
         getScene().getCamera().addYawInput((float) getCursorDeltaX() * _mouseSensitivity);
         getScene().getCamera().addPitchInput((float) getCursorDeltaY() * _mouseSensitivity);
     }
@@ -54,10 +62,10 @@ public class DefaultController extends IGameController {
     @Override
     public void keyCallback(int key, int scancode, int action, int mods) {
         if (!Window.GetPrimaryWindow().captureMouse()) return;
-        if (action != GLFW.GLFW_RELEASE) {
+        if (action != GLFW.GLFW_RELEASE && _enableCameraMovements) {
             switch (key) {
-                case GLFW.GLFW_KEY_C -> getScene().getCamera().setFieldOfView(getScene().getCamera().getFieldOfView() / 1.2f);
-                case GLFW.GLFW_KEY_X -> getScene().getCamera().setFieldOfView(getScene().getCamera().getFieldOfView() * 1.2f);
+                case GLFW.GLFW_KEY_C : getScene().getCamera().setFieldOfView(getScene().getCamera().getFieldOfView() / 1.2f); break;
+                case GLFW.GLFW_KEY_X : getScene().getCamera().setFieldOfView(getScene().getCamera().getFieldOfView() * 1.2f); break;
             }
         }
     }

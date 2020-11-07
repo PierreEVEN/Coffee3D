@@ -22,10 +22,10 @@ public class Console extends SubWindow {
         for (LogMessage message : Log.GetLogHistory()) {
 
             switch (message.verbosity) {
-                case DISPLAY -> ImGui.pushStyleColor(ImGuiCol.Text, .5f, .5f, 1f, 1f);
-                case WARNING -> ImGui.pushStyleColor(ImGuiCol.Text, 1f, 1f, .5f, 1f);
-                case ERROR -> ImGui.pushStyleColor(ImGuiCol.Text, 1f, .5f, .5f, 1f);
-                case FAIL -> ImGui.pushStyleColor(ImGuiCol.Text, 1f, 1f, 1f, 1f);
+                case DISPLAY : ImGui.pushStyleColor(ImGuiCol.Text, .5f, .5f, 1f, 1f); break;
+                case WARNING : ImGui.pushStyleColor(ImGuiCol.Text, 1f, 1f, .5f, 1f); break;
+                case ERROR : ImGui.pushStyleColor(ImGuiCol.Text, 1f, .5f, .5f, 1f); break;
+                case FAIL : ImGui.pushStyleColor(ImGuiCol.Text, 1f, 1f, 1f, 1f); break;
             }
 
             ImGui.text(message.message);

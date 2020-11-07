@@ -54,21 +54,4 @@ public final class Vertex {
         normals = normal;
         vertexColor = colors;
     }
-
-    /**
-     * get structure byte size
-     * @return byte count
-     */
-    public static int GetByteSize() { return GetFloatSize() * 4; }
-
-    /**
-     * get structure float size
-     * @return float count
-     */
-    public static int GetFloatSize() {
-        return 3 +//pos
-                2 +//coords
-                3 +//normal
-                4;//color
-    }
 }

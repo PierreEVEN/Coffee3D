@@ -8,10 +8,6 @@ out vec4 outputColor;
 uniform sampler2D colorTexture;
 uniform sampler2D depthTexture;
 
-
-
-
-
 vec4 blurTexture(sampler2D text, vec2 coordinates) {
     float Pi = 6.28318530718; // Pi*2
     vec2 iResolution = vec2(1);

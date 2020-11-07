@@ -8,7 +8,7 @@ import coffee3D.core.resources.GraphicResource;
 public abstract class TextureResource extends GraphicResource {
 
     protected int _textureHandle;
-    protected boolean _linearTextureFilter = true;
+    protected final boolean _linearTextureFilter;
 
     protected TextureResource(String resourceName, boolean bLinearFilter) {
         super(resourceName);

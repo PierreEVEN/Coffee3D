@@ -12,7 +12,7 @@ public class MaterialInstance extends MaterialInterface {
 
     protected AssetReference<MaterialInterface> _parentMaterial;
 
-    private static final Color _matInstAssetColor = new Color(24/255f, 164/255f, 39/255f, 1f);
+    private static final Color _matInstAssetColor = new Color(0/255f, 102/255f, 0/255f, 1f);
 
     @Override
     public Color getAssetColor() { return _matInstAssetColor; }
