@@ -11,6 +11,7 @@ public abstract class IEngineModule {
         _moduleInstance = this;
     }
 
+    public String GetDefaultFontName() { return "default_font";}
     public abstract void LoadResources();
     public abstract IGameController GetController();
     public abstract void PreInitialize();

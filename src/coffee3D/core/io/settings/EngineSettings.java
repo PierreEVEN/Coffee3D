@@ -9,6 +9,7 @@ public class EngineSettings {
     public static boolean ENABLE_SHADOWS = true;
     public static boolean ENABLE_PICKING = true;
     public static boolean ENABLE_POSTPROCESSING = true;
+    public static boolean ENABLE_STENCIL_TEST = true;
 
     public static boolean FULLSCREEN_MODE = false;
     public static int MSAA_SAMPLES = 4;

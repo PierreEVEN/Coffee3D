@@ -2,6 +2,7 @@ package coffee3D.editor.ui.browsers;
 
 import coffee3D.core.assets.Asset;
 import coffee3D.core.assets.AssetManager;
+import coffee3D.core.assets.types.Font;
 import coffee3D.core.io.log.Log;
 import coffee3D.core.io.settings.EngineSettings;
 import coffee3D.core.ui.subWindows.SubWindow;
@@ -12,11 +13,11 @@ import imgui.flag.ImGuiTreeNodeFlags;
 import imgui.type.ImBoolean;
 import imgui.type.ImString;
 
-import java.awt.*;
 import java.io.File;
-import java.lang.reflect.Array;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
 
 public class ContentBrowser extends SubWindow {
     private boolean _bSetColumnWidth = false;
@@ -37,6 +38,8 @@ public class ContentBrowser extends SubWindow {
 
     @Override
     protected void draw() {
+
+        Font contentFont = AssetManager.FindAsset("Roboto-Regular");
 
         if (ImGui.button("Create")) {
 
@@ -59,6 +62,9 @@ public class ContentBrowser extends SubWindow {
 
         if (ImGui.beginChild("contentAssets")) {
 
+
+            if (contentFont != null) contentFont.use();
+
             float sizeX = ImGui.getContentRegionAvailX();
 
             int widthItems = (int) (sizeX / 80);
@@ -76,6 +82,8 @@ public class ContentBrowser extends SubWindow {
                 }
             }
             ImGui.columns(1);
+
+            if (contentFont != null) contentFont.pop();
         }
         ImGui.endChild();
         ImGui.columns(1);

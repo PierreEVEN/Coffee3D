@@ -20,6 +20,7 @@ import coffee3D.editor.ui.SceneViewport;
 import coffee3D.editor.ui.propertyHelper.AssetPicker;
 import coffee3D.editor.ui.tools.StatWindow;
 import imgui.ImGui;
+import imgui.flag.ImGuiStyleVar;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
@@ -54,6 +55,7 @@ public class LevelEditorViewport extends SceneViewport {
 
     @Override
     protected void draw() {
+        ImGui.pushStyleVar(ImGuiStyleVar.ItemSpacing, 4, 15);
         if (ImGui.beginMenuBar()) {
             if (ImGui.beginMenu("edit")) {
                 if (ImGui.menuItem("save")) getScene().save();
@@ -79,6 +81,7 @@ public class LevelEditorViewport extends SceneViewport {
 
             ImGui.endMenuBar();
         }
+        ImGui.popStyleVar();
 
         super.draw();
         if (ImGui.beginDragDropTarget())
@@ -127,7 +130,7 @@ public class LevelEditorViewport extends SceneViewport {
                 } break;
                 case GLFW.GLFW_KEY_G : {
                     if (_currentMovementDirection == MovementDirection.NoAxis) {
-                        _currentMovementDirection = null;
+                        _currentMovementDirection = MovementDirection.None;
                     }
                     else {
                         _currentMovementDirection = MovementDirection.NoAxis;
@@ -137,7 +140,9 @@ public class LevelEditorViewport extends SceneViewport {
                 case GLFW.GLFW_KEY_Y : beginMovement(MovementDirection.Y); break;
                 case GLFW.GLFW_KEY_W : beginMovement(MovementDirection.Z); break;
                 case GLFW.GLFW_KEY_F : {
-                    if (getEditedComponent() != null) _sceneContext.getCamera().setRelativePosition(new Vector3f(_sceneContext.getCamera().getForwardVector()).mul(getEditedComponent().getBound().radius * -3).add(getEditedComponent().getRelativePosition()));
+                    if (getEditedComponent() != null) {
+                        _sceneContext.getCamera().setRelativePosition(new Vector3f(_sceneContext.getCamera().getForwardVector()).mul(getEditedComponent().getBound().radius * -3).add(getEditedComponent().getBound().position));
+                    }
                 }
                 case GLFW.GLFW_KEY_C : {
                     if (mods == GLFW.GLFW_MOD_CONTROL) {
@@ -182,7 +187,7 @@ public class LevelEditorViewport extends SceneViewport {
             }
             else {
                 if (getEditedComponent() != null) {
-                    getEditedComponent().setOutlined(false);
+                    getEditedComponent().setStencilValue(0);
                 }
                 editComponent(getScene().getLastHitComponent());
             }
@@ -196,17 +201,24 @@ public class LevelEditorViewport extends SceneViewport {
     public void cursorPosCallback(double x, double y) {
         if (getEditedComponent() != null) {
             float delta = (float) IEngineModule.Get().GetController().getCursorDeltaX();
-            if (GLFW.glfwGetKey(Window.GetPrimaryWindow().getGlfwWindowHandle(), GLFW.GLFW_KEY_LEFT_ALT) == GLFW.GLFW_PRESS) delta /= 10;
+            if (GLFW.glfwGetKey(Window.GetPrimaryWindow().getGlfwWindowHandle(), GLFW.GLFW_KEY_LEFT_ALT) == GLFW.GLFW_PRESS)
+                delta /= 10;
             switch (_currentMovementDirection) {
-                case X : getEditedComponent().getRelativePosition().x += delta; break;
-                case Y : getEditedComponent().getRelativePosition().y += delta; break;
-                case Z : getEditedComponent().getRelativePosition().z += delta; break;
+                case X:
+                    getEditedComponent().getRelativePosition().x += delta;
+                    break;
+                case Y:
+                    getEditedComponent().getRelativePosition().y += delta;
+                    break;
+                case Z:
+                    getEditedComponent().getRelativePosition().z += delta;
+                    break;
             }
         }
     }
 
     private void beginMovement(MovementDirection direction) {
-        if (_currentMovementDirection == MovementDirection.None) return;
+        if (_currentMovementDirection == MovementDirection.None || _currentMovementDirection == null) return;
         cancelMovement();
         if (getEditedComponent() == null) return;
         _initialPosition = new Vector3f(getEditedComponent().getRelativePosition());

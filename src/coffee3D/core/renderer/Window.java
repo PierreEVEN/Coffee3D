@@ -2,9 +2,11 @@ package coffee3D.core.renderer;
 
 import coffee3D.core.assets.AssetManager;
 import coffee3D.core.IEngineModule;
+import coffee3D.core.assets.types.Font;
 import coffee3D.core.io.log.Log;
 import coffee3D.core.io.settings.EngineSettings;
 import coffee3D.core.resources.ResourceManager;
+import coffee3D.core.resources.factories.FontFactory;
 import coffee3D.core.types.TypeHelper;
 import coffee3D.core.ui.hud.HudUtils;
 import coffee3D.core.ui.imgui.ImGuiImplementation;
@@ -73,7 +75,10 @@ public class Window {
         _engineModule.LoadResources();
 
         Log.Display("initialize imGui");
+        FontFactory.FlushDelayedFonts();
         ImGuiImplementation.Get().init(_glfwWindowHandle);
+        Font defaultFont = AssetManager.FindAsset(_engineModule.GetDefaultFontName());
+        if (defaultFont != null) defaultFont.setDefault();
 
         Log.Display("build level");
         _engineModule.PreInitialize();
@@ -120,7 +125,6 @@ public class Window {
      */
     private void renderLoop() {
         while (!glfwWindowShouldClose(_glfwWindowHandle)) {
-
             //Handle inputs
             if (_engineModule.GetController() == null) Log.Fail("Internal error : Controller is null");
             _engineModule.GetController().update();

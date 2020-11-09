@@ -1,5 +1,6 @@
 package coffee3D.core.resources.types;
 
+import coffee3D.core.io.log.Log;
 import coffee3D.core.resources.GraphicResource;
 
 /**
@@ -20,4 +21,14 @@ public abstract class TextureResource extends GraphicResource {
      * @return texture id
      */
     public int getTextureHandle() { return _textureHandle; }
+
+    public static void resizeTextureData(int[] from, int[] to, int fromX, int fromY, int toX, int toY) {
+        for (int x = 0; x < toX; ++x) {
+            for (int y = 0; y < toY; ++y) {
+                int pxFrom = (int) (x * (fromX / (double) toX));
+                int pyFrom = (int) (y * (fromY / (double) toY));
+                to[(x + y * toX)] = from[(pxFrom + pyFrom * fromX)];
+            }
+        }
+    }
 }

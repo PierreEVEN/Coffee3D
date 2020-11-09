@@ -2,6 +2,7 @@ package coffee3D.editor;
 
 import coffee3D.core.assets.Asset;
 import coffee3D.core.assets.AssetManager;
+import coffee3D.core.assets.types.Font;
 import coffee3D.core.assets.types.World;
 import coffee3D.core.controller.IGameController;
 import coffee3D.core.IEngineModule;
@@ -19,21 +20,25 @@ import coffee3D.editor.ui.tools.Console;
 import imgui.ImGui;
 import imgui.ImGuiIO;
 
+import java.io.File;
+
 public class EditorModule extends IEngineModule {
 
     private RenderScene _rootScene;
     private EditorController _controller;
 
     @Override
-    public void LoadResources() {
-        /* Load default font */
-        ImGuiImplementation.Get().addFont(EngineSettings.ENGINE_ASSET_PATH + "/assets/fonts/roboto/Roboto-Medium.ttf", 40);
-        ImGuiIO io = ImGui.getIO();
-        io.setFontGlobalScale(0.5f);
+    public void LoadResources() {}
+
+    @Override
+    public String GetDefaultFontName() {
+        return "Roboto-Medium";
     }
 
     @Override
     public void PreInitialize() {
+
+
         /* Create default scene and default controller */
         _rootScene = new RenderScene(false);
         _rootScene.load(AssetManager.FindAsset(EngineSettings.DEFAULT_MAP_NAME));
@@ -58,6 +63,8 @@ public class EditorModule extends IEngineModule {
     @Override
     public void DrawUI() {
         EditorUI.DrawMenuBar(_rootScene);
+
+        //ImGui.image(_rootScene.getShadowBuffer().getDepthTexture(), 1024, 1024, 0, 1, 1, 0);
     }
 
     @Override

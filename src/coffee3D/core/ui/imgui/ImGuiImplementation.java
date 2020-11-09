@@ -2,10 +2,7 @@ package coffee3D.core.ui.imgui;
 
 import coffee3D.core.io.inputs.GlfwInputHandler;
 import imgui.*;
-import imgui.flag.ImGuiBackendFlags;
-import imgui.flag.ImGuiConfigFlags;
-import imgui.flag.ImGuiKey;
-import imgui.flag.ImGuiMouseCursor;
+import imgui.flag.*;
 import imgui.gl3.ImGuiImplGl3;
 
 import java.util.ArrayList;
@@ -51,6 +48,20 @@ public class ImGuiImplementation {
         // Try others with ImGui.styleColors*() methods.
         ImGui.styleColorsDark();
 
+        ImGui.getStyle().setColor(ImGuiCol.FrameBg, ImColor.intToColor(46, 46, 46, 255));
+        ImGui.getStyle().setColor(ImGuiCol.TitleBg, ImColor.intToColor(30, 30, 30, 255));
+        ImGui.getStyle().setColor(ImGuiCol.CheckMark, ImColor.intToColor(159, 159, 159, 255));
+        ImGui.getStyle().setColor(ImGuiCol.SliderGrab, ImColor.intToColor(159, 159, 159, 255));
+        ImGui.getStyle().setColor(ImGuiCol.Button, ImColor.intToColor(137, 134, 137, 255));
+        ImGui.getStyle().setColor(ImGuiCol.Header, ImColor.intToColor(71, 71, 71, 255));
+        ImGui.getStyle().setColor(ImGuiCol.Tab, ImColor.intToColor(21, 21, 21, 220));
+        ImGui.getStyle().setColor(ImGuiCol.TabUnfocused, ImColor.intToColor(27, 27, 27, 220));
+        ImGui.getStyle().setColor(ImGuiCol.TabUnfocusedActive, ImColor.intToColor(52, 52, 52, 255));
+        ImGui.getStyle().setColor(ImGuiCol.DockingEmptyBg, ImColor.intToColor(18, 18, 18, 255));
+        ImGui.getStyle().setColor(ImGuiCol.TitleBgActive, ImColor.intToColor(29, 29, 29, 255));
+        ImGui.getStyle().setColor(ImGuiCol.WindowBg, ImColor.intToColor(15, 15, 15, 255));
+        ImGui.getStyle().setColor(ImGuiCol.TabActive, ImColor.intToColor(135, 135, 135, 255));
+
         ImGuiStyle style = ImGui.getStyle();
         style.setWindowRounding(0);
         style.setScrollbarRounding(0);
@@ -58,11 +69,11 @@ public class ImGuiImplementation {
         style.setWindowBorderSize(1);
         style.setPopupBorderSize(1);
         style.setWindowTitleAlign(0.5f, style.getWindowTitleAlignY());
-        style.setFramePadding(6.f, 6.f);
-        style.setWindowPadding(4.f, 4.f);
-        style.setGrabMinSize(16.f);
-        style.setScrollbarSize(20.f);
-        style.setIndentSpacing(30.f);
+        style.setFramePadding(12, 10);
+        style.setWindowPadding(4, 4);
+        style.setGrabMinSize(12);
+        style.setScrollbarSize(16);
+        style.setIndentSpacing(17);
 
         // Initialize ImGuiIO config
         final ImGuiIO io = ImGui.getIO();

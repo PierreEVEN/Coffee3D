@@ -45,8 +45,7 @@ public class StaticMeshComponent extends SceneComponent {
         // rebuild override list if mesh changed
         if (lastMesh.get() != _mesh.get()) rebuildOverrides();
 
-        // Send model matrix
-        _mesh.get().setMaterialModel(getWorldTransformationMatrix());
+        boolean draw = true;
 
         // Select material drawList
         switch (RenderUtils.RENDER_MODE) {
@@ -59,19 +58,21 @@ public class StaticMeshComponent extends SceneComponent {
                 }
                 _mesh.get().setMaterialList(_materialList);
             } break;
+            case Stencil: {
+                if (getStencilValue() != 0) {
+                    RenderUtils.CheckGLErrors();
+                    RenderUtils.getPickMaterialDrawList()[0].use(context);
+                    RenderUtils.getPickMaterialDrawList()[0].getResource().setIntParameter("pickId", getStencilValue());
+                    _mesh.get().setMaterialList(RenderUtils.getPickMaterialDrawList());
+                    RenderUtils.CheckGLErrors();
+                } else draw = false;
+            }
         }
 
-        // Render mesh
-        _mesh.get().use(context);
-
-        if (doesDisplayOutlines()) drawOutlines(context);
-    }
-
-    private void drawOutlines(Scene context) {
-        glDisable(GL_CULL_FACE);
-        _mesh.get().setMaterialList(RenderUtils.getOutlineMaterialDrawList());
-        _mesh.get().use(context);
-        glDisable(GL_CULL_FACE);
+        if (draw) {
+            _mesh.get().setMaterialModel(getWorldTransformationMatrix());
+            _mesh.get().use(context);
+        }
     }
 
     private void rebuildOverrides() {

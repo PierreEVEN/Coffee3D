@@ -63,7 +63,7 @@ public class AssetManager {
     public static boolean IsAssetNameFree(String name) {
         if (name.equals("")) return false;
         if (AssetManager.FindAsset(name) != null) return false;
-        if (!name.matches("^[a-zA-Z0-9_]*$")) return false;
+        if (!name.matches("^[a-zA-Z0-9_-]*$")) return false;
         return true;
     }
 

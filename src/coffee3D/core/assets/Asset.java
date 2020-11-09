@@ -1,12 +1,18 @@
 package coffee3D.core.assets;
 
 import coffee3D.core.io.log.Log;
+import coffee3D.core.renderer.RenderUtils;
 import coffee3D.core.renderer.scene.Scene;
+import coffee3D.core.resources.factories.TextureFactory;
 import coffee3D.core.resources.types.TextureResource;
 import coffee3D.core.types.Color;
+import coffee3D.core.types.TypeHelper;
 import coffee3D.editor.ui.propertyHelper.SerializableData;
+import org.joml.Vector2i;
 
 import java.io.*;
+
+import static org.lwjgl.opengl.GL46.*;
 
 /**
  * Asset base class
@@ -40,8 +46,14 @@ public abstract class Asset extends SerializableData {
         _assetName = assetName;
         _assetPath = assetPath;
         AssetManager.RegisterAsset(this);
-        load();
+        if (autoLoad()) load();
     }
+
+    /**
+     * Used to manually load resource
+     * @return auto load
+     */
+    public boolean autoLoad() { return true; }
 
     /**
      * Load asset into memory
@@ -152,6 +164,42 @@ public abstract class Asset extends SerializableData {
     *******************************************************************/
 
     private static final Color _defaultAssetColor = new Color(.5f, .5f, .5f, .5f);
+    private transient TextureResource thumbnailTexture;
+    public static final Vector2i THUMBNAIL_RESOLUTION = new Vector2i(64,64);
+
+    public final TextureResource getThumbnail() {
+        if (thumbnailTexture == null) {
+            int[] thumbnailData = null;
+            if (thumbnailData == null) {
+                Vector2i textureSize = new Vector2i();
+                int texture  = getThumbnailSourceTexture(textureSize);
+                int[] textureRawData;
+                if (texture >= 0) {
+                    textureRawData = new int[textureSize.x * textureSize.y];
+                    glBindTexture(GL_TEXTURE_2D, texture);
+                    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureRawData);
+                    glBindTexture(GL_TEXTURE_2D, 0);
+                }
+                else {
+                    texture = getThumbnailSourceBuffer(textureSize);
+                    if (texture >= 0) {
+                        textureRawData = new int[textureSize.x * textureSize.y];
+                        glBindFramebuffer(GL_FRAMEBUFFER, texture);
+                        glReadPixels(0, 0, textureSize.x, textureSize.y, GL_RGBA, GL_UNSIGNED_BYTE, textureRawData);
+                        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+                    }
+                    else return null;
+                }
+                thumbnailData = new int[THUMBNAIL_RESOLUTION.x * THUMBNAIL_RESOLUTION.y];
+                TextureResource.resizeTextureData(textureRawData, thumbnailData, textureSize.x, textureSize.y, THUMBNAIL_RESOLUTION.x, THUMBNAIL_RESOLUTION.y);
+            }
+            thumbnailTexture = TextureFactory.T2dFromData("thumbnail_" + getName() + "_" + TypeHelper.MakeGlobalUid(), thumbnailData, THUMBNAIL_RESOLUTION.x, THUMBNAIL_RESOLUTION.y, false);
+        }
+        return thumbnailTexture;
+    }
+
+    public int getThumbnailSourceTexture(Vector2i textureSize) { return -1; }
+    public int getThumbnailSourceBuffer(Vector2i textureSize) { return -1; }
 
     public String[] getAssetExtensions() { return null; }
 
@@ -160,8 +208,6 @@ public abstract class Asset extends SerializableData {
     public void setSavePath(File path) { _assetPath = path; }
 
     public File getSavePath() { return _assetPath; }
-
-    public TextureResource getThumbnailImage() { return null; }
 
     public void drawDetailedContent() {}
 }

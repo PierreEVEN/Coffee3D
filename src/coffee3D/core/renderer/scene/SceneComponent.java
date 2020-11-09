@@ -1,7 +1,5 @@
 package coffee3D.core.renderer.scene;
 
-import coffee3D.core.renderer.RenderMode;
-import coffee3D.core.renderer.RenderUtils;
 import coffee3D.core.types.SphereBound;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
@@ -15,10 +13,10 @@ public class SceneComponent implements Serializable {
     private static final long serialVersionUID = 744620683032598971L;
 
     protected String _componentName;
-    private transient boolean _showOutlines;
+    protected transient int _stencilValue;
 
-    public boolean doesDisplayOutlines() { return _showOutlines && RenderUtils.RENDER_MODE == RenderMode.Color; }
-    public void setOutlined(boolean enableOutlines) { _showOutlines = enableOutlines; }
+    public int getStencilValue() { return _stencilValue; }
+    public void setStencilValue(int stencilValue) { _stencilValue = stencilValue; }
 
     public String getComponentName() {
         return _componentName;
@@ -42,7 +40,7 @@ public class SceneComponent implements Serializable {
         _scale = scale;
 
         _componentName = getClass().getSimpleName();
-        _showOutlines = false;
+        _stencilValue = 0;
     }
 
 

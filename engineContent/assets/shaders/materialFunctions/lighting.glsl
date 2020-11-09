@@ -64,6 +64,7 @@ float ShadowCalculation(vec4 fragPosLightSpace, sampler2D shadowTexture, vec3 no
 }
 
 vec3 calcLight(vec3 baseColor, vec3 worldPos, vec3 norm, sampler2D shadowTexture, vec4 posLightSpace) {
+
     // ambient
     vec3 ambient = 0.15 * baseColor;
     // diffuse

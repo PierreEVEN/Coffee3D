@@ -3,6 +3,7 @@ package coffee3D.editor.ui.propertyHelper.writers;
 import coffee3D.core.assets.Asset;
 import coffee3D.core.assets.AssetManager;
 import coffee3D.core.assets.AssetReference;
+import coffee3D.editor.ui.assets.EditorAssetUtils;
 import coffee3D.editor.ui.propertyHelper.AssetPicker;
 import imgui.ImGui;
 
@@ -16,6 +17,11 @@ public class AssetButton {
             foundAsset = (Asset) assetRef.get();
         }
         ImGui.beginGroup();
+
+        if (foundAsset != null) {
+            EditorAssetUtils.DrawAssetThumbnail(foundAsset);
+            ImGui.sameLine();
+        }
         if (ImGui.button(foundAsset == null ? "none" : foundAsset.getName(), ImGui.getContentRegionAvailX(), 0.f)) {
             new AssetPicker("Pick asset for " + fieldName, assetRef, null);
         }

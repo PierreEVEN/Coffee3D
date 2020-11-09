@@ -103,6 +103,9 @@ public class RenderUtils {
                 case GL_STACK_OVERFLOW : errorCode = "GL_STACK_OVERFLOW"; break;
                 case GL_STACK_UNDERFLOW : errorCode = "GL_STACK_UNDERFLOW"; break;
                 case GL_OUT_OF_MEMORY : errorCode = "GL_OUT_OF_MEMORY"; break;
+                case 0x506 : errorCode = "GL_INVALID_FRAMEBUFFER_OPERATION"; break;
+                case 0x0507 : errorCode = "GL_CONTEXT_LOST"; break;
+                case 0x8031 : errorCode = "GL_TABLE_TOO_LARGE1"; break;
                 default : errorCode = "unknown : " + Integer.toHexString(errCode); break;
             }
             Log.Fail("GL error : " + errorCode);

@@ -51,7 +51,7 @@ public class AssetPicker extends SubWindow {
     @Override
     protected void draw() {
         int lastIndex = _selectedItem.get();
-        ImGui.listBox("##Assets", _selectedItem, _assetNames, _assetNames.length);
+        ImGui.listBox("##Assets", _selectedItem, _assetNames, _assetNames.length,  _assetNames.length);
         if (lastIndex != _selectedItem.get()) {
             if (_selectedItem.get() == 0) {
                 _assetPtr.set(null);

@@ -34,7 +34,7 @@ public class RenderScene extends Scene {
     private final Framebuffer _pickBuffer;
     private final Framebuffer _postProcessBuffer;
     private final Framebuffer _shadowBuffer;
-    private final SceneUniformBuffer _sceneUbo;
+    private final Framebuffer _stencilBuffer;
     private final Camera _camera;
     private final ByteBuffer _pickOutputBuffer;
     private SceneComponent _lastHitComponent = null;
@@ -42,12 +42,14 @@ public class RenderScene extends Scene {
     private final FrustumIntersection _frustum = new FrustumIntersection();
     private final LinkedList<SceneComponent> frustumDrawList = new LinkedList<>();
     private static MeshResource _viewportQuadMesh;
+    private static SceneUniformBuffer _sceneUbo;
 
 
-    private boolean enablePicking;
-    private boolean enableShadows;
-    private boolean enablePostProcess;
-    private boolean bFullScreen;
+    private final boolean enablePicking;
+    private final boolean enableShadows;
+    private final boolean enablePostProcess;
+    private final boolean enableStencilTest;
+    private final boolean bFullScreen;
     private boolean freezeFrustum = false;
 
     public void freezeFrustum(boolean bFreeze) { freezeFrustum = bFreeze; }
@@ -56,10 +58,10 @@ public class RenderScene extends Scene {
     public RenderScene(boolean fullscreen) {
         super();
 
-
         enablePicking = EngineSettings.ENABLE_PICKING;
         enableShadows = EngineSettings.ENABLE_SHADOWS;
         enablePostProcess = EngineSettings.ENABLE_POSTPROCESSING;
+        enableStencilTest = EngineSettings.ENABLE_STENCIL_TEST;
         bFullScreen = fullscreen;
 
         // Buffers
@@ -67,10 +69,12 @@ public class RenderScene extends Scene {
         _postProcessBuffer = !fullscreen && enablePostProcess ? new Framebuffer("postProcessBuffer_" + TypeHelper.MakeGlobalUid(), 0,0, true, false) : null;
         _shadowBuffer = enableShadows ? new Framebuffer("shadowBuffer_" + TypeHelper.MakeGlobalUid(), 4096, 4096, false, true) : null;
         _pickBuffer = enablePicking ? new Framebuffer("pickBuffer_" + TypeHelper.MakeGlobalUid(), 1, 1, true, true) : null;
-
+        _stencilBuffer = enableStencilTest ? new Framebuffer("stencilBuffer_" + TypeHelper.MakeGlobalUid(), 0, 0, true, true) : null;
         _sceneProperties = new RenderSceneProperties();
-        _sceneUbo = new SceneUniformBuffer("SceneBuffer_" + TypeHelper.MakeGlobalUid());
-        _sceneUbo.load();
+        if (_sceneUbo == null) {
+            _sceneUbo = new SceneUniformBuffer("SceneBuffer_" + TypeHelper.MakeGlobalUid());
+            _sceneUbo.load();
+        }
         _camera = new Camera();
         _pickOutputBuffer = BufferUtils.createByteBuffer(3);
 
@@ -106,7 +110,7 @@ public class RenderScene extends Scene {
         for (SceneComponent component : getComponents()) component.drawInternal(this);
     }
 
-    public void drawFrustrumComponents() {
+    public void drawFrustumComponents() {
         if (RenderUtils.RENDER_MODE == RenderMode.Select) {
             for (SceneComponent component : frustumDrawList) {
                 RenderUtils.getPickMaterialDrawList()[0].use(this);
@@ -121,9 +125,9 @@ public class RenderScene extends Scene {
     }
 
 
-    public void renderScene() {
+    public boolean renderScene() {
         if (bFullScreen && _sceneBuffer != null) _sceneBuffer.resizeFramebuffer(Window.GetPrimaryWindow().getPixelWidth(), Window.GetPrimaryWindow().getPixelHeight());
-        if (getFbWidth() <= 0 || getFbHeight() <= 0) return;
+        if (getFbWidth() <= 0 || getFbHeight() <= 0) return false;
 
         // QUERY RENDERED COMPONENTS
         buildFrustumList();
@@ -137,29 +141,35 @@ public class RenderScene extends Scene {
             RenderUtils.RENDER_MODE = RenderMode.Shadow;
             _shadowBuffer.use(true, null);
             glEnable(GL_CULL_FACE);
-            //glCullFace(GL_BACK);
             updateLightMatrix();
             drawAllComponents();
         }
 
+        // DRAW STENCIL BUFFER
+        if (enableStencilTest) {
+            RenderUtils.RENDER_MODE = RenderMode.Stencil;
+            _stencilBuffer.resizeFramebuffer(getFbWidth(), getFbHeight());
+            _stencilBuffer.use(true,null);
+            glEnable(GL_DEPTH_TEST);
+            glDisable(GL_CULL_FACE);
+            glCullFace(GL_FRONT);
+            glFrontFace(GL_CW);
+            drawFrustumComponents();
+        }
+
         // COLOR RENDERING
         RenderUtils.RENDER_MODE = RenderMode.Color;
-
-        if (bFullScreen && !enablePostProcess) {
-            Framebuffer.BindBackBuffer(EngineSettings.TRANSPARENT_FRAMEBUFFER ? null : ((RenderSceneProperties) _sceneProperties)._backgroundColor);
-        }
-        else {
-            _sceneBuffer.use(true, EngineSettings.TRANSPARENT_FRAMEBUFFER ? null : ((RenderSceneProperties) _sceneProperties)._backgroundColor);
-        }
+        if (bFullScreen && !enablePostProcess) Framebuffer.BindBackBuffer(EngineSettings.TRANSPARENT_FRAMEBUFFER ? null : ((RenderSceneProperties) _sceneProperties)._backgroundColor);
+        else _sceneBuffer.use(true, EngineSettings.TRANSPARENT_FRAMEBUFFER ? null : ((RenderSceneProperties) _sceneProperties)._backgroundColor);
         glEnable(GL_DEPTH_TEST);
-        glEnable(GL_MULTISAMPLE);
         glEnable(GL_STENCIL_TEST);
+        glEnable(GL_MULTISAMPLE);
         glEnable(GL_CULL_FACE);
         glCullFace(GL_FRONT);
         glFrontFace(GL_CW);
-        glPolygonMode( GL_FRONT_AND_BACK, Window.GetPrimaryWindow().getDrawMode());
-        drawFrustrumComponents();
-        glPolygonMode( GL_FRONT_AND_BACK, GL_FILL);
+        glPolygonMode(GL_FRONT_AND_BACK, Window.GetPrimaryWindow().getDrawMode());
+        drawFrustumComponents();
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         // POST PROCESS RENDERING
         if (enablePostProcess && (bFullScreen ? Framebuffer.BindBackBuffer(null) : _postProcessBuffer.use(true,null))) {
@@ -168,10 +178,14 @@ public class RenderScene extends Scene {
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, _sceneBuffer.getColorTexture());
             RenderUtils.getPostProcessMaterial().getResource().setIntParameter("depthTexture", 1);
-            glActiveTexture(GL_TEXTURE0 + 1);
-            glBindTexture(GL_TEXTURE_2D, _sceneBuffer.getDepthStencilTexture());
+            glActiveTexture(GL_TEXTURE1);
+            glBindTexture(GL_TEXTURE_2D, _sceneBuffer.getDepthTexture());
+            if (enableStencilTest) {
+                RenderUtils.getPostProcessMaterial().getResource().setIntParameter("stencilTexture", 2);
+                glActiveTexture(GL_TEXTURE2);
+                glBindTexture(GL_TEXTURE_2D, _stencilBuffer.getColorTexture());
+            }
             _viewportQuadMesh.use(this);
-            RenderUtils.CheckGLErrors();
         }
 
         // PICK BUFFER RENDERING
@@ -185,8 +199,13 @@ public class RenderScene extends Scene {
             glFrontFace(GL_CW);
             drawPickBuffer();
         }
+        return true;
+    }
 
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    public void resizeBuffers(int sizeX, int sizeY) {
+        if (_sceneBuffer != null) _sceneBuffer.resizeFramebuffer(sizeX, sizeY);
+        if (_stencilBuffer != null) _stencilBuffer.resizeFramebuffer(sizeX, sizeY);
+        if (_postProcessBuffer != null) _postProcessBuffer.resizeFramebuffer(sizeX, sizeY);
     }
 
     public void updateLightMatrix() {
@@ -226,18 +245,14 @@ public class RenderScene extends Scene {
                 TypeHelper.getMat4().identity().lookAt(camWorldPosition, TypeHelper.getVector3(camWorldPosition).add(cursorSceneDirection), getCamera().getUpVector()));
 
         RenderUtils.CheckGLErrors();
-        drawFrustrumComponents();
+        drawFrustumComponents();
         RenderUtils.CheckGLErrors();
 
         glReadPixels(0, 0, 1, 1,  GL_RGB, GL_UNSIGNED_BYTE, _pickOutputBuffer);
 
         int hitCompId = (_pickOutputBuffer.get(0) & 0xff) + ((_pickOutputBuffer.get(1) & 0xff) << 8) + ((_pickOutputBuffer.get(2) & 0xff) << 16);
-        if (hitCompId > 0 && getComponents().size() >= hitCompId) {
-            _lastHitComponent = getComponents().get(hitCompId - 1);
-        }
-        else {
-            _lastHitComponent = null;
-        }
+        if (hitCompId > 0 && getComponents().size() >= hitCompId) _lastHitComponent = getComponents().get(hitCompId - 1);
+        else _lastHitComponent = null;
 
         RenderUtils.RENDER_MODE = RenderMode.Color;
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -248,6 +263,8 @@ public class RenderScene extends Scene {
     public Framebuffer getPostProcessBuffer() { return _postProcessBuffer; }
     public Framebuffer getShadowBuffer() { return _shadowBuffer; }
     public Framebuffer getPickBuffer() { return _pickBuffer; }
+    public Framebuffer getStencilBuffer() { return _stencilBuffer; }
+
 
     public int getFbWidth() { return _sceneBuffer == null ? Window.GetPrimaryWindow().getPixelWidth() : _sceneBuffer.getWidth(); }
     public int getFbHeight() { return _sceneBuffer == null ? Window.GetPrimaryWindow().getPixelHeight() : _sceneBuffer.getHeight(); }
@@ -281,5 +298,6 @@ public class RenderScene extends Scene {
         if (_pickBuffer != null) _pickBuffer.delete();
         if (_postProcessBuffer != null) _postProcessBuffer.delete();
         if (_shadowBuffer != null) _shadowBuffer.delete();
+        if (_stencilBuffer != null) _stencilBuffer.delete();
     }
 }

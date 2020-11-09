@@ -9,6 +9,7 @@ layout (std140) uniform shader_data
     vec4 cameraPos;
     vec4 cameraDir;
     vec4 sunDirection;
+    vec2 framebufferSize;
     float time;
     float shadowIntensity;
 };

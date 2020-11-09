@@ -31,6 +31,7 @@ public class StructureReader {
                 // use adapted writer
 
                 ImGui.columns(2);
+                ImGui.setColumnWidth(0, 125);
                 if (nodeName.charAt(0) != '#') {
                     ImGui.text(nodeName.charAt(0) == '_' ? nodeName.substring(1) : nodeName);
                 }
@@ -78,6 +79,8 @@ public class StructureReader {
                 Object[] tab = (Object[]) field.get(obj);
                 if (ImGui.collapsingHeader(nodeName)) {
                     for (int i = 0; i < tab.length; ++i) {
+                        ImGui.text("Element" + i);
+                        ImGui.sameLine();
                         Object result = WriteObj(tab[i], "##[" + i + "]" + nodeName, true);
                         if (result != null) {
                             tab[i] = result;

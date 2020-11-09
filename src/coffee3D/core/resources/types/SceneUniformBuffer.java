@@ -40,7 +40,8 @@ public class SceneUniformBuffer extends GraphicResource {
 
     @Override
     public void unload() {
-        glDeleteBuffers(_uboHandle);
+        // a faire qu'une fois
+        //glDeleteBuffers(_uboHandle);
     }
 
     @Override
@@ -68,5 +69,6 @@ public class SceneUniformBuffer extends GraphicResource {
         _bufferData.lightSpaceMatrix.set(scene.getLightSpaceMatrix());
         _bufferData.time = (float)GLFW.glfwGetTime();
         _bufferData.shadowIntensity = ((RenderSceneProperties)scene.getProperties()).shadowIntensity * (scene.getShadowBuffer() == null ? 0 : 1);
+        _bufferData.framebufferSize.set(scene.getFbWidth(), scene.getFbHeight());
     }
 }

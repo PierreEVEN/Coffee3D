@@ -2,12 +2,12 @@ package coffee3D.core.assets.types;
 
 import coffee3D.core.assets.Asset;
 import coffee3D.core.assets.AssetReference;
-import coffee3D.core.io.log.Log;
-import coffee3D.core.renderer.RenderUtils;
 import coffee3D.core.renderer.scene.RenderScene;
 import coffee3D.core.renderer.scene.Scene;
 import coffee3D.core.resources.types.MaterialResource;
 import coffee3D.core.types.Color;
+import coffee3D.core.renderer.scene.ThumbnailScene;
+import org.joml.Vector2i;
 
 import java.io.File;
 
@@ -26,7 +26,7 @@ public abstract class MaterialInterface extends Asset {
 
     protected MaterialInterface(String name, File sourcePath, File assetPath, AssetReference<Texture2D>[] textures) {
         super(name, sourcePath, assetPath);
-        _materialColor = new Color(1, 1, 1, 1f);
+        _materialColor = new Color(1, 1, 1, 1);
         _uvScale = 1f;
         _textures = textures;
     }
@@ -50,7 +50,7 @@ public abstract class MaterialInterface extends Asset {
         if (((RenderScene)context).getShadowBuffer() == null) return;
         getResource().setIntParameter("shadowMap", 0);
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, ((RenderScene)context).getShadowBuffer().getDepthStencilTexture());
+        glBindTexture(GL_TEXTURE_2D, ((RenderScene)context).getShadowBuffer().getDepthTexture());
     }
 
     public void bindTextures(AssetReference<Texture2D>[] textureOverride) {
@@ -80,4 +80,11 @@ public abstract class MaterialInterface extends Asset {
     public Color getColor() { return _materialColor; }
     public void setColor(Color inColor) { _materialColor = inColor; }
     public float getUvScale() { return _uvScale; }
+
+    @Override
+    public int getThumbnailSourceBuffer(Vector2i textureSize) {
+        textureSize.set(ThumbnailScene.Get().getFbWidth(), ThumbnailScene.Get().getFbHeight());
+        ThumbnailScene.Get().use(this, null);
+        return ThumbnailScene.Get().getPostProcessBuffer().getFrameBuffer();
+    }
 }

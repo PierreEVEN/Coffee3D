@@ -9,6 +9,7 @@ import coffee3D.core.resources.types.Texture2DResource;
 import coffee3D.core.resources.types.TextureResource;
 import coffee3D.core.types.Color;
 import imgui.ImGui;
+import org.joml.Vector2i;
 
 import java.io.File;
 
@@ -68,14 +69,17 @@ public class Texture2D extends Asset {
     }
 
     @Override
-    public TextureResource getThumbnailImage() { return _texture; }
-
-    @Override
     public void drawDetailedContent() {
         super.drawDetailedContent();
         if (_texture != null) {
             ImGui.text("resolution : " + _texture.getWidth() + "x" + _texture.getHeight());
             ImGui.image(getTextureID(), _texture.getWidth(), _texture.getHeight(), 0, 1, 1, 0);
         }
+    }
+
+    @Override
+    public int getThumbnailSourceTexture(Vector2i textureSize) {
+        textureSize.set(_texture.getWidth(), _texture.getHeight());
+        return getTextureID();
     }
 }

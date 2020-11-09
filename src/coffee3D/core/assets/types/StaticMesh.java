@@ -13,8 +13,10 @@ import coffee3D.core.resources.ResourceManager;
 import coffee3D.core.types.Color;
 import coffee3D.core.types.SphereBound;
 import coffee3D.core.types.TypeHelper;
+import coffee3D.core.renderer.scene.ThumbnailScene;
 import imgui.ImGui;
 import org.joml.Matrix4f;
+import org.joml.Vector2i;
 import org.joml.Vector3f;
 
 import java.io.File;
@@ -174,5 +176,12 @@ public class StaticMesh extends Asset {
         super.drawDetailedContent();
 
         ImGui.text("section count : " + (_sections == null ? "null" : _sections.length));
+    }
+
+    @Override
+    public int getThumbnailSourceBuffer(Vector2i textureSize) {
+        textureSize.set(ThumbnailScene.Get().getFbWidth(), ThumbnailScene.Get().getFbHeight());
+        ThumbnailScene.Get().use(null, this);
+        return ThumbnailScene.Get().getPostProcessBuffer().getFrameBuffer();
     }
 }

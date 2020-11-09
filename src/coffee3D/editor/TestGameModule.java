@@ -24,15 +24,16 @@ public class TestGameModule extends IEngineModule {
 
 
     @Override
-    public void LoadResources() {
-        ImGuiImplementation.Get().addFont("engineContent/assets/fonts/roboto/Roboto-Medium.ttf", 60);
-        ImGuiIO io = ImGui.getIO();
-        io.setFontGlobalScale(0.4f);
-    }
+    public void LoadResources() {}
 
     @Override
     public IGameController GetController() {
         return controller;
+    }
+
+    @Override
+    public String GetDefaultFontName() {
+        return super.GetDefaultFontName();
     }
 
     @Override
@@ -42,7 +43,6 @@ public class TestGameModule extends IEngineModule {
         _rootScene.load(AssetManager.FindAsset(EngineSettings.DEFAULT_MAP_NAME));
         controller = new TopViewController(_rootScene);
         Window.GetPrimaryWindow().showCursor(true);
-
         Window.GetPrimaryWindow().setWindowTitle("Sample game");
     }
 
@@ -61,6 +61,7 @@ public class TestGameModule extends IEngineModule {
 
     @Override
     public void DrawHUD() {
+        /*
         StatHelper.DrawStats(_rootScene);
 
 
@@ -106,6 +107,8 @@ public class TestGameModule extends IEngineModule {
         }
         HudUtils.EndContainer();
 
+
+         */
 
 
     }

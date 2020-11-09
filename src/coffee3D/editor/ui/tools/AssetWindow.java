@@ -81,6 +81,17 @@ public class AssetWindow extends SubWindow {
                         new Quaternionf().identity(),
                         new Vector3f(1,1,1));
                 _background.attachToScene(_thumbnailScene);
+                StaticMeshComponent skyBox = new StaticMeshComponent(
+                        null,
+                        new Vector3f(0,0,0),
+                        new Quaternionf().identity(),
+                        new Vector3f(-700,-700,-700));
+                skyBox.attachToScene(_thumbnailScene);
+
+                skyBox.setStaticMesh(AssetManager.FindAsset("default_sphere"));
+                skyBox.setMaterial(AssetManager.FindAsset("skyboxMaterial"), 0);
+
+
             }
             int sizeX = Math.min((int) ImGui.getContentRegionAvailX(), (int) ImGui.getContentRegionAvailY());
 
@@ -92,7 +103,7 @@ public class AssetWindow extends SubWindow {
                 _background.setMaterial((MaterialInterface)_editedAsset, 0);
             }
 
-            _thumbnailScene.getColorFrameBuffer().resizeFramebuffer(sizeX, sizeX);
+            _thumbnailScene.resizeBuffers(sizeX, sizeX);
 
             _thumbnailScene.getCamera().setYawInput((float) (GLFW.glfwGetTime() * 20));
             _thumbnailScene.getCamera().setPitchInput(30);
@@ -102,7 +113,7 @@ public class AssetWindow extends SubWindow {
                             .add(_background.getBound().position));
 
             _thumbnailScene.renderScene();
-            ImGui.image(_thumbnailScene.getColorFrameBuffer().getColorTexture(), sizeX, sizeX, 0, 1, 1, 0);
+            ImGui.image(_thumbnailScene.getPostProcessBuffer().getColorTexture(), sizeX, sizeX, 0, 1, 1, 0);
         }
     }
 
