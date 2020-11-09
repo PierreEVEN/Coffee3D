@@ -34,7 +34,6 @@ public class EditorUI {
 
         if (ImGui.beginMainMenuBar()) {
             if (ImGui.beginMenu("Files")) {
-                if (ImGui.menuItem("save all")) EditorModule.SaveAll();
                 if (ImGui.menuItem("quit")) {
                     Window.GetPrimaryWindow().close();
                 }
@@ -48,25 +47,6 @@ public class EditorUI {
                 if (ImGui.menuItem("Stat window")) new StatWindow(context, "Stat window");
                 ImGui.separator();
                 if (ImGui.menuItem("Style editor")) new StyleEditor("Style editor");
-                ImGui.endMenu();
-            }
-            if (ImGui.beginMenu("View")) {
-                if (ImGui.beginMenu("Draw mode")) {
-                    if (ImGui.menuItem("Shape")) Window.GetPrimaryWindow().setDrawMode(GL_FILL);
-                    if (ImGui.menuItem("Wireframe")) Window.GetPrimaryWindow().setDrawMode(GL_LINE);
-                    if (ImGui.menuItem("Points")) Window.GetPrimaryWindow().setDrawMode(GL_POINT);
-                    ImGui.endMenu();
-                }
-                ImGui.checkbox("SCENE show bounds", EngineSettings.DRAW_DEBUG_BOUNDS);
-                ImGui.checkbox("UI draw debug boxes", HudUtils.bDrawDebugBoxes);
-                ImGui.endMenu();
-            }
-            if (ImGui.beginMenu("Import")) {
-                if (ImGui.menuItem("Static mesh")) new MeshImporter("Mesh importer");
-                if (ImGui.menuItem("Material")) new MaterialImporter("Material importer");
-                if (ImGui.menuItem("Material instance")) new MaterialInstanceImporter("create material instance");
-                if (ImGui.menuItem("Texture2D")) new TextureImporter("Texture importer");
-                if (ImGui.menuItem("Font")) new FontImporter("Font importer");
                 ImGui.endMenu();
             }
 

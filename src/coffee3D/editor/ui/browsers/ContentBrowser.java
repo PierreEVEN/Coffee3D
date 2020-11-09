@@ -8,8 +8,10 @@ import coffee3D.core.io.settings.EngineSettings;
 import coffee3D.core.ui.subWindows.SubWindow;
 import coffee3D.editor.EditorModule;
 import coffee3D.editor.ui.assets.EditorAssetUtils;
+import coffee3D.editor.ui.importers.*;
 import imgui.ImColor;
 import imgui.ImGui;
+import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiTreeNodeFlags;
 import imgui.type.ImBoolean;
 import imgui.type.ImString;
@@ -42,25 +44,39 @@ public class ContentBrowser extends SubWindow {
 
         Font contentFont = AssetManager.FindAsset("Roboto-Regular");
 
+        ImGui.pushStyleVar(ImGuiStyleVar.FramePadding, 10, 7);
         if (ImGui.button("Create")) {
+            ImGui.openPopup("CreatePopup");
 
+        }
+
+        if (ImGui.beginPopup("CreatePopup")) {
+            if (ImGui.menuItem("Static mesh")) new MeshImporter("Mesh importer");
+            if (ImGui.menuItem("Material")) new MaterialImporter("Material importer");
+            if (ImGui.menuItem("Material instance")) new MaterialInstanceImporter("create material instance");
+            if (ImGui.menuItem("Texture2D")) new TextureImporter("Texture importer");
+            if (ImGui.menuItem("Font")) new FontImporter("Font importer");
+            ImGui.endPopup();
         }
 
         ImGui.sameLine();
 
         if (ImGui.button("Save All")) EditorModule.SaveAll();
 
+        ImGui.popStyleVar();
 
         ImGui.separator();
 
         drawHierarchy();
         ImGui.nextColumn();
 
+        ImGui.pushStyleVar(ImGuiStyleVar.FramePadding, 10, 3);
         ImGui.inputText("##searchBox", searchString);
 
         drawFilters();
         ImGui.dummy(0, 5);
 
+        ImGui.popStyleVar();
         if (ImGui.beginChild("contentAssets")) {
 
 
@@ -68,7 +84,7 @@ public class ContentBrowser extends SubWindow {
 
             float sizeX = ImGui.getContentRegionAvailX();
 
-            int widthItems = (int) (sizeX / 80);
+            int widthItems = (int) (sizeX / 70);
             ImGui.columns(Math.max(widthItems, 1), "", false);
 
             for (Class key : AssetManager.GetAssetMap().keySet()) {

@@ -24,6 +24,7 @@ import static org.lwjgl.system.MemoryStack.stackPush;
 public class RenderUtils {
 
 
+    private static MaterialInterface billboardPickMaterial;
     private static MaterialInterface debugMaterial;
     private static MaterialInterface postProcessMaterial;
     private static MaterialInterface[] shadowDrawList;
@@ -63,6 +64,18 @@ public class RenderUtils {
             RenderUtils.CheckGLErrors();
         }
         return debugMaterial;
+    }
+
+
+    public static MaterialInterface getBillboardPickMaterial() {
+        if (billboardPickMaterial == null) {
+            billboardPickMaterial = new Material("BillboardPickMaterial", EngineSettings.BILLBOARD_PICK_MATERIAL_PATH, null, null);
+            if (billboardPickMaterial == null) {
+                Log.Fail("failed to load billboard pick material from : " + EngineSettings.BILLBOARD_PICK_MATERIAL_PATH);
+            }
+            RenderUtils.CheckGLErrors();
+        }
+        return billboardPickMaterial;
     }
 
     public static MaterialInterface[] getPickMaterialDrawList() {

@@ -10,11 +10,13 @@ import coffee3D.core.io.Clipboard;
 import coffee3D.core.io.inputs.GlfwInputHandler;
 import coffee3D.core.io.inputs.IInputListener;
 import coffee3D.core.io.log.Log;
+import coffee3D.core.io.settings.EngineSettings;
 import coffee3D.core.renderer.scene.Components.BillboardComponent;
 import coffee3D.core.renderer.scene.Components.StaticMeshComponent;
 import coffee3D.core.renderer.scene.RenderScene;
 import coffee3D.core.renderer.scene.SceneComponent;
 import coffee3D.core.renderer.Window;
+import coffee3D.core.ui.hud.HudUtils;
 import coffee3D.editor.controller.EditorController;
 import coffee3D.editor.ui.levelEditor.tools.ComponentInspector;
 import coffee3D.editor.ui.levelEditor.tools.LevelProperties;
@@ -32,6 +34,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+
+import static org.lwjgl.opengl.GL11.*;
 
 enum MovementDirection {
     None,
@@ -68,7 +72,16 @@ public class LevelEditorViewport extends SceneViewport {
                 ImGui.endMenu();
             }
             if (ImGui.beginMenu("debug")) {
-                if (ImGui.menuItem(getScene().isFrustumFrozen() ? "unfreeze frustum culling" : "freeze frustum culling")) getScene().freezeFrustum(!getScene().isFrustumFrozen());
+                if (ImGui.menuItem(getScene().isFrustumFrozen() ? "unfreeze frustum culling" : "freeze frustum culling"))
+                    getScene().freezeFrustum(!getScene().isFrustumFrozen());
+                if (ImGui.beginMenu("Draw mode")) {
+                    if (ImGui.menuItem("Shape")) Window.GetPrimaryWindow().setDrawMode(GL_FILL);
+                    if (ImGui.menuItem("Wireframe")) Window.GetPrimaryWindow().setDrawMode(GL_LINE);
+                    if (ImGui.menuItem("Points")) Window.GetPrimaryWindow().setDrawMode(GL_POINT);
+                    ImGui.endMenu();
+                }
+                ImGui.checkbox("SCENE show bounds", EngineSettings.DRAW_DEBUG_BOUNDS);
+                ImGui.checkbox("UI draw debug boxes", HudUtils.bDrawDebugBoxes);
                 ImGui.endMenu();
             }
             if (ImGui.beginMenu("window")) {

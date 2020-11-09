@@ -7,6 +7,7 @@ import coffee3D.core.resources.GraphicResource;
 import coffee3D.core.resources.ResourceManager;
 import coffee3D.core.types.Color;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 import java.nio.FloatBuffer;
@@ -132,5 +133,10 @@ public class MaterialResource extends GraphicResource {
         int matHandle = glGetUniformLocation(_materialHandle, parameterName);
         if (matHandle < 0) return;
         glUniform4f(matHandle, value.x, value.y, value.z, value.w);
+    }
+    public void setVec4Parameter(String parameterName, Vector3f value, float w) {
+        int matHandle = glGetUniformLocation(_materialHandle, parameterName);
+        if (matHandle < 0) return;
+        glUniform4f(matHandle, value.x, value.y, value.z, w);
     }
 }

@@ -52,7 +52,7 @@ public class ImGuiImplementation {
         ImGui.getStyle().setColor(ImGuiCol.TitleBg, ImColor.intToColor(30, 30, 30, 255));
         ImGui.getStyle().setColor(ImGuiCol.CheckMark, ImColor.intToColor(159, 159, 159, 255));
         ImGui.getStyle().setColor(ImGuiCol.SliderGrab, ImColor.intToColor(159, 159, 159, 255));
-        ImGui.getStyle().setColor(ImGuiCol.Button, ImColor.intToColor(137, 134, 137, 255));
+        ImGui.getStyle().setColor(ImGuiCol.Button, ImColor.intToColor(69, 69, 69, 255));
         ImGui.getStyle().setColor(ImGuiCol.Header, ImColor.intToColor(71, 71, 71, 255));
         ImGui.getStyle().setColor(ImGuiCol.Tab, ImColor.intToColor(21, 21, 21, 220));
         ImGui.getStyle().setColor(ImGuiCol.TabUnfocused, ImColor.intToColor(27, 27, 27, 220));

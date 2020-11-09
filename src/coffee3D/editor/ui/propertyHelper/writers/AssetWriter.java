@@ -14,7 +14,6 @@ public class AssetWriter extends FieldWriter {
 
         AssetReference ref = (AssetReference)object;
         if (AssetButton.Draw(field, ref)) {
-            Log.Warning("edited");
             return ref;
         }
         return null;

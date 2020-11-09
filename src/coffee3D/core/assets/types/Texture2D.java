@@ -39,6 +39,10 @@ public class Texture2D extends Asset {
         return _texture != null ? _texture.getTextureHandle() : -1;
     }
 
+    public TextureResource getResource() {
+        return _texture;
+    }
+
     @Override
     public void load() {
         _texture = TextureFactory.T2dFromFile(getName(), getSourcePath(), _linearFilter);

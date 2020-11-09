@@ -1,13 +1,32 @@
 package coffee3D.core.renderer.scene;
 
+import coffee3D.core.assets.types.MaterialInterface;
+import coffee3D.core.assets.types.Texture2D;
+import coffee3D.core.io.settings.EngineSettings;
+import coffee3D.core.renderer.AssetReferences;
+import coffee3D.core.renderer.RenderMode;
+import coffee3D.core.renderer.RenderUtils;
+import coffee3D.core.resources.factories.MaterialFactory;
+import coffee3D.core.resources.factories.MeshFactory;
+import coffee3D.core.resources.types.MaterialResource;
+import coffee3D.core.resources.types.MeshResource;
+import coffee3D.core.resources.types.Texture2DResource;
+import coffee3D.core.resources.types.TextureResource;
 import coffee3D.core.types.SphereBound;
+import coffee3D.core.types.Vertex;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 
+import javax.xml.soap.Text;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.glBindTexture;
+import static org.lwjgl.opengl.GL13.*;
 
 public class SceneComponent implements Serializable {
     private static final long serialVersionUID = 744620683032598971L;
@@ -61,7 +80,64 @@ public class SceneComponent implements Serializable {
      * implement to draw stuff
      * @param context scene context
      */
-    protected void draw(Scene context) {}
+    protected void draw(Scene context) {
+        drawBillboard(context, null, (float) Math.max(0.3, Math.min(2, ((RenderScene)context).getCamera().getWorldPosition().distance(getWorldPosition()) / 50)));
+    }
+
+    public TextureResource getComponentIcon() { return AssetReferences.GetIconSceneComponent().getResource(); }
+
+    private static MeshResource _billboardMesh;
+    private static MaterialResource _billboardMaterial;
+    private static MeshResource GetBillboardMesh() {
+        if (_billboardMesh == null) {
+            Vertex[] vertices = new Vertex[]{
+                    new Vertex(new Vector3f(-1, -1, 0), new Vector2f(0, 0)),
+                    new Vertex(new Vector3f(1, -1, 0), new Vector2f(1, 0)),
+                    new Vertex(new Vector3f(1, 1, 0), new Vector2f(1, 1)),
+                    new Vertex(new Vector3f(-1, 1, 0), new Vector2f(0, 1)),
+            };
+            int[] triangles = new int[]{0, 1, 2, 0, 2, 3};
+            _billboardMesh = MeshFactory.FromResources("BillboardMesh", vertices, triangles);
+        }
+        return _billboardMesh;
+    }
+    private static MaterialResource GetBillboardMaterial() {
+        if (_billboardMaterial == null) {
+            _billboardMaterial = MaterialFactory.FromFiles("BillboardMaterial", EngineSettings.BILLBOARD_MATERIAL_PATH + ".vert", EngineSettings.BILLBOARD_MATERIAL_PATH + ".frag");
+        }
+        return _billboardMaterial;
+    }
+
+    protected void drawBillboard(Scene context, Texture2D texture, float size) {
+        switch (RenderUtils.RENDER_MODE) {
+            case Select:
+                RenderUtils.getBillboardPickMaterial().use(context);
+                RenderUtils.getBillboardPickMaterial().getResource().setIntParameter("pickId", getComponentIndex() + 1);
+                RenderUtils.getBillboardPickMaterial().getResource().setVec4Parameter("position", getBound().position, size);
+                GetBillboardMesh().use(context);
+                break;
+            case Color:
+                GetBillboardMaterial().use(context);
+                GetBillboardMaterial().setVec4Parameter("position", getBound().position, size);
+                glActiveTexture(GL_TEXTURE0);
+                GetBillboardMaterial().setIntParameter("image", 0);
+                if (texture == null) glBindTexture(GL_TEXTURE_2D, getComponentIcon().getTextureHandle());
+                else glBindTexture(GL_TEXTURE_2D, texture.getTextureID());
+                GetBillboardMesh().use(context);
+                break;
+            case Stencil: {
+                if (getStencilValue() != 0) {
+                    RenderUtils.CheckGLErrors();
+                    RenderUtils.getBillboardPickMaterial().use(context);
+                    RenderUtils.getBillboardPickMaterial().getResource().setIntParameter("pickId", getStencilValue());
+                    RenderUtils.getBillboardPickMaterial().getResource().setVec4Parameter("position", getBound().position, size);
+                    RenderUtils.CheckGLErrors();
+                    GetBillboardMesh().use(context);
+                }
+                break;
+            }
+        }
+    }
 
 
     /*                                                                */

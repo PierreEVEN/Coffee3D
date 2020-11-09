@@ -2,10 +2,13 @@ package coffee3D.core.renderer.scene.Components;
 
 import coffee3D.core.assets.AssetReference;
 import coffee3D.core.assets.types.MaterialInterface;
+import coffee3D.core.assets.types.Texture2D;
+import coffee3D.core.renderer.AssetReferences;
 import coffee3D.core.renderer.RenderUtils;
 import coffee3D.core.renderer.scene.Scene;
 import coffee3D.core.assets.types.StaticMesh;
 import coffee3D.core.renderer.scene.SceneComponent;
+import coffee3D.core.resources.types.TextureResource;
 import coffee3D.core.types.SphereBound;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -35,6 +38,12 @@ public class StaticMeshComponent extends SceneComponent {
     }
 
     @Override
+    public TextureResource getComponentIcon() {
+        if (getStaticMesh() == null) return AssetReferences.GetIconMesh().getResource();
+        else return getStaticMesh().getThumbnail();
+    }
+
+    @Override
     public void draw(Scene context) {
         // If mesh is null, draw default billboard
         if (_mesh.get() == null) {
@@ -49,22 +58,28 @@ public class StaticMeshComponent extends SceneComponent {
 
         // Select material drawList
         switch (RenderUtils.RENDER_MODE) {
-            case Select : _mesh.get().setMaterialList(RenderUtils.getPickMaterialDrawList()); break;
-            case Shadow : _mesh.get().setMaterialList(RenderUtils.getShadowDrawList()); break;
-            case Color : {
+            case Select:
+                RenderUtils.getPickMaterialDrawList()[0].use(context);
+                RenderUtils.getPickMaterialDrawList()[0].getResource().setIntParameter("pickId", getComponentIndex() + 1);
+                _mesh.get().setMaterialList(RenderUtils.getPickMaterialDrawList());
+                break;
+            case Shadow:
+                _mesh.get().setMaterialList(RenderUtils.getShadowDrawList());
+                break;
+            case Color: {
                 for (int i = 0; i < _materialList.length; ++i) {
                     if (_materialOverride[i].get() != null) _materialList[i] = _materialOverride[i].get();
                     else _materialList[i] = _mesh.get().getMaterials()[i];
                 }
                 _mesh.get().setMaterialList(_materialList);
-            } break;
+            }
+            break;
             case Stencil: {
                 if (getStencilValue() != 0) {
                     RenderUtils.CheckGLErrors();
                     RenderUtils.getPickMaterialDrawList()[0].use(context);
                     RenderUtils.getPickMaterialDrawList()[0].getResource().setIntParameter("pickId", getStencilValue());
                     _mesh.get().setMaterialList(RenderUtils.getPickMaterialDrawList());
-                    RenderUtils.CheckGLErrors();
                 } else draw = false;
             }
         }

@@ -8,6 +8,7 @@ import coffee3D.core.ui.subWindows.SubWindow;
 import coffee3D.editor.ui.levelEditor.LevelEditorViewport;
 import imgui.ImGui;
 import imgui.flag.ImGuiDragDropFlags;
+import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiTreeNodeFlags;
 import imgui.type.ImString;
 import org.lwjgl.glfw.GLFW;
@@ -40,6 +41,8 @@ public class SceneOutliner extends SubWindow {
         if (comp.getChildren() == null || comp.getChildren().size() == 0) flags |= ImGuiTreeNodeFlags.Leaf;
         if (comp == _parentViewport.getEditedComponent()) flags |= ImGuiTreeNodeFlags.Selected;
 
+        ImGui.image(comp.getComponentIcon().getTextureHandle(), 16, 16, 0 ,1 ,1 ,0);
+        ImGui.sameLine();
         boolean bExpand = ImGui.treeNodeEx(componentName + "##" + _currentNodeIndex, flags);
 
         if (ImGui.beginDragDropSource(ImGuiDragDropFlags.None)) {
@@ -78,12 +81,18 @@ public class SceneOutliner extends SubWindow {
         _currentNodeIndex = 0;
         _drawedComponents.clear();
 
+        ImGui.pushStyleVar(ImGuiStyleVar.FramePadding, 10, 3);
+        ImGui.text("search");
+        ImGui.sameLine();
         ImGui.inputText("##searchBox", searchString);
-
-        for (SceneComponent comp : _parentScene.getComponents())
-        {
-            drawNode(comp);
+        ImGui.popStyleVar();
+        ImGui.separator();
+        if (ImGui.beginChild("SceneOutlinerList")) {
+            for (SceneComponent comp : _parentScene.getComponents()) {
+                drawNode(comp);
+            }
         }
+        ImGui.endChild();
     }
 
     @Override

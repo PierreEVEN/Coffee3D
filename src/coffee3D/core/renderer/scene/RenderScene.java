@@ -111,17 +111,7 @@ public class RenderScene extends Scene {
     }
 
     public void drawFrustumComponents() {
-        if (RenderUtils.RENDER_MODE == RenderMode.Select) {
-            for (SceneComponent component : frustumDrawList) {
-                RenderUtils.getPickMaterialDrawList()[0].use(this);
-                RenderUtils.getPickMaterialDrawList()[0].getResource().setIntParameter("pickId", component.getComponentIndex() + 1);
-                RenderUtils.CheckGLErrors();
-                component.drawInternal(this);
-            }
-        }
-        else {
-            for (SceneComponent component : frustumDrawList) component.drawInternal(this);
-        }
+        for (SceneComponent component : frustumDrawList) component.drawInternal(this);
     }
 
 
@@ -134,7 +124,7 @@ public class RenderScene extends Scene {
 
         // CONTEXT INITIALIZATION
         _sceneUbo.use(this, getFbWidth(), getFbHeight(), getCamera());
-        _camera.draw(this);
+        _camera.drawInternal(this);
 
         // SHADOW RENDERING
         if (enableShadows) {

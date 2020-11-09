@@ -1,11 +1,6 @@
 #version 330 core
 
-#include "materialFunctions/uniformDeclaration.glsl";
-
-layout (location = 0) in vec3 aPos;
-layout (location = 1) in vec2 aTexCoord;
-
-out vec2 texCoord;
+#include "materialFunctions/basicVertexShader.glsl";
 
 uniform vec4 position;
 
@@ -19,5 +14,4 @@ void main()
     + CameraUp_worldspace * aPos.y * position.w;
 
     gl_Position = projMatrix * viewMatrix * vec4(vertexPosition_worldspace, 1.0f);
-    texCoord = aTexCoord;
 }
