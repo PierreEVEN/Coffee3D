@@ -8,6 +8,7 @@ import coffee3D.core.io.settings.EngineSettings;
 import coffee3D.core.ui.subWindows.SubWindow;
 import coffee3D.editor.EditorModule;
 import coffee3D.editor.ui.assets.EditorAssetUtils;
+import imgui.ImColor;
 import imgui.ImGui;
 import imgui.flag.ImGuiTreeNodeFlags;
 import imgui.type.ImBoolean;

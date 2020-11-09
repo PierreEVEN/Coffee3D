@@ -5,7 +5,9 @@ import coffee3D.core.assets.types.Font;
 import coffee3D.core.assets.types.Material;
 import coffee3D.core.io.log.Log;
 import coffee3D.core.resources.types.TextureResource;
+import coffee3D.core.types.TypeHelper;
 import coffee3D.editor.ui.tools.AssetWindow;
+import imgui.ImColor;
 import imgui.ImGui;
 import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiDragDropFlags;
@@ -18,13 +20,9 @@ public class EditorAssetUtils {
 
     public static void DrawAssetThumbnail(Asset asset) {
         if (asset == null) return;
+
         ImGui.beginGroup();
-        Vector4f assetColor = asset.getAssetColor().getVector();
-        ImGui.pushStyleColor(ImGuiCol.Button, assetColor.x, assetColor.y, assetColor.z, assetColor.w);
-        ImGui.pushStyleVar(ImGuiStyleVar.FramePadding, 3, 3);
         DrawAssetButton(asset);
-        ImGui.popStyleColor();
-        ImGui.popStyleVar();
         if (ImGui.beginDragDropSource(ImGuiDragDropFlags.None)) {
             ImGui.setDragDropPayload("DDOP_ASSET", asset.getName().getBytes());
             DrawAssetButton(asset);
@@ -32,11 +30,14 @@ public class EditorAssetUtils {
         }
         ImGui.textWrapped((asset.getName() + (asset.isDirty() ? "*" : "")));
         ImGui.endGroup();
-
     }
 
-    private static void DrawAssetButton(Asset asset) {
+    public static void DrawAssetButton(Asset asset) {
         if (asset == null) return;
+
+        Vector4f assetColor = asset.getAssetColor().getVector();
+        ImGui.pushStyleColor(ImGuiCol.Button, assetColor.x, assetColor.y, assetColor.z, assetColor.w);
+        ImGui.pushStyleVar(ImGuiStyleVar.FramePadding, 0, 4);
 
         TextureResource thumbnail = asset.getThumbnail();
 
@@ -51,6 +52,8 @@ public class EditorAssetUtils {
                 new AssetWindow(asset, asset.getName());
             }
         }
+        ImGui.popStyleColor();
+        ImGui.popStyleVar();
     }
 
 }

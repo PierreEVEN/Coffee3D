@@ -9,6 +9,7 @@ import coffee3D.editor.ui.levelEditor.LevelEditorViewport;
 import imgui.ImGui;
 import imgui.flag.ImGuiDragDropFlags;
 import imgui.flag.ImGuiTreeNodeFlags;
+import imgui.type.ImString;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ public class SceneOutliner extends SubWindow {
     private final LevelEditorViewport _parentViewport;
     private int _currentNodeIndex = 0;
     private final ArrayList<SceneComponent> _drawedComponents = new ArrayList<>();
+    private final ImString searchString = new ImString("", 256);
 
     public SceneOutliner(LevelEditorViewport parentViewport, String windowName) {
         super(windowName);
@@ -29,6 +31,8 @@ public class SceneOutliner extends SubWindow {
         _currentNodeIndex++;
 
         String componentName = comp.getComponentName();
+
+        if (!searchString.get().equals("") && !componentName.contains(searchString.get())) return;
 
         _drawedComponents.add(comp);
 
@@ -73,6 +77,9 @@ public class SceneOutliner extends SubWindow {
     protected void draw() {
         _currentNodeIndex = 0;
         _drawedComponents.clear();
+
+        ImGui.inputText("##searchBox", searchString);
+
         for (SceneComponent comp : _parentScene.getComponents())
         {
             drawNode(comp);

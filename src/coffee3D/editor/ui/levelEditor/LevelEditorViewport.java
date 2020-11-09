@@ -3,11 +3,14 @@ package coffee3D.editor.ui.levelEditor;
 import coffee3D.core.IEngineModule;
 import coffee3D.core.assets.Asset;
 import coffee3D.core.assets.AssetManager;
+import coffee3D.core.assets.types.Material;
 import coffee3D.core.assets.types.StaticMesh;
+import coffee3D.core.assets.types.Texture2D;
 import coffee3D.core.io.Clipboard;
 import coffee3D.core.io.inputs.GlfwInputHandler;
 import coffee3D.core.io.inputs.IInputListener;
 import coffee3D.core.io.log.Log;
+import coffee3D.core.renderer.scene.Components.BillboardComponent;
 import coffee3D.core.renderer.scene.Components.StaticMeshComponent;
 import coffee3D.core.renderer.scene.RenderScene;
 import coffee3D.core.renderer.scene.SceneComponent;
@@ -91,14 +94,26 @@ public class LevelEditorViewport extends SceneViewport {
             {
                 String assetName = new String(data);
                 Asset droppedAsset = AssetManager.FindAsset(assetName);
-                if (droppedAsset != null && droppedAsset instanceof StaticMesh) {
+                if (droppedAsset instanceof StaticMesh) {
                     StaticMeshComponent sm = new StaticMeshComponent(
                             (StaticMesh)droppedAsset,
-                            new Vector3f(getScene().getCamera().getForwardVector()).mul(2 * ((StaticMesh) droppedAsset).getBound().radius).add(getScene().getCamera().getRelativePosition()),
+                            new Vector3f(getScene().getCamera().getForwardVector()).mul(2 * ((StaticMesh) droppedAsset).getBound().radius).add(getScene().getCamera().getRelativePosition()).sub(((StaticMesh) droppedAsset).getBound().position),
                             new Quaternionf().identity(),
                             new Vector3f(1,1,1));
                     sm.attachToScene(getScene());
                     sm.setComponentName("sm_" + droppedAsset.getName());
+                    editComponent(sm);
+                }
+
+                if (droppedAsset instanceof Texture2D) {
+                    BillboardComponent bb = new BillboardComponent(
+                            (Texture2D)droppedAsset,
+                            new Vector3f(getScene().getCamera().getForwardVector()).mul(2).add(getScene().getCamera().getRelativePosition()),
+                            new Quaternionf().identity(),
+                            new Vector3f(1,1,1));
+                    bb.attachToScene(getScene());
+                    bb.setComponentName("bb_" + droppedAsset.getName());
+                    editComponent(bb);
                 }
             }
         }

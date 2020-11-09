@@ -19,7 +19,7 @@ public class AssetButton {
         ImGui.beginGroup();
 
         if (foundAsset != null) {
-            EditorAssetUtils.DrawAssetThumbnail(foundAsset);
+            EditorAssetUtils.DrawAssetButton(foundAsset);
             ImGui.sameLine();
         }
         if (ImGui.button(foundAsset == null ? "none" : foundAsset.getName(), ImGui.getContentRegionAvailX(), 0.f)) {

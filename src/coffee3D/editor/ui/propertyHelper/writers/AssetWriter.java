@@ -10,7 +10,7 @@ public class AssetWriter extends FieldWriter {
     }
 
     @Override
-    protected Object draw(String field, Object object) throws IllegalAccessException {
+    protected Object draw(String field, Object object) {
 
         AssetReference ref = (AssetReference)object;
         if (AssetButton.Draw(field, ref)) {
