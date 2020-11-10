@@ -1,5 +1,6 @@
 package coffee3D.core.renderer.scene.Components;
 
+import coffee3D.core.audio.IAudioListener;
 import coffee3D.core.renderer.scene.Scene;
 import coffee3D.core.renderer.scene.SceneComponent;
 import coffee3D.core.types.TypeHelper;
@@ -7,7 +8,7 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-public class Camera extends SceneComponent {
+public class Camera extends SceneComponent implements IAudioListener {
     private static final long serialVersionUID = 3287874597857486658L;
 
     protected float _pitch, _yaw, _fov, _zMin, _zMax;
@@ -74,4 +75,19 @@ public class Camera extends SceneComponent {
 
     public void setPerspective(boolean bEnablePerspective) { _bUsePerspective = bEnablePerspective; }
     public boolean enablePerspective() { return _bUsePerspective; }
+
+    @Override
+    public Vector3f getListenerPosition() {
+        return getWorldPosition();
+    }
+
+    @Override
+    public Vector3f getListenerForwardVector() {
+        return getForwardVector();
+    }
+
+    @Override
+    public Vector3f getListenerUpVector() {
+        return getUpVector();
+    }
 }

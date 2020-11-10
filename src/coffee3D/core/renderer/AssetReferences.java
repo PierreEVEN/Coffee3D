@@ -11,8 +11,10 @@ public final class AssetReferences {
 
     public static File ICON_SCENE_COMPONENT = new File("engineContent/assets/textures/icon/itemIcon.png");
     public static File ICON_STATIC_MESH = new File("engineContent/assets/textures/icon/meshIcon.png");
+    public static File ICON_AUDIO = new File("engineContent/assets/textures/icon/audioIcon.png");
     private static Texture2D _icon_scene_component_texture;
     private static Texture2D _icon_static_mesh_component_texture;
+    private static Texture2D _icon_audio_component;
 
     public static Texture2D GetIconSceneComponent() {
         if (_icon_scene_component_texture == null) {
@@ -26,7 +28,12 @@ public final class AssetReferences {
         }
         return _icon_static_mesh_component_texture;
     }
-
+    public static Texture2D GetIconAudio() {
+        if (_icon_audio_component == null) {
+            _icon_audio_component = loadTexture("_icon_static_mesh_component_texture", ICON_AUDIO);
+        }
+        return _icon_audio_component;
+    }
 
 
     private static Texture2D loadTexture(String name, File path) {
@@ -38,5 +45,4 @@ public final class AssetReferences {
         RenderUtils.CheckGLErrors();
         return result;
     }
-
 }

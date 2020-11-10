@@ -43,6 +43,7 @@ public class EditorAssetUtils {
 
         if (thumbnail == null) {
             if (asset instanceof Font) asset.use(null);
+            ImGui.dummy(0, 4);
             if (ImGui.button(("#" + asset.getName() + (asset.isDirty() ? "*" : "")), 64, 64)) {
                 new AssetWindow(asset, asset.getName());
             }

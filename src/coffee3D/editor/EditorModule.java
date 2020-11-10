@@ -4,6 +4,7 @@ import coffee3D.core.assets.Asset;
 import coffee3D.core.assets.AssetManager;
 import coffee3D.core.assets.types.Font;
 import coffee3D.core.assets.types.World;
+import coffee3D.core.audio.AudioListener;
 import coffee3D.core.controller.IGameController;
 import coffee3D.core.IEngineModule;
 import coffee3D.core.io.settings.EngineSettings;
@@ -43,6 +44,7 @@ public class EditorModule extends IEngineModule {
         _rootScene = new RenderScene(false);
         _rootScene.load(AssetManager.FindAsset(EngineSettings.DEFAULT_MAP_NAME));
         _controller = new EditorController(_rootScene);
+        AudioListener.Get().bindListener(_rootScene.getCamera());
 
         /* load default widgets */
         new LevelEditorViewport((RenderScene) _rootScene, "viewport");
@@ -63,8 +65,6 @@ public class EditorModule extends IEngineModule {
     @Override
     public void DrawUI() {
         EditorUI.DrawMenuBar(_rootScene);
-
-        //ImGui.image(_rootScene.getShadowBuffer().getDepthTexture(), 1024, 1024, 0, 1, 1, 0);
     }
 
     @Override

@@ -56,6 +56,7 @@ public class ContentBrowser extends SubWindow {
             if (ImGui.menuItem("Material instance")) new MaterialInstanceImporter("create material instance");
             if (ImGui.menuItem("Texture2D")) new TextureImporter("Texture importer");
             if (ImGui.menuItem("Font")) new FontImporter("Font importer");
+            if (ImGui.menuItem("Audio")) new AudioImporter("Audio importer");
             ImGui.endPopup();
         }
 

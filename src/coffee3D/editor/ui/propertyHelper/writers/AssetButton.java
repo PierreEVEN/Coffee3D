@@ -3,6 +3,8 @@ package coffee3D.editor.ui.propertyHelper.writers;
 import coffee3D.core.assets.Asset;
 import coffee3D.core.assets.AssetManager;
 import coffee3D.core.assets.AssetReference;
+import coffee3D.core.io.log.Log;
+import coffee3D.core.types.TypeHelper;
 import coffee3D.editor.ui.assets.EditorAssetUtils;
 import coffee3D.editor.ui.propertyHelper.AssetPicker;
 import imgui.ImGui;
@@ -28,11 +30,11 @@ public class AssetButton {
             EditorAssetUtils.DrawAssetButton(foundAsset);
             ImGui.sameLine();
         }
-        if (ImGui.button(foundAsset == null ? "none" : foundAsset.getName(), ImGui.getContentRegionAvailX(), 0.f)) {
+        if (ImGui.button((foundAsset == null ? "none" : foundAsset.getName()) + "##" + TypeHelper.GetFrameUid(), ImGui.getContentRegionAvailX(), 0.f)) {
             _availableAssets = AssetManager.GetAssetByClass(assetRef.getType());
-            ImGui.openPopup("PickAssetPopup");
+            ImGui.openPopup("PickAssetPopup_" + assetRef.toString());
         }
-        if (ImGui.beginPopup("PickAssetPopup")) {
+        if (ImGui.beginPopup("PickAssetPopup_" + assetRef.toString())) {
             drawPopupContent(assetRef);
             ImGui.endPopup();
         }
@@ -58,11 +60,18 @@ public class AssetButton {
 
 
     private static <T> void drawPopupContent(AssetReference<T> assetRef) {
-        for (int i = 0; i < _availableAssets.size(); ++i) {
-            ImGui.image(_availableAssets.get(i).getThumbnail().getTextureHandle(), 16, 16, 0 ,1 ,1 ,0);
-            ImGui.sameLine();
-            if (ImGui.menuItem(_availableAssets.get(i).getName())) {
-                assetRef.set((T) _availableAssets.get(i));
+        if (ImGui.menuItem("none")) {
+            assetRef.set(null);
+        }
+        if (_availableAssets != null) {
+            for (int i = 0; i < _availableAssets.size(); ++i) {
+                if (_availableAssets.get(i).getThumbnail() != null) {
+                    ImGui.image(_availableAssets.get(i).getThumbnail().getTextureHandle(), 16, 16, 0, 1, 1, 0);
+                    ImGui.sameLine();
+                }
+                if (ImGui.menuItem(_availableAssets.get(i).getName())) {
+                    assetRef.set((T) _availableAssets.get(i));
+                }
             }
         }
     }

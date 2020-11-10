@@ -3,14 +3,13 @@ package coffee3D.editor.ui.levelEditor;
 import coffee3D.core.IEngineModule;
 import coffee3D.core.assets.Asset;
 import coffee3D.core.assets.AssetManager;
-import coffee3D.core.assets.types.Material;
-import coffee3D.core.assets.types.StaticMesh;
-import coffee3D.core.assets.types.Texture2D;
+import coffee3D.core.assets.types.*;
 import coffee3D.core.io.Clipboard;
 import coffee3D.core.io.inputs.GlfwInputHandler;
 import coffee3D.core.io.inputs.IInputListener;
 import coffee3D.core.io.log.Log;
 import coffee3D.core.io.settings.EngineSettings;
+import coffee3D.core.renderer.scene.Components.AudioComponent;
 import coffee3D.core.renderer.scene.Components.BillboardComponent;
 import coffee3D.core.renderer.scene.Components.StaticMeshComponent;
 import coffee3D.core.renderer.scene.RenderScene;
@@ -107,10 +106,19 @@ public class LevelEditorViewport extends SceneViewport {
             {
                 String assetName = new String(data);
                 Asset droppedAsset = AssetManager.FindAsset(assetName);
+                Vector3f position;
+                if (getScene().getHitResult().component != null) {
+                    position = new Vector3f(getScene().getHitResult().position);
+                }
+                else {
+                    position = new Vector3f(getScene().getCamera().getForwardVector()).mul(2 * ((StaticMesh) droppedAsset).getBound().radius).add(getScene().getCamera().getRelativePosition()).sub(((StaticMesh) droppedAsset).getBound().position);
+                }
+
                 if (droppedAsset instanceof StaticMesh) {
+
                     StaticMeshComponent sm = new StaticMeshComponent(
                             (StaticMesh)droppedAsset,
-                            new Vector3f(getScene().getCamera().getForwardVector()).mul(2 * ((StaticMesh) droppedAsset).getBound().radius).add(getScene().getCamera().getRelativePosition()).sub(((StaticMesh) droppedAsset).getBound().position),
+                            position,
                             new Quaternionf().identity(),
                             new Vector3f(1,1,1));
                     sm.attachToScene(getScene());
@@ -127,6 +135,24 @@ public class LevelEditorViewport extends SceneViewport {
                     bb.attachToScene(getScene());
                     bb.setComponentName("bb_" + droppedAsset.getName());
                     editComponent(bb);
+                }
+
+                if (droppedAsset instanceof SoundWave) {
+                    AudioComponent bb = new AudioComponent(
+                            (SoundWave) droppedAsset,
+                            new Vector3f(getScene().getCamera().getForwardVector()).mul(2).add(getScene().getCamera().getRelativePosition()),
+                            new Quaternionf().identity(),
+                            new Vector3f(1,1,1));
+                    bb.attachToScene(getScene());
+                    bb.setComponentName("aud_" + droppedAsset.getName());
+                    editComponent(bb);
+                }
+
+                if (droppedAsset instanceof MaterialInterface) {
+                    if (getScene().getHitResult().component instanceof StaticMeshComponent) {
+                        ((StaticMeshComponent)getScene().getHitResult().component).setMaterial(((MaterialInterface)droppedAsset), 0);
+                    }
+                    editComponent(getScene().getHitResult().component);
                 }
             }
         }
@@ -217,7 +243,7 @@ public class LevelEditorViewport extends SceneViewport {
                 if (getEditedComponent() != null) {
                     getEditedComponent().setStencilValue(0);
                 }
-                editComponent(getScene().getLastHitComponent());
+                editComponent(getScene().getHitResult().component);
             }
         }
     }

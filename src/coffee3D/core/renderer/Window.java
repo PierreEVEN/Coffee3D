@@ -3,6 +3,7 @@ package coffee3D.core.renderer;
 import coffee3D.core.assets.AssetManager;
 import coffee3D.core.IEngineModule;
 import coffee3D.core.assets.types.Font;
+import coffee3D.core.audio.AudioListener;
 import coffee3D.core.io.log.Log;
 import coffee3D.core.io.settings.EngineSettings;
 import coffee3D.core.resources.ResourceManager;
@@ -130,6 +131,8 @@ public class Window {
             _engineModule.GetController().update();
 
             glfwPollEvents();
+
+            AudioListener.Get().tick();
 
             // Draw frame
             drawFrame();

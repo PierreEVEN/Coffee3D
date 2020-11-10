@@ -152,7 +152,7 @@ public abstract class Asset extends SerializableData {
             ois.close();
             fis.close();
         } catch (Exception e) {
-            Log.Warning("failed to deserialize asset " + filePath.getName() + " : " + e.getMessage());
+            Log.Error("failed to deserialize asset " + filePath.getName() + " : " + e.getMessage());
         }
         return null;
     }

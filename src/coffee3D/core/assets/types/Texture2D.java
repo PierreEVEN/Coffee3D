@@ -18,8 +18,8 @@ public class Texture2D extends Asset {
     private static final long serialVersionUID = -868665333590764448L;
     private transient Texture2DResource _texture;
     protected boolean _linearFilter = true;
-    private static final Color textureColor = new Color(255/255f, 51/255f, 51/255f, 1);
-    private static final String[] meshExtensions = new String[] {"png"};
+    private static final Color _textureColor = new Color(255/255f, 51/255f, 51/255f, 1);
+    private static final String[] _colorExtensions = new String[] {"png"};
 
     public Texture2D(String name, File filePath, File assetPath) {
         super(name, filePath, assetPath);
@@ -27,12 +27,12 @@ public class Texture2D extends Asset {
 
     @Override
     public String[] getAssetExtensions() {
-        return meshExtensions;
+        return _colorExtensions;
     }
 
     @Override
     public Color getAssetColor() {
-        return textureColor;
+        return _textureColor;
     }
 
     public int getTextureID() {

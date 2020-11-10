@@ -36,13 +36,12 @@ public class RenderScene extends Scene {
     private final Framebuffer _shadowBuffer;
     private final Framebuffer _stencilBuffer;
     private final Camera _camera;
-    private final ByteBuffer _pickOutputBuffer;
-    private SceneComponent _lastHitComponent = null;
     private final Matrix4f lightSpaceMatrix = new Matrix4f().identity();
     private final FrustumIntersection _frustum = new FrustumIntersection();
     private final LinkedList<SceneComponent> frustumDrawList = new LinkedList<>();
     private static MeshResource _viewportQuadMesh;
     private static SceneUniformBuffer _sceneUbo;
+    private final HitResult _lastHit = new HitResult();
 
 
     private final boolean enablePicking;
@@ -76,7 +75,6 @@ public class RenderScene extends Scene {
             _sceneUbo.load();
         }
         _camera = new Camera();
-        _pickOutputBuffer = BufferUtils.createByteBuffer(3);
 
         if (_viewportQuadMesh == null) {
             Vertex[] vertices = new Vertex[]{
@@ -114,6 +112,7 @@ public class RenderScene extends Scene {
         for (SceneComponent component : frustumDrawList) component.drawInternal(this);
     }
 
+    public SceneUniformBuffer getSceneUbo() { return _sceneUbo; }
 
     public boolean renderScene() {
         if (bFullScreen && _sceneBuffer != null) _sceneBuffer.resizeFramebuffer(Window.GetPrimaryWindow().getPixelWidth(), Window.GetPrimaryWindow().getPixelHeight());
@@ -187,7 +186,7 @@ public class RenderScene extends Scene {
             glEnable(GL_CULL_FACE);
             glCullFace(GL_FRONT);
             glFrontFace(GL_CW);
-            drawPickBuffer();
+            _lastHit.update(this, _pickBuffer);
         }
         return true;
     }
@@ -221,33 +220,9 @@ public class RenderScene extends Scene {
 
     public boolean isFullscreen() { return bFullScreen; }
 
-    public SceneComponent getLastHitComponent() { return _lastHitComponent; }
+    public HitResult getHitResult() { return _lastHit; }
 
     public Camera getCamera() { return _camera; }
-
-    public void drawPickBuffer() {
-        Vector3f cursorSceneDirection = TypeHelper.getVector3();
-        getCursorSceneDirection(cursorSceneDirection);
-
-        Vector3f camWorldPosition = getCamera().getWorldPosition();
-
-        _sceneUbo.use(this, _pickBuffer.getWidth(), _pickBuffer.getHeight(), getCamera(),
-                TypeHelper.getMat4().identity().lookAt(camWorldPosition, TypeHelper.getVector3(camWorldPosition).add(cursorSceneDirection), getCamera().getUpVector()));
-
-        RenderUtils.CheckGLErrors();
-        drawFrustumComponents();
-        RenderUtils.CheckGLErrors();
-
-        glReadPixels(0, 0, 1, 1,  GL_RGB, GL_UNSIGNED_BYTE, _pickOutputBuffer);
-
-        int hitCompId = (_pickOutputBuffer.get(0) & 0xff) + ((_pickOutputBuffer.get(1) & 0xff) << 8) + ((_pickOutputBuffer.get(2) & 0xff) << 16);
-        if (hitCompId > 0 && getComponents().size() >= hitCompId) _lastHitComponent = getComponents().get(hitCompId - 1);
-        else _lastHitComponent = null;
-
-        RenderUtils.RENDER_MODE = RenderMode.Color;
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    }
-
 
     public Framebuffer getColorFrameBuffer() { return _sceneBuffer; }
     public Framebuffer getPostProcessBuffer() { return _postProcessBuffer; }

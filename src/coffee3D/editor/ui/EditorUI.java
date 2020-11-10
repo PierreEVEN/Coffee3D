@@ -1,5 +1,7 @@
 package coffee3D.editor.ui;
 
+import coffee3D.core.audio.AudioListener;
+import coffee3D.core.io.log.Log;
 import coffee3D.core.io.settings.EngineSettings;
 import coffee3D.core.renderer.scene.RenderScene;
 import coffee3D.core.renderer.Window;
@@ -31,7 +33,6 @@ public class EditorUI {
         ImGui.end();
 
         ImGui.pushStyleVar(ImGuiStyleVar.ItemSpacing, 4, 15);
-
         if (ImGui.beginMainMenuBar()) {
             if (ImGui.beginMenu("Files")) {
                 if (ImGui.menuItem("quit")) {
