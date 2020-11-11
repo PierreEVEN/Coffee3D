@@ -60,7 +60,7 @@ public class MaterialFactory {
                     String includePath = line.substring(line.indexOf('"') + 1, line.indexOf(';') - 1);
                     File newContent = new File(new File(filePath).getParent() + "/" + includePath);
                     if (newContent.exists()) content += buildShaderContent(newContent.getPath());
-                    else Log.Error("Failed to import shader file " + newContent.getPath());
+                    else Log.Error("Failed to import shader file in " + filePath + " : " + newContent.getPath());
                 }
                 else {
                     content += line + "\n";

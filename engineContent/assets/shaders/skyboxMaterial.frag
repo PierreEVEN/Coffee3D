@@ -15,8 +15,10 @@ void main() {
     vec3 colorB = vec3(.2, .6, 1) / 2;
     vec3 realColor = vecLerp(colorA, colorB, zValue);
 
+    vec3 norm = normalize(pos.xyz - cameraPos.xyz);
+
     vec3 lightDir = normalize(sunDirection.xyz);
     vec4 finalColor = vec4(realColor, 1) * color;
-    float val = pow(min(1, max(0, dot(lightDir, worldNormal))), 200);
+    float val = pow(min(1, max(0, dot(lightDir, norm))), 200);
     outputColor = (finalColor + val) * length(sunDirection);
 }

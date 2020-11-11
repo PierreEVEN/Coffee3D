@@ -12,64 +12,46 @@ import coffee3D.core.resources.types.MeshResource;
 import coffee3D.core.resources.types.SceneUniformBuffer;
 import coffee3D.core.types.TypeHelper;
 import coffee3D.core.types.Vertex;
-import org.joml.FrustumIntersection;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-import org.lwjgl.BufferUtils;
-
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.LinkedList;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
 import static org.lwjgl.opengl.GL13.*;
-import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
-import static org.lwjgl.opengl.GL30.glBindFramebuffer;
 
 public class RenderScene extends Scene {
 
-    private final Framebuffer _sceneBuffer;
+    private final Framebuffer _colorBuffer;
     private final Framebuffer _pickBuffer;
     private final Framebuffer _postProcessBuffer;
     private final Framebuffer _shadowBuffer;
     private final Framebuffer _stencilBuffer;
     private final Camera _camera;
     private final Matrix4f lightSpaceMatrix = new Matrix4f().identity();
-    private final FrustumIntersection _frustum = new FrustumIntersection();
-    private final LinkedList<SceneComponent> frustumDrawList = new LinkedList<>();
+    private final DrawList _drawList = new DrawList();
     private static MeshResource _viewportQuadMesh;
     private static SceneUniformBuffer _sceneUbo;
     private final HitResult _lastHit = new HitResult();
 
+    public final RenderSceneSettings _sceneSettings;
 
-    private final boolean enablePicking;
-    private final boolean enableShadows;
-    private final boolean enablePostProcess;
-    private final boolean enableStencilTest;
-    private final boolean bFullScreen;
     private boolean freezeFrustum = false;
 
     public void freezeFrustum(boolean bFreeze) { freezeFrustum = bFreeze; }
     public boolean isFrustumFrozen() { return freezeFrustum; }
 
-    public RenderScene(boolean fullscreen) {
+    public RenderScene(RenderSceneSettings settings) {
         super();
-
-        enablePicking = EngineSettings.ENABLE_PICKING;
-        enableShadows = EngineSettings.ENABLE_SHADOWS;
-        enablePostProcess = EngineSettings.ENABLE_POSTPROCESSING;
-        enableStencilTest = EngineSettings.ENABLE_STENCIL_TEST;
-        bFullScreen = fullscreen;
+        _sceneSettings = settings;
+        _sceneProperties = new RenderSceneProperties();
 
         // Buffers
-        _sceneBuffer = !fullscreen || enablePostProcess ? new Framebuffer("colorBuffer_" + TypeHelper.MakeGlobalUid(), 0, 0, true, true) : null;
-        _postProcessBuffer = !fullscreen && enablePostProcess ? new Framebuffer("postProcessBuffer_" + TypeHelper.MakeGlobalUid(), 0,0, true, false) : null;
-        _shadowBuffer = enableShadows ? new Framebuffer("shadowBuffer_" + TypeHelper.MakeGlobalUid(), 4096, 4096, false, true) : null;
-        _pickBuffer = enablePicking ? new Framebuffer("pickBuffer_" + TypeHelper.MakeGlobalUid(), 1, 1, true, true) : null;
-        _stencilBuffer = enableStencilTest ? new Framebuffer("stencilBuffer_" + TypeHelper.MakeGlobalUid(), 0, 0, true, true) : null;
-        _sceneProperties = new RenderSceneProperties();
+        _colorBuffer = _sceneSettings.hasColorBuffer() ? new Framebuffer("colorBuffer_" + TypeHelper.MakeGlobalUid(), 0, 0, true, true) : null;
+        _postProcessBuffer = _sceneSettings.hasPostProcessBuffer() ? new Framebuffer("postProcessBuffer_" + TypeHelper.MakeGlobalUid(), 0,0, true, false) : null;
+        _shadowBuffer = _sceneSettings.hasShadowBuffer() ? new Framebuffer("shadowBuffer_" + TypeHelper.MakeGlobalUid(), 4096, 4096, false, true) : null;
+        _pickBuffer = _sceneSettings.hasPickBuffer() ? new Framebuffer("pickBuffer_" + TypeHelper.MakeGlobalUid(), 1, 1, true, true) : null;
+        _stencilBuffer = _sceneSettings.hasStencilBuffer() ? new Framebuffer("stencilBuffer_" + TypeHelper.MakeGlobalUid(), 0, 0, true, true) : null;
         if (_sceneUbo == null) {
             _sceneUbo = new SceneUniformBuffer("SceneBuffer_" + TypeHelper.MakeGlobalUid());
             _sceneUbo.load();
@@ -88,45 +70,29 @@ public class RenderScene extends Scene {
         }
     }
 
-    public void buildFrustumList() {
-        if (freezeFrustum) return;
-        frustumDrawList.clear();
-
-        _frustum.set(getProjection(getFbWidth(), getFbHeight(), getCamera()).mul(getCamera().getViewMatrix()));
-        ArrayList<SceneComponent> components = getComponents();
-        for (int i = 0; i < components.size(); ++i) {
-            SceneComponent component = components.get(i);
-            component.setComponentIndex(i);
-            if (_frustum.testSphere(component.getBound().position, component.getBound().radius)) {
-                frustumDrawList.add(component);
-            }
-        }
+    public RenderSceneSettings getSettings() {
+        return _sceneSettings;
     }
-
 
     public void drawAllComponents() {
         for (SceneComponent component : getComponents()) component.drawInternal(this);
     }
 
-    public void drawFrustumComponents() {
-        for (SceneComponent component : frustumDrawList) component.drawInternal(this);
-    }
-
     public SceneUniformBuffer getSceneUbo() { return _sceneUbo; }
 
     public boolean renderScene() {
-        if (bFullScreen && _sceneBuffer != null) _sceneBuffer.resizeFramebuffer(Window.GetPrimaryWindow().getPixelWidth(), Window.GetPrimaryWindow().getPixelHeight());
+        if (_sceneSettings.hasFullScreenColorBuffer()) resizeBuffers(Window.GetPrimaryWindow().getPixelWidth(), Window.GetPrimaryWindow().getPixelHeight());
         if (getFbWidth() <= 0 || getFbHeight() <= 0) return false;
 
         // QUERY RENDERED COMPONENTS
-        buildFrustumList();
+        _drawList.build(getComponents(), getCamera().getViewMatrix(), getProjection(getFbWidth(), getFbHeight(), getCamera()));
 
         // CONTEXT INITIALIZATION
         _sceneUbo.use(this, getFbWidth(), getFbHeight(), getCamera());
         _camera.drawInternal(this);
 
         // SHADOW RENDERING
-        if (enableShadows) {
+        if (_sceneSettings.enableShadows()) {
             RenderUtils.RENDER_MODE = RenderMode.Shadow;
             _shadowBuffer.use(true, null);
             glEnable(GL_CULL_FACE);
@@ -135,7 +101,7 @@ public class RenderScene extends Scene {
         }
 
         // DRAW STENCIL BUFFER
-        if (enableStencilTest) {
+        if (_sceneSettings.enableStencil()) {
             RenderUtils.RENDER_MODE = RenderMode.Stencil;
             _stencilBuffer.resizeFramebuffer(getFbWidth(), getFbHeight());
             _stencilBuffer.use(true,null);
@@ -143,13 +109,14 @@ public class RenderScene extends Scene {
             glDisable(GL_CULL_FACE);
             glCullFace(GL_FRONT);
             glFrontFace(GL_CW);
-            drawFrustumComponents();
+            _drawList.render(this);
         }
+        else if (_sceneSettings.hasStencilBuffer()) _stencilBuffer.use(this);
 
         // COLOR RENDERING
         RenderUtils.RENDER_MODE = RenderMode.Color;
-        if (bFullScreen && !enablePostProcess) Framebuffer.BindBackBuffer(EngineSettings.TRANSPARENT_FRAMEBUFFER ? null : ((RenderSceneProperties) _sceneProperties)._backgroundColor);
-        else _sceneBuffer.use(true, EngineSettings.TRANSPARENT_FRAMEBUFFER ? null : ((RenderSceneProperties) _sceneProperties)._backgroundColor);
+        if (_sceneSettings.hasColorBuffer())  _colorBuffer.use(true, EngineSettings.TRANSPARENT_FRAMEBUFFER ? null : ((RenderSceneProperties) _sceneProperties)._backgroundColor);
+        else Framebuffer.BindBackBuffer(EngineSettings.TRANSPARENT_FRAMEBUFFER ? null : ((RenderSceneProperties) _sceneProperties)._backgroundColor);
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_STENCIL_TEST);
         glEnable(GL_MULTISAMPLE);
@@ -157,19 +124,19 @@ public class RenderScene extends Scene {
         glCullFace(GL_FRONT);
         glFrontFace(GL_CW);
         glPolygonMode(GL_FRONT_AND_BACK, Window.GetPrimaryWindow().getDrawMode());
-        drawFrustumComponents();
+        _drawList.render(this);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         // POST PROCESS RENDERING
-        if (enablePostProcess && (bFullScreen ? Framebuffer.BindBackBuffer(null) : _postProcessBuffer.use(true,null))) {
+        if (_sceneSettings.enablePostProcess() && (_sceneSettings.isFullScreen() ? Framebuffer.BindBackBuffer(null) : _postProcessBuffer.use(true,null))) {
             RenderUtils.getPostProcessMaterial().use(this);
             RenderUtils.getPostProcessMaterial().getResource().setIntParameter("colorTexture", 0);
             glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, _sceneBuffer.getColorTexture());
+            glBindTexture(GL_TEXTURE_2D, _colorBuffer.getColorTexture());
             RenderUtils.getPostProcessMaterial().getResource().setIntParameter("depthTexture", 1);
             glActiveTexture(GL_TEXTURE1);
-            glBindTexture(GL_TEXTURE_2D, _sceneBuffer.getDepthTexture());
-            if (enableStencilTest) {
+            glBindTexture(GL_TEXTURE_2D, _colorBuffer.getDepthTexture());
+            if (_sceneSettings.hasStencilBuffer()) {
                 RenderUtils.getPostProcessMaterial().getResource().setIntParameter("stencilTexture", 2);
                 glActiveTexture(GL_TEXTURE2);
                 glBindTexture(GL_TEXTURE_2D, _stencilBuffer.getColorTexture());
@@ -178,7 +145,7 @@ public class RenderScene extends Scene {
         }
 
         // PICK BUFFER RENDERING
-        if (enablePicking) {
+        if (_sceneSettings.isPickCursorEveryFrames()) {
             RenderUtils.RENDER_MODE = RenderMode.Select;
             _pickBuffer.use(true, null);
             glEnable(GL_DEPTH_TEST);
@@ -188,11 +155,12 @@ public class RenderScene extends Scene {
             glFrontFace(GL_CW);
             _lastHit.update(this, _pickBuffer);
         }
+        else if (_sceneSettings.hasPickBuffer()) _pickBuffer.use(true, null);
         return true;
     }
 
     public void resizeBuffers(int sizeX, int sizeY) {
-        if (_sceneBuffer != null) _sceneBuffer.resizeFramebuffer(sizeX, sizeY);
+        if (_colorBuffer != null) _colorBuffer.resizeFramebuffer(sizeX, sizeY);
         if (_stencilBuffer != null) _stencilBuffer.resizeFramebuffer(sizeX, sizeY);
         if (_postProcessBuffer != null) _postProcessBuffer.resizeFramebuffer(sizeX, sizeY);
     }
@@ -218,28 +186,26 @@ public class RenderScene extends Scene {
 
     public Matrix4f getLightSpaceMatrix() { return lightSpaceMatrix; }
 
-    public boolean isFullscreen() { return bFullScreen; }
-
     public HitResult getHitResult() { return _lastHit; }
 
     public Camera getCamera() { return _camera; }
 
-    public Framebuffer getColorFrameBuffer() { return _sceneBuffer; }
+    public Framebuffer getColorFrameBuffer() { return _colorBuffer; }
     public Framebuffer getPostProcessBuffer() { return _postProcessBuffer; }
     public Framebuffer getShadowBuffer() { return _shadowBuffer; }
     public Framebuffer getPickBuffer() { return _pickBuffer; }
     public Framebuffer getStencilBuffer() { return _stencilBuffer; }
 
 
-    public int getFbWidth() { return _sceneBuffer == null ? Window.GetPrimaryWindow().getPixelWidth() : _sceneBuffer.getWidth(); }
-    public int getFbHeight() { return _sceneBuffer == null ? Window.GetPrimaryWindow().getPixelHeight() : _sceneBuffer.getHeight(); }
+    public int getFbWidth() { return _colorBuffer == null ? Window.GetPrimaryWindow().getPixelWidth() : _colorBuffer.getWidth(); }
+    public int getFbHeight() { return _colorBuffer == null ? Window.GetPrimaryWindow().getPixelHeight() : _colorBuffer.getHeight(); }
 
     public float getCursorPosX() {
-        return (float) (_sceneBuffer == null ? Window.GetPrimaryWindow().getCursorPosX() : Window.GetPrimaryWindow().getCursorPosX() - _sceneBuffer.getDrawOffsetX());
+        return (float) (_colorBuffer == null ? Window.GetPrimaryWindow().getCursorPosX() : Window.GetPrimaryWindow().getCursorPosX() - _colorBuffer.getDrawOffsetX());
     }
 
     public float getCursorPosY() {
-        return (float) (_sceneBuffer == null ? Window.GetPrimaryWindow().getCursorPosY() : Window.GetPrimaryWindow().getCursorPosY() - _sceneBuffer.getDrawOffsetY());
+        return (float) (_colorBuffer == null ? Window.GetPrimaryWindow().getCursorPosY() : Window.GetPrimaryWindow().getCursorPosY() - _colorBuffer.getDrawOffsetY());
     }
 
     public void getCursorSceneDirection(Vector3f result) {
@@ -247,19 +213,19 @@ public class RenderScene extends Scene {
     }
 
     public void setResolution(int width, int height) {
-        if (_sceneBuffer != null) _sceneBuffer.resizeFramebuffer(width, height);
+        if (_colorBuffer != null) _colorBuffer.resizeFramebuffer(width, height);
         if (_postProcessBuffer != null) _postProcessBuffer.resizeFramebuffer(width, height);
     }
 
     public void setPosition(int x, int y) {
-        if (_sceneBuffer != null) _sceneBuffer.updateDrawOffset(x, y);
+        if (_colorBuffer != null) _colorBuffer.updateDrawOffset(x, y);
         if (_postProcessBuffer != null) _postProcessBuffer.updateDrawOffset(x, y);
     }
 
     @Override
     public void delete() {
         super.delete();
-        if (_sceneBuffer != null) _sceneBuffer.delete();
+        if (_colorBuffer != null) _colorBuffer.delete();
         if (_pickBuffer != null) _pickBuffer.delete();
         if (_postProcessBuffer != null) _postProcessBuffer.delete();
         if (_shadowBuffer != null) _shadowBuffer.delete();

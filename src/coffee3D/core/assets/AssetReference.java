@@ -7,6 +7,7 @@ public class AssetReference <T> implements Serializable {
     private transient T _asset;
     private String _assetName;
     private final Class _assetClass;
+    private transient boolean isBound = false;
 
     public AssetReference(Class assetClass, T asset) {
         _assetClass = assetClass;
@@ -33,6 +34,7 @@ public class AssetReference <T> implements Serializable {
                 _asset = AssetManager.FindAsset(_assetName);
             }
         });
+        isBound = true;
     }
 
     public Class getGenericClass() {
@@ -45,7 +47,10 @@ public class AssetReference <T> implements Serializable {
 
     public T get() {
         if (_assetName == null) return null;
-        if (_asset == null) _asset = AssetManager.FindAsset(_assetName);
+        if (_asset == null) {
+            _asset = AssetManager.FindAsset(_assetName);
+            if (!isBound) bindEvent();
+        }
         return _asset;
     }
 
@@ -55,5 +60,6 @@ public class AssetReference <T> implements Serializable {
         if (asset != null && (!_assetClass.isAssignableFrom(asset.getClass()))) return;
         _asset = asset;
         _assetName = asset == null ? null : ((Asset)asset).getName();
+        bindEvent();
     }
 }

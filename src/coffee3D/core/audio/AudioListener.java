@@ -5,7 +5,6 @@ import coffee3D.core.renderer.scene.RenderScene;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.openal.*;
-import sun.misc.IOUtils;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -43,6 +42,7 @@ public class AudioListener {
     }
 
     public void tick() {
+        if (_listener == null) return;
         Vector3f forwardVector = _listener.getListenerForwardVector();
         Vector3f upVector = _listener.getListenerUpVector();
         Vector3f position = _listener.getListenerPosition();

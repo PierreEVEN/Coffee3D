@@ -23,7 +23,7 @@ public class ThumbnailScene extends RenderScene {
     private final StaticMeshComponent object;
 
     private ThumbnailScene() {
-        super(false);
+        super(RenderSceneSettings.DEFAULT_THUMBNAIL);
         object = new StaticMeshComponent(
                 null,
                 new Vector3f(0,0,0),

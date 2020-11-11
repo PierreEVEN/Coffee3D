@@ -4,7 +4,6 @@ import coffee3D.core.io.log.Log;
 import coffee3D.core.renderer.scene.RenderScene;
 import coffee3D.core.ui.subWindows.SubWindow;
 import imgui.ImGui;
-import imgui.ImGuiOnceUponAFrame;
 import imgui.flag.ImGuiWindowFlags;
 
 public class SceneViewport extends SubWindow {
@@ -21,7 +20,7 @@ public class SceneViewport extends SubWindow {
     @Override
     protected void draw() {
 
-        if (_sceneContext.isFullscreen()) {
+        if (_sceneContext.getSettings().isFullScreen()) {
             Log.Warning("cannot render fullscreen scene in ImGui window");
             return;
         }
@@ -31,7 +30,7 @@ public class SceneViewport extends SubWindow {
         if (ImGui.beginChild("windowContent", ImGui.getContentRegionAvailX(), ImGui.getContentRegionAvailY(), false, ImGuiWindowFlags.NoInputs)) {
             _sceneContext.setPosition((int) ImGui.getWindowPosX(), (int) ImGui.getWindowPosY());
             ImGui.image(
-                    _sceneContext.getPostProcessBuffer() == null ? _sceneContext.getColorFrameBuffer().getColorTexture() : _sceneContext.getPostProcessBuffer().getColorTexture(),
+                    _sceneContext.getSettings().enablePostProcess() ? _sceneContext.getPostProcessBuffer().getColorTexture() : _sceneContext.getColorFrameBuffer().getColorTexture(),
                     _sceneContext.getFbWidth(),
                     _sceneContext.getFbHeight(),
                     0, 1, 1, 0);

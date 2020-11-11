@@ -19,7 +19,6 @@ import org.joml.Quaternionf;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
-import javax.xml.soap.Text;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

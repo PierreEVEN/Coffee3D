@@ -51,7 +51,7 @@ public class EditorUI {
                 ImGui.endMenu();
             }
 
-            String fpsText = "ms / fps : " + ((float)Window.GetPrimaryWindow().getDeltaTime() + " / " + (int)(1 / (float)Window.GetPrimaryWindow().getDeltaTime()));
+            String fpsText = "ms / fps : " + (int)(Window.GetPrimaryWindow().getDeltaTime()*1000) + " / " + (int)(1 / (float)Window.GetPrimaryWindow().getDeltaTime());
             ImVec2 fpsTextSize = new ImVec2();
             ImGui.calcTextSize(fpsTextSize , fpsText);
             ImGui.dummy(ImGui.getContentRegionAvailX() - fpsTextSize.x - 10, 0.f);

@@ -191,9 +191,9 @@ public class Window {
 
     private void updateDeltaTime() {
         _deltaTime = GLFW.glfwGetTime() - _lastFrameTime;
-        if (_deltaTime > 1.0 / 30.0) {
+        if (_deltaTime > 1.0 / 10.0) {
             Log.Warning("Game froze for " + _deltaTime + "s");
-            _deltaTime = 1.0 / 30.0;
+            _deltaTime = 1.0 / 10.0;
         }
         _lastFrameTime = GLFW.glfwGetTime();
     }

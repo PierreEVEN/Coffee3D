@@ -2,7 +2,6 @@ package coffee3D.editor;
 
 import coffee3D.core.IEngineModule;
 import coffee3D.core.assets.AssetManager;
-import coffee3D.core.assets.types.Texture2D;
 import coffee3D.core.controller.IGameController;
 import coffee3D.core.controller.TopViewController;
 import coffee3D.core.io.settings.EngineSettings;
@@ -10,12 +9,8 @@ import coffee3D.core.renderer.RenderUtils;
 import coffee3D.core.renderer.Window;
 import coffee3D.core.renderer.scene.RenderScene;
 import coffee3D.core.renderer.scene.RenderSceneProperties;
-import coffee3D.core.ui.hud.*;
-import coffee3D.core.ui.imgui.ImGuiImplementation;
+import coffee3D.core.renderer.scene.RenderSceneSettings;
 import coffee3D.core.ui.tools.StatHelper;
-import imgui.ImColor;
-import imgui.ImGui;
-import imgui.ImGuiIO;
 import org.lwjgl.glfw.GLFW;
 
 public class TestGameModule extends IEngineModule {
@@ -39,7 +34,7 @@ public class TestGameModule extends IEngineModule {
     @Override
     public void PreInitialize() {
 
-        _rootScene = new RenderScene(true);
+        _rootScene = new RenderScene(RenderSceneSettings.DEFAULT_FULL_SCREEN);
         _rootScene.load(AssetManager.FindAsset(EngineSettings.DEFAULT_MAP_NAME));
         controller = new TopViewController(_rootScene);
         Window.GetPrimaryWindow().showCursor(true);
@@ -61,9 +56,9 @@ public class TestGameModule extends IEngineModule {
 
     @Override
     public void DrawHUD() {
-        /*
         StatHelper.DrawStats(_rootScene);
 
+        /*
 
         ImGui.image(AssetManager.<Texture2D>FindAsset("whiteTexture").getTextureID(), 50, 50);
 

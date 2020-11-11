@@ -81,7 +81,7 @@ public abstract class Asset extends SerializableData {
      * Update asset name
      * @param newName new name
      */
-    public void updateName(String newName) {
+    public void setName(String newName) {
         AssetManager.UnRegisterAsset(this);
         String oldName = getName();
         _assetName = newName;

@@ -37,7 +37,7 @@ void main()
     const float gamma = 2.2;
 
     vec3 hdrColor = texture(colorTexture, TexCoords).rgb +  + getSelectionOutline() * vec3(1,.5,0);
-    vec3 bloomColor = max(vec3(0), blurTexture(colorTexture, TexCoords).rgb - 1);
+    vec3 bloomColor = vec3(0);//max(vec3(0), blurTexture(colorTexture, TexCoords).rgb - 1);
     hdrColor += bloomColor; // additive blending
     // tone mapping
     vec3 result = vec3(1.0) - exp(-hdrColor * exposure);

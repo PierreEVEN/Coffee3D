@@ -10,6 +10,7 @@ import coffee3D.core.IEngineModule;
 import coffee3D.core.io.settings.EngineSettings;
 import coffee3D.core.renderer.RenderUtils;
 import coffee3D.core.renderer.scene.RenderScene;
+import coffee3D.core.renderer.scene.RenderSceneSettings;
 import coffee3D.core.ui.imgui.ImGuiImplementation;
 
 import coffee3D.editor.controller.EditorController;
@@ -41,7 +42,7 @@ public class EditorModule extends IEngineModule {
 
 
         /* Create default scene and default controller */
-        _rootScene = new RenderScene(false);
+        _rootScene = new RenderScene(RenderSceneSettings.DEFAULT_WINDOWED);
         _rootScene.load(AssetManager.FindAsset(EngineSettings.DEFAULT_MAP_NAME));
         _controller = new EditorController(_rootScene);
         AudioListener.Get().bindListener(_rootScene.getCamera());

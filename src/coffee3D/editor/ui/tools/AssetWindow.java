@@ -4,7 +4,6 @@ import coffee3D.core.assets.Asset;
 import coffee3D.core.assets.AssetManager;
 import coffee3D.core.assets.types.MaterialInterface;
 import coffee3D.core.assets.types.StaticMesh;
-import coffee3D.core.io.log.Log;
 import coffee3D.core.renderer.scene.*;
 import coffee3D.core.renderer.scene.Components.StaticMeshComponent;
 import coffee3D.core.types.Color;
@@ -62,7 +61,7 @@ public class AssetWindow extends SubWindow {
                 ImGui.popStyleColor();
             }
             else {
-                _editedAsset.updateName(newAssetName.get());
+                _editedAsset.setName(newAssetName.get());
             }
         }
 
@@ -73,7 +72,7 @@ public class AssetWindow extends SubWindow {
 
             if (_thumbnailScene == null)
             {
-                _thumbnailScene = new RenderScene(false);
+                _thumbnailScene = new RenderScene(RenderSceneSettings.DEFAULT_THUMBNAIL);
                 ((RenderSceneProperties)_thumbnailScene.getProperties())._backgroundColor = new Color(0,0,0,0);
                 _background = new StaticMeshComponent(
                         null,

@@ -113,8 +113,6 @@ public class AssetManager {
         }
     }
 
-
-
     private final static HashMap<Class, List<Asset>> _assetMap = new HashMap<>();
 
     public static HashMap<Class, List<Asset>> GetAssetMap() {

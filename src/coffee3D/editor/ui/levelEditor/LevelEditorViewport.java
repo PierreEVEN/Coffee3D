@@ -81,6 +81,12 @@ public class LevelEditorViewport extends SceneViewport {
                 }
                 ImGui.checkbox("SCENE show bounds", EngineSettings.DRAW_DEBUG_BOUNDS);
                 ImGui.checkbox("UI draw debug boxes", HudUtils.bDrawDebugBoxes);
+                if (ImGui.menuItem(_sceneContext.getSettings().enableShadows() ? "disable shadows" : "enable shadows"))
+                    _sceneContext.getSettings().setShadows(!_sceneContext.getSettings().enableShadows());
+
+                if (ImGui.menuItem(_sceneContext.getSettings().enablePostProcess() ? "disable post process" : "enable post process"))
+                    _sceneContext.getSettings().set_enablePostProcess(!_sceneContext.getSettings().enablePostProcess());
+
                 ImGui.endMenu();
             }
             if (ImGui.beginMenu("window")) {

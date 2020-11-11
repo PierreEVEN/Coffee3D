@@ -2,7 +2,6 @@
 #define LIGHTING_GLSL
 
 #include "noises.glsl";
-#include "texture.glsl";
 
 #define MIN_LIGHTING 0
 #define AMBIANT_INTENSITY .3
