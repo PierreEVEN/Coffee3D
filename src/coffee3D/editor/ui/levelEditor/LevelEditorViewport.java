@@ -61,6 +61,12 @@ public class LevelEditorViewport extends SceneViewport {
 
     @Override
     protected void draw() {
+        if (getEditedComponent() != null) {
+            getScene().gizmo.setRelativeRotation(getEditedComponent().getRelativeRotation());
+            getScene().gizmo.setRelativePosition(getEditedComponent().getRelativePosition());
+        }
+
+
         ImGui.pushStyleVar(ImGuiStyleVar.ItemSpacing, 4, 15);
         if (ImGui.beginMenuBar()) {
             if (ImGui.beginMenu("edit")) {

@@ -14,11 +14,8 @@ public class DebugRenderer {
 
     public static void DrawDebugLine(Scene context, Vector3f p1, Vector3f p2, Color color) {
         if (RenderUtils.RENDER_MODE != RenderMode.Color) return;
-        RenderUtils.CheckGLErrors();
-        RenderUtils.getDebugMaterial().setColor(color);
-        RenderUtils.CheckGLErrors();
         RenderUtils.getDebugMaterial().use(context);
-
+        RenderUtils.getDebugMaterial().setColor(color);
         RenderUtils.getDebugMaterial().getResource().setMatrixParameter("model", TypeHelper.getMat4().identity());
         glMatrixMode(GL_MODELVIEW);
         glBegin(GL_LINES);

@@ -66,7 +66,7 @@ public class SceneUniformBuffer extends GraphicResource {
         _bufferData.cameraPosition.set(camera.getRelativePosition(), 0);
         _bufferData.cameraDirection.set(camera.getUpVector(), 0);
         _bufferData.sunVector.set(((RenderSceneProperties)scene.getProperties()).getSunVector(), 0);
-        _bufferData.lightSpaceMatrix.set(scene.getLightSpaceMatrix());
+        _bufferData.lightSpaceMatrix.set(scene.getShadowMatrix());
         _bufferData.time = (float)GLFW.glfwGetTime();
         _bufferData.shadowIntensity = ((RenderSceneProperties)scene.getProperties()).shadowIntensity * (scene.getSettings().enableShadows() ? 1 : 0);
         _bufferData.framebufferSize.set(scene.getFbWidth(), scene.getFbHeight());

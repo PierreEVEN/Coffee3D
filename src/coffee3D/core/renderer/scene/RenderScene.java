@@ -6,6 +6,7 @@ import coffee3D.core.renderer.RenderMode;
 import coffee3D.core.renderer.RenderUtils;
 import coffee3D.core.renderer.scene.Components.Camera;
 import coffee3D.core.renderer.Window;
+import coffee3D.core.renderer.scene.Components.GizmoComponent;
 import coffee3D.core.resources.factories.MeshFactory;
 import coffee3D.core.resources.types.Framebuffer;
 import coffee3D.core.resources.types.MeshResource;
@@ -13,6 +14,7 @@ import coffee3D.core.resources.types.SceneUniformBuffer;
 import coffee3D.core.types.TypeHelper;
 import coffee3D.core.types.Vertex;
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
@@ -22,21 +24,24 @@ import static org.lwjgl.opengl.GL13.*;
 
 public class RenderScene extends Scene {
 
+    // BUFFERS
     private final Framebuffer _colorBuffer;
     private final Framebuffer _pickBuffer;
     private final Framebuffer _postProcessBuffer;
     private final Framebuffer _shadowBuffer;
     private final Framebuffer _stencilBuffer;
-    private final Camera _camera;
-    private final Matrix4f lightSpaceMatrix = new Matrix4f().identity();
-    private final DrawList _drawList = new DrawList();
-    private static MeshResource _viewportQuadMesh;
     private static SceneUniformBuffer _sceneUbo;
+
+    private final Camera _camera;
+    private final Matrix4f _shadowMatrix = new Matrix4f();
+    private final DrawList _drawList = new DrawList();
     private final HitResult _lastHit = new HitResult();
-
+    private static MeshResource _viewportQuadMesh;
     public final RenderSceneSettings _sceneSettings;
-
     private boolean freezeFrustum = false;
+
+    public GizmoComponent gizmo;
+
 
     public void freezeFrustum(boolean bFreeze) { freezeFrustum = bFreeze; }
     public boolean isFrustumFrozen() { return freezeFrustum; }
@@ -68,6 +73,11 @@ public class RenderScene extends Scene {
             int[] triangles = new int[]{0, 1, 2, 0, 2, 3};
             _viewportQuadMesh = MeshFactory.FromResources("screenQuadMesh", vertices, triangles);
         }
+
+
+        gizmo = new GizmoComponent(new Vector3f().zero(), new Quaternionf().identity(), new Vector3f(1,1,1));
+
+
     }
 
     public RenderSceneSettings getSettings() {
@@ -85,7 +95,7 @@ public class RenderScene extends Scene {
         if (getFbWidth() <= 0 || getFbHeight() <= 0) return false;
 
         // QUERY RENDERED COMPONENTS
-        _drawList.build(getComponents(), getCamera().getViewMatrix(), getProjection(getFbWidth(), getFbHeight(), getCamera()));
+        if (!isFrustumFrozen()) _drawList.build(getComponents(), getCamera().getViewMatrix(), getProjection(getFbWidth(), getFbHeight(), getCamera()));
 
         // CONTEXT INITIALIZATION
         _sceneUbo.use(this, getFbWidth(), getFbHeight(), getCamera());
@@ -125,6 +135,8 @@ public class RenderScene extends Scene {
         glFrontFace(GL_CW);
         glPolygonMode(GL_FRONT_AND_BACK, Window.GetPrimaryWindow().getDrawMode());
         _drawList.render(this);
+        glClear(GL_DEPTH_BUFFER_BIT);
+        gizmo.drawInternal(this);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         // POST PROCESS RENDERING
@@ -178,13 +190,13 @@ public class RenderScene extends Scene {
                 TypeHelper.getVector3(0, 0, 0),
                 TypeHelper.getVector3(0, 0, 1));
 
-        lightSpaceMatrix.set(lightProjection.mul(lightView));
+        _shadowMatrix.set(lightProjection.mul(lightView));
 
         RenderUtils.getShadowDrawList()[0].use(this);
-        RenderUtils.getShadowDrawList()[0].getResource().setMatrixParameter("lightSpaceMatrix", lightSpaceMatrix);
+        RenderUtils.getShadowDrawList()[0].getResource().setMatrixParameter("lightSpaceMatrix", _shadowMatrix);
     }
 
-    public Matrix4f getLightSpaceMatrix() { return lightSpaceMatrix; }
+    public Matrix4f getShadowMatrix() { return _shadowMatrix; }
 
     public HitResult getHitResult() { return _lastHit; }
 
