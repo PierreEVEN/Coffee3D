@@ -27,7 +27,7 @@ public class MaterialInstance extends MaterialInterface {
 
     @Override
     public void use(Scene context) {
-        if (_parentMaterial.get() != this) _parentMaterial.get().getResource().use(context);
+        useInternal(context);
         bindColor(getColor());
         bindTextures(getTextures());
     }

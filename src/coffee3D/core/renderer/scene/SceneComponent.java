@@ -126,11 +126,9 @@ public class SceneComponent implements Serializable {
                 break;
             case Stencil: {
                 if (getStencilValue() != 0) {
-                    RenderUtils.CheckGLErrors();
                     RenderUtils.getBillboardPickMaterial().use(context);
                     RenderUtils.getBillboardPickMaterial().getResource().setIntParameter("pickId", getStencilValue());
                     RenderUtils.getBillboardPickMaterial().getResource().setVec4Parameter("position", getBound().position, size);
-                    RenderUtils.CheckGLErrors();
                     GetBillboardMesh().use(context);
                 }
                 break;

@@ -39,8 +39,8 @@ public class GizmoComponent extends SceneComponent {
         gizmoMesh[0].use(context);
 
         DebugRenderer.DrawDebugLine(context, TypeHelper.getVector3(0, 0, 0), getWorldPosition(), Color.RED);
-        DebugRenderer.DrawDebugLine(context, TypeHelper.getVector3(0, 0, 0), getWorldPosition(), Color.GREEN);
-        DebugRenderer.DrawDebugLine(context, TypeHelper.getVector3(0, 0, 0), getWorldPosition(), Color.BLUE);
+        DebugRenderer.DrawDebugLine(context, TypeHelper.getVector3(0, 0, 10), getWorldPosition(), Color.GREEN);
+        DebugRenderer.DrawDebugLine(context, TypeHelper.getVector3(0, 0, 20), getWorldPosition(), Color.BLUE);
 
     }
 }

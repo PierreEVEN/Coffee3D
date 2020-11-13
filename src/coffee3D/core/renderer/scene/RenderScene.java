@@ -136,7 +136,7 @@ public class RenderScene extends Scene {
         glPolygonMode(GL_FRONT_AND_BACK, Window.GetPrimaryWindow().getDrawMode());
         _drawList.render(this);
         glClear(GL_DEPTH_BUFFER_BIT);
-        //gizmo.drawInternal(this);
+        gizmo.drawInternal(this);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         // POST PROCESS RENDERING

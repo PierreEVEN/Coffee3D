@@ -2,6 +2,7 @@ package coffee3D.core.assets.types;
 
 import coffee3D.core.assets.Asset;
 import coffee3D.core.assets.AssetReference;
+import coffee3D.core.io.log.Log;
 import coffee3D.core.renderer.scene.RenderScene;
 import coffee3D.core.renderer.scene.Scene;
 import coffee3D.core.resources.types.MaterialResource;
@@ -13,9 +14,14 @@ import java.io.File;
 
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glBindTexture;
-import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
-import static org.lwjgl.opengl.GL13.glActiveTexture;
+import static org.lwjgl.opengl.GL13.*;
 
+/**
+ * usage :
+ * 1) Set defaults (color + textures)
+ * 2) call use(context);
+ * 3) set additional values
+ */
 public abstract class MaterialInterface extends Asset {
     private static final long serialVersionUID = -167314150263644016L;
 
@@ -33,12 +39,16 @@ public abstract class MaterialInterface extends Asset {
 
     @Override
     public void use(Scene context) {
-        getResource().use(context);
+        useInternal(context);
         bindColor(null);
-        bindShadowMaps(context);
         bindTextures(null);
-
     }
+
+    public final void useInternal(Scene context) {
+        getResource().use(context);
+        bindShadowMaps(context);
+    }
+
 
     public abstract MaterialResource getResource();
 
@@ -62,7 +72,7 @@ public abstract class MaterialInterface extends Asset {
             if (usedTexture != null)
             {
                 getResource().setIntParameter("texture" + i, i + 1);
-                glActiveTexture(GL_TEXTURE0 + 1);
+                glActiveTexture(GL_TEXTURE1 + i);
                 glBindTexture(GL_TEXTURE_2D, usedTexture.getTextureID());
             }
         }
