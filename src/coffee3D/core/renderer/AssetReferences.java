@@ -1,17 +1,22 @@
 package coffee3D.core.renderer;
 
 import coffee3D.core.assets.types.Material;
+import coffee3D.core.assets.types.StaticMesh;
 import coffee3D.core.assets.types.Texture2D;
 import coffee3D.core.io.log.Log;
 import coffee3D.core.io.settings.EngineSettings;
+import coffee3D.core.resources.types.MeshResource;
 
 import java.io.File;
 
 public final class AssetReferences {
 
-    public static File ICON_SCENE_COMPONENT = new File("engineContent/assets/textures/icon/itemIcon.png");
-    public static File ICON_STATIC_MESH = new File("engineContent/assets/textures/icon/meshIcon.png");
-    public static File ICON_AUDIO = new File("engineContent/assets/textures/icon/audioIcon.png");
+    public static File GIZMO_MESH_PATH = new File(EngineSettings.ENGINE_ASSET_PATH.getPath() + "/assets/models/gizmo.fbx");
+    public static File GIZMO_MATERIAL_PATH = new File(EngineSettings.ENGINE_ASSET_PATH.getPath() + "/assets/shaders/gizmoMaterial");
+
+    public static File ICON_SCENE_COMPONENT = new File(EngineSettings.ENGINE_ASSET_PATH.getPath() + "/assets/textures/icon/itemIcon.png");
+    public static File ICON_STATIC_MESH = new File(EngineSettings.ENGINE_ASSET_PATH.getPath() + "/assets/textures/icon/meshIcon.png");
+    public static File ICON_AUDIO = new File(EngineSettings.ENGINE_ASSET_PATH.getPath() + "/assets/textures/icon/audioIcon.png");
     private static Texture2D _icon_scene_component_texture;
     private static Texture2D _icon_static_mesh_component_texture;
     private static Texture2D _icon_audio_component;
@@ -34,7 +39,6 @@ public final class AssetReferences {
         }
         return _icon_audio_component;
     }
-
 
     private static Texture2D loadTexture(String name, File path) {
         Texture2D result;

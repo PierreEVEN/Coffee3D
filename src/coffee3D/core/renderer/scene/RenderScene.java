@@ -40,7 +40,7 @@ public class RenderScene extends Scene {
     public final RenderSceneSettings _sceneSettings;
     private boolean freezeFrustum = false;
 
-    public GizmoComponent gizmo;
+    public transient GizmoComponent gizmo;
 
 
     public void freezeFrustum(boolean bFreeze) { freezeFrustum = bFreeze; }
@@ -136,11 +136,12 @@ public class RenderScene extends Scene {
         glPolygonMode(GL_FRONT_AND_BACK, Window.GetPrimaryWindow().getDrawMode());
         _drawList.render(this);
         glClear(GL_DEPTH_BUFFER_BIT);
-        gizmo.drawInternal(this);
+        //gizmo.drawInternal(this);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         // POST PROCESS RENDERING
         if (_sceneSettings.enablePostProcess() && (_sceneSettings.isFullScreen() ? Framebuffer.BindBackBuffer(null) : _postProcessBuffer.use(true,null))) {
+            glDisable(GL_CULL_FACE);
             RenderUtils.getPostProcessMaterial().use(this);
             RenderUtils.getPostProcessMaterial().getResource().setIntParameter("colorTexture", 0);
             glActiveTexture(GL_TEXTURE0);

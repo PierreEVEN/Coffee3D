@@ -21,7 +21,11 @@ class Logger {
 
     private Logger() {
         try {
-            File logPath = new File("./saved/logs");
+            File logPath = new File("./saved");
+            if (!logPath.exists()) {
+                logPath.mkdir();
+            }
+            logPath = new File("./saved/logs");
             if (!logPath.exists()) {
                 logPath.mkdir();
             }

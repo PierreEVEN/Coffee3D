@@ -110,6 +110,14 @@ public class MaterialResource extends GraphicResource {
         glUniform1f(matHandle, value);
     }
 
+    public void setModelMatrix(Matrix4f value) {
+        int matHandle = glGetUniformLocation(_materialHandle, "model");
+        if (matHandle < 0) return;
+        final FloatBuffer bfr = createFloatBuffer(16);
+        value.get(bfr);
+        glUniformMatrix4fv(matHandle, false, bfr);
+    }
+
     public void setMatrixParameter(String parameterName, Matrix4f value) {
         int matHandle = glGetUniformLocation(_materialHandle, parameterName);
         if (matHandle < 0) return;

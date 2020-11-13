@@ -1,5 +1,6 @@
 package coffee3D.editor.ui.propertyHelper.writers;
 
+import coffee3D.core.io.log.Log;
 import coffee3D.editor.ui.propertyHelper.FieldWriter;
 import imgui.ImGui;
 import org.joml.Quaternionf;
@@ -7,7 +8,7 @@ import org.joml.Vector3f;
 
 public class QuaternionWriter extends FieldWriter
 {
-    private Vector3f _euler;
+    private final Vector3f _euler = new Vector3f();;
 
     public QuaternionWriter() {
         super(Quaternionf.class);
@@ -17,7 +18,6 @@ public class QuaternionWriter extends FieldWriter
     protected Object draw(String field, Object object) throws IllegalAccessException {
 
         Quaternionf vec = (Quaternionf) object;
-        if (_euler == null) _euler = new Vector3f();
         vec.getEulerAnglesXYZ(_euler);
 
         _euler.x = (float)Math.toDegrees(_euler.x);
@@ -29,7 +29,8 @@ public class QuaternionWriter extends FieldWriter
         ImGui.dragFloat3("##" + field, values);
 
         if (values[0] != _euler.x || values[1] != _euler.y || values[2] != _euler.z) {
-            return vec.identity().rotateXYZ((float)Math.toRadians(values[0]), (float)Math.toRadians(values[1]), (float)Math.toRadians(values[2]));
+            vec.identity().rotateXYZ((float)Math.toRadians(values[0]), (float)Math.toRadians(values[1]), (float)Math.toRadians(values[2]));
+            return vec;
         }
 
         return null;

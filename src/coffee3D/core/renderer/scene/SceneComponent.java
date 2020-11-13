@@ -276,7 +276,7 @@ public class SceneComponent implements Serializable {
      */
     public Vector3f getForwardVector() {
         if (_forwardVector == null) _forwardVector = new Vector3f();
-        _rotation.normalizedPositiveX(_forwardVector);
+        _rotation.transform(_forwardVector.set(1, 0,0));
         return _forwardVector;
     }
 
@@ -286,8 +286,8 @@ public class SceneComponent implements Serializable {
      */
     public Vector3f getRightVector() {
         if (_rightVector == null) _rightVector = new Vector3f();
-        _rotation.normalizedPositiveY(_rightVector);
-        return _rightVector.mul(-1f);
+        _rotation.transform(_rightVector.set(0, 1,0));
+        return _rightVector;
     }
 
     /**
@@ -296,7 +296,7 @@ public class SceneComponent implements Serializable {
      */
     public Vector3f getUpVector() {
         if (_upVector == null) _upVector = new Vector3f();
-        _rotation.normalizedPositiveZ(_upVector);
+        _rotation.transform(_upVector.set(0, 0,1));
         return _upVector;
     }
 

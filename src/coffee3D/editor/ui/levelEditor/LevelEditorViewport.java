@@ -123,7 +123,17 @@ public class LevelEditorViewport extends SceneViewport {
                     position = new Vector3f(getScene().getHitResult().position);
                 }
                 else {
-                    position = new Vector3f(getScene().getCamera().getForwardVector()).mul(2 * ((StaticMesh) droppedAsset).getBound().radius).add(getScene().getCamera().getRelativePosition()).sub(((StaticMesh) droppedAsset).getBound().position);
+                    if (droppedAsset instanceof StaticMesh) {
+                        position = new Vector3f(
+                                getScene().getCamera().getForwardVector())
+                                .mul(2 * ((StaticMesh) droppedAsset).getBound().radius)
+                                .add(getScene().getCamera().getRelativePosition())
+                                .sub(((StaticMesh) droppedAsset).getBound().position);
+                    }
+                    else {
+                        position = new Vector3f(
+                                getScene().getCamera().getForwardVector()).mul(2).add(getScene().getCamera().getRelativePosition());
+                    }
                 }
 
                 if (droppedAsset instanceof StaticMesh) {

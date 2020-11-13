@@ -33,10 +33,7 @@ public class Camera extends SceneComponent implements IAudioListener {
     }
 
     private void sendRotation() {
-        Quaternionf rot = TypeHelper.getQuat().identity()
-                .rotateY((float)Math.toRadians(-_pitch))
-                .rotateZ((float)Math.toRadians(_yaw));
-        setRelativeRotation(rot);
+        setRelativeRotation(getRelativeRotation().identity().rotateZYX((float)Math.toRadians(-_yaw), (float)Math.toRadians(_pitch), 0));
     }
 
     public Camera() {
