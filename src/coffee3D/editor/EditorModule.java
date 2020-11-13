@@ -2,8 +2,6 @@ package coffee3D.editor;
 
 import coffee3D.core.assets.Asset;
 import coffee3D.core.assets.AssetManager;
-import coffee3D.core.assets.types.Font;
-import coffee3D.core.assets.types.World;
 import coffee3D.core.audio.AudioListener;
 import coffee3D.core.controller.IGameController;
 import coffee3D.core.IEngineModule;
@@ -11,18 +9,14 @@ import coffee3D.core.io.settings.EngineSettings;
 import coffee3D.core.renderer.RenderUtils;
 import coffee3D.core.renderer.scene.RenderScene;
 import coffee3D.core.renderer.scene.RenderSceneSettings;
-import coffee3D.core.ui.imgui.ImGuiImplementation;
 
 import coffee3D.editor.controller.EditorController;
 
 import coffee3D.editor.ui.browsers.ContentBrowser;
 import coffee3D.editor.ui.EditorUI;
 import coffee3D.editor.ui.levelEditor.LevelEditorViewport;
+import coffee3D.editor.ui.propertyHelper.FieldWriter;
 import coffee3D.editor.ui.tools.Console;
-import imgui.ImGui;
-import imgui.ImGuiIO;
-
-import java.io.File;
 
 public class EditorModule extends IEngineModule {
 
@@ -40,12 +34,13 @@ public class EditorModule extends IEngineModule {
     @Override
     public void PreInitialize() {
 
+        FieldWriter.RegisterPrimitiveWriters();
 
         /* Create default scene and default controller */
         _rootScene = new RenderScene(RenderSceneSettings.DEFAULT_WINDOWED);
-        _rootScene.load(AssetManager.FindAsset(EngineSettings.DEFAULT_MAP_NAME));
+        _rootScene.load(AssetManager.FindAsset(EngineSettings.Get().defaultMapName));
         _controller = new EditorController(_rootScene);
-        AudioListener.Get().bindListener(_rootScene.getCamera());
+        //AudioListener.Get().bindListener(_rootScene.getCamera());
 
         /* load default widgets */
         new LevelEditorViewport((RenderScene) _rootScene, "viewport");

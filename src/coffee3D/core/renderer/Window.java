@@ -1,18 +1,19 @@
 package coffee3D.core.renderer;
 
+import coffee3D.core.Engine;
 import coffee3D.core.assets.AssetManager;
 import coffee3D.core.IEngineModule;
 import coffee3D.core.assets.types.Font;
 import coffee3D.core.audio.AudioListener;
 import coffee3D.core.io.log.Log;
 import coffee3D.core.io.settings.EngineSettings;
+import coffee3D.core.io.settings.GameSettings;
 import coffee3D.core.resources.ResourceManager;
 import coffee3D.core.resources.factories.FontFactory;
 import coffee3D.core.types.TypeHelper;
 import coffee3D.core.ui.hud.HudUtils;
 import coffee3D.core.ui.imgui.ImGuiImplementation;
 import coffee3D.core.ui.subWindows.SubWindow;
-import coffee3D.editor.ui.propertyHelper.FieldWriter;
 import imgui.ImGui;
 import imgui.ImGuiIO;
 import imgui.flag.ImGuiWindowFlags;
@@ -58,9 +59,12 @@ public class Window {
      * @param engineModule source module
      */
     public void run(IEngineModule engineModule) {
-        _engineModule = engineModule;
 
-        FieldWriter.RegisterPrimitiveWriters();
+        Log.Display("~ Loading Coffee3D v" + Engine.GetEngineVersion() + " ~");
+
+        GameSettings.ScanSettings();
+
+        _engineModule = engineModule;
 
         Log.Display("initialize glfw");
         _glfwWindowHandle = RenderUtils.InitializeGlfw(_bfrSize, "Coffee3D");
@@ -71,8 +75,8 @@ public class Window {
         ImGuiImplementation.Get().preInit(_glfwWindowHandle);
 
         Log.Display("load resources");
-        AssetManager.LoadAssetLibrary(EngineSettings.ENGINE_ASSET_PATH);
-        AssetManager.LoadAssetLibrary(EngineSettings.GAME_ASSET_PATH);
+        AssetManager.LoadAssetLibrary(EngineSettings.Get().engineAssetsPath);
+        AssetManager.LoadAssetLibrary(EngineSettings.Get().gameAssetsPath);
         _engineModule.LoadResources();
 
         Log.Display("initialize imGui");
@@ -132,7 +136,7 @@ public class Window {
 
             glfwPollEvents();
 
-            AudioListener.Get().tick();
+            //AudioListener.Get().tick();
 
             // Draw frame
             drawFrame();
@@ -152,8 +156,8 @@ public class Window {
         initUI();
 
         HudUtils.ResetCounters();
-        ImGui.setNextWindowPos(0, 0);
-        ImGui.setNextWindowSize(Window.GetPrimaryWindow().getPixelWidth(), Window.GetPrimaryWindow().getPixelHeight());
+        ImGui.setNextWindowPos(-4, -4);
+        ImGui.setNextWindowSize(Window.GetPrimaryWindow().getPixelWidth() + 8, Window.GetPrimaryWindow().getPixelHeight() + 8);
         if (ImGui.begin("HUD Window", ImGuiWindowFlags.NoNav | ImGuiWindowFlags.NoInputs | ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoBackground)) {
             _engineModule.DrawHUD();
         }

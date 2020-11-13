@@ -6,7 +6,7 @@ import coffee3D.editor.EditorModule;
 
 public class Main {
     public static void main(String[] args) {
-        EngineSettings.ENABLE_DOUBLE_BUFFERING = true;
+        EngineSettings.Get().doubleBuffering = true;
         Window.GetPrimaryWindow().run(new EditorModule());
     }
 }

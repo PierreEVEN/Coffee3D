@@ -33,7 +33,6 @@ public class AudioSource {
             AL10.alSourcei(source, AL10.AL_LOOPING, AL10.AL_FALSE);
 
             AL10.alSourcePlay(source);
-            Log.Display("play");
             _source = source;
         }
     }

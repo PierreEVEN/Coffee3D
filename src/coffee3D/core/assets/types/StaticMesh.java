@@ -2,6 +2,7 @@ package coffee3D.core.assets.types;
 
 import coffee3D.core.assets.Asset;
 import coffee3D.core.assets.AssetReference;
+import coffee3D.core.renderer.RenderUtils;
 import coffee3D.core.resources.factories.ImportZAxis;
 import coffee3D.core.resources.factories.MeshFactory;
 import coffee3D.core.io.log.Log;
@@ -125,7 +126,7 @@ public class StaticMesh extends Asset {
         else {
             Log.Warning(toString() + " has empty sections");
         }
-        if (EngineSettings.DRAW_DEBUG_BOUNDS.get()) {
+        if (RenderUtils.DRAW_DEBUG_BOUNDS.get()) {
             drawBound(context);
         }
     }

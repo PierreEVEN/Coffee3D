@@ -1,7 +1,5 @@
 package coffee3D.editor.controller;
 
-import coffee3D.core.IEngineModule;
-import coffee3D.core.assets.AssetManager;
 import coffee3D.core.controller.DefaultController;
 import coffee3D.core.renderer.scene.RenderScene;
 import coffee3D.core.renderer.Window;

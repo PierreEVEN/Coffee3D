@@ -34,13 +34,9 @@ public class GizmoComponent extends SceneComponent {
             Log.Fail("failed to find gizmo asset path");
         }
 
+        gizmoMaterial.setIntParameter("axis",1);
         gizmoMaterial.use(context);
         gizmoMaterial.setModelMatrix(getWorldTransformationMatrix());
         gizmoMesh[0].use(context);
-
-        DebugRenderer.DrawDebugLine(context, TypeHelper.getVector3(0, 0, 0), getWorldPosition(), Color.RED);
-        DebugRenderer.DrawDebugLine(context, TypeHelper.getVector3(0, 0, 10), getWorldPosition(), Color.GREEN);
-        DebugRenderer.DrawDebugLine(context, TypeHelper.getVector3(0, 0, 20), getWorldPosition(), Color.BLUE);
-
     }
 }

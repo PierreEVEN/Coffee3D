@@ -24,7 +24,7 @@ public class MaterialInstanceImporter extends SubWindow {
         super(windowName);
         _parent = new AssetReference<>(MaterialInterface.class);
         assetName = new ImString("");
-        outputPath = EngineSettings.GAME_ASSET_PATH;
+        outputPath = EngineSettings.Get().gameAssetsPath;
     }
 
     public boolean canImport() {

@@ -2,20 +2,13 @@ package coffee3D.editor;
 
 import coffee3D.core.IEngineModule;
 import coffee3D.core.assets.AssetManager;
-import coffee3D.core.assets.types.Texture2D;
 import coffee3D.core.controller.IGameController;
 import coffee3D.core.controller.TopViewController;
 import coffee3D.core.io.settings.EngineSettings;
-import coffee3D.core.maths.Interpolation;
-import coffee3D.core.maths.MathLibrary;
-import coffee3D.core.renderer.RenderUtils;
 import coffee3D.core.renderer.Window;
 import coffee3D.core.renderer.scene.RenderScene;
 import coffee3D.core.renderer.scene.RenderSceneProperties;
 import coffee3D.core.renderer.scene.RenderSceneSettings;
-import coffee3D.core.ui.subWindows.SubWindow;
-import coffee3D.core.ui.tools.StatHelper;
-import imgui.ImGui;
 import org.lwjgl.glfw.GLFW;
 
 public class TestGameModule extends IEngineModule {
@@ -40,7 +33,7 @@ public class TestGameModule extends IEngineModule {
     public void PreInitialize() {
 
         _rootScene = new RenderScene(RenderSceneSettings.DEFAULT_FULL_SCREEN);
-        _rootScene.load(AssetManager.FindAsset(EngineSettings.DEFAULT_MAP_NAME));
+        _rootScene.load(AssetManager.FindAsset(EngineSettings.Get().defaultMapName));
         controller = new TopViewController(_rootScene);
         Window.GetPrimaryWindow().showCursor(true);
         Window.GetPrimaryWindow().setWindowTitle("Sample game");
@@ -48,12 +41,8 @@ public class TestGameModule extends IEngineModule {
 
     @Override
     public void DrawScene() {
-
         ((RenderSceneProperties)_rootScene.getProperties()).sunOrientation.identity().rotateXYZ((float) (GLFW.glfwGetTime() * .1), (float) Math.toRadians(-20), 0);
-
-        RenderUtils.CheckGLErrors();
         _rootScene.renderScene();
-        RenderUtils.CheckGLErrors();
     }
 
     @Override
@@ -66,12 +55,10 @@ public class TestGameModule extends IEngineModule {
         //StatHelper.DrawStats(_rootScene);
 
 
+        /*
+
         Texture2D tex = AssetManager.FindAsset("whiteTexture");
 
-
-        ImGui.image(tex.getTextureID(), ImGui.getContentRegionAvailX(), 500, 0, 1, 1, 0);
-
-        /*
 
         ImGui.image(AssetManager.<Texture2D>FindAsset("whiteTexture").getTextureID(), 50, 50);
 

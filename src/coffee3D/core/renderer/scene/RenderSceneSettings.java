@@ -5,14 +5,14 @@ import coffee3D.core.io.settings.EngineSettings;
 public class RenderSceneSettings {
     private final boolean _isFullScreen;
     private boolean _enableShadows;
-    private boolean _pickCursorEveryFrames;
+    private final boolean _pickCursorEveryFrames;
     private boolean _enablePostProcess;
-    private boolean _enableStencil;
+    private final boolean _enableStencil;
     private final boolean _isStatic;
 
     public static final RenderSceneSettings DEFAULT_FULL_SCREEN = new RenderSceneSettings(false, true);
     public static final RenderSceneSettings DEFAULT_WINDOWED = new RenderSceneSettings(false, false);
-    public static final RenderSceneSettings DEFAULT_THUMBNAIL = new RenderSceneSettings(true, false, true, true, true, true);
+    public static final RenderSceneSettings DEFAULT_THUMBNAIL = new RenderSceneSettings(true, false, true, false, true, true);
 
     public void setShadows(boolean enable) {
         if (_isStatic) return;
@@ -50,43 +50,27 @@ public class RenderSceneSettings {
         return _isFullScreen;
     }
 
-    public boolean enableShadows() {
-        return _enableShadows && EngineSettings.ENABLE_SHADOWS;
-    }
+    public boolean enableShadows() { return _enableShadows && EngineSettings.Get().enableShadows; }
 
-    public boolean enablePostProcess() {
-        return _enablePostProcess && EngineSettings.ENABLE_POSTPROCESSING;
-    }
+    public boolean enablePostProcess() { return _enablePostProcess && EngineSettings.Get().enablePostProcessing; }
 
-    public boolean enableStencil() {
-        return _enableStencil && EngineSettings.ENABLE_STENCIL_TEST;
-    }
+    public boolean enableStencil() { return _enableStencil && EngineSettings.Get().enableStencilTest; }
 
-    public boolean isPickCursorEveryFrames() {
-        return hasPickBuffer() && _pickCursorEveryFrames;
-    }
+    public boolean isPickCursorEveryFrames() { return hasPickBuffer() && _pickCursorEveryFrames && EngineSettings.Get().enablePicking; }
 
     public boolean hasFullScreenColorBuffer() {
         return _isFullScreen && hasColorBuffer();
     }
 
-    public boolean hasPostProcessBuffer() {
-        return !_isFullScreen && EngineSettings.ENABLE_POSTPROCESSING && !(!_enablePostProcess && _isStatic);
-    }
+    public boolean hasPostProcessBuffer() { return !_isFullScreen && !(!_enablePostProcess && _isStatic); }
 
-    public boolean hasStencilBuffer() {
-        return EngineSettings.ENABLE_STENCIL_TEST && !(!_enableStencil && _isStatic);
-    }
+    public boolean hasStencilBuffer() { return !(!_enableStencil && _isStatic); }
 
     public boolean hasShadowBuffer() {
-        return EngineSettings.ENABLE_SHADOWS && !(!_enableShadows && _isStatic);
+        return !(!_enableShadows && _isStatic);
     }
 
-    public boolean hasPickBuffer() {
-        return EngineSettings.ENABLE_PICKING;
-    }
+    public boolean hasPickBuffer() { return true; }
 
-    public boolean hasColorBuffer() {
-        return !_isFullScreen || EngineSettings.ENABLE_POSTPROCESSING;
-    }
+    public boolean hasColorBuffer() { return !_isFullScreen || (enablePostProcess()); }
 }

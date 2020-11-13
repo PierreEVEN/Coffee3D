@@ -1,9 +1,7 @@
 package coffee3D.editor.ui.importers;
 
 import coffee3D.core.assets.AssetManager;
-import coffee3D.core.assets.types.MaterialInstance;
 import coffee3D.core.assets.types.World;
-import coffee3D.core.io.log.Log;
 import coffee3D.core.io.settings.EngineSettings;
 import coffee3D.core.renderer.scene.Scene;
 import coffee3D.core.ui.subWindows.SubWindow;
@@ -25,9 +23,9 @@ public class WorldCreator extends SubWindow {
     public WorldCreator(Scene inScene, String windowName) {
         super(windowName);
         _editedScene = inScene;
-        assetSavePath = EngineSettings.GAME_ASSET_PATH;
-        sourceSavePath = EngineSettings.GAME_ASSET_PATH;
-        assetName = new ImString(EngineSettings.DEFAULT_MAP_NAME);
+        assetSavePath = EngineSettings.Get().gameAssetsPath;
+        sourceSavePath = EngineSettings.Get().gameAssetsPath;
+        assetName = new ImString(EngineSettings.Get().defaultMapName);
     }
 
     @Override

@@ -102,7 +102,7 @@ public class SceneComponent implements Serializable {
     }
     private static MaterialResource GetBillboardMaterial() {
         if (_billboardMaterial == null) {
-            _billboardMaterial = MaterialFactory.FromFiles("BillboardMaterial", EngineSettings.BILLBOARD_MATERIAL_PATH + ".vert", EngineSettings.BILLBOARD_MATERIAL_PATH + ".frag");
+            _billboardMaterial = MaterialFactory.FromFiles("BillboardMaterial", AssetReferences.BILLBOARD_MATERIAL_PATH + ".vert", AssetReferences.BILLBOARD_MATERIAL_PATH + ".frag");
         }
         return _billboardMaterial;
     }

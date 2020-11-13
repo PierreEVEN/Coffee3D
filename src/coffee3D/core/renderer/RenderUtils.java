@@ -5,6 +5,7 @@ import coffee3D.core.assets.types.MaterialInterface;
 import coffee3D.core.io.inputs.GlfwInputHandler;
 import coffee3D.core.io.log.Log;
 import coffee3D.core.io.settings.EngineSettings;
+import imgui.type.ImBoolean;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -35,9 +36,9 @@ public class RenderUtils {
 
     public static MaterialInterface[] getShadowDrawList() {
         if (shadowDrawList == null) {
-            shadowDrawList = new Material[] { new Material("ShadowMaterial", EngineSettings.SHADOW_MATERIAL_PATH, null, null) };
+            shadowDrawList = new Material[] { new Material("ShadowMaterial", AssetReferences.SHADOW_MATERIAL_PATH, null, null) };
             if (shadowDrawList == null) {
-                Log.Fail("failed to shadow material from : " + EngineSettings.SHADOW_MATERIAL_PATH);
+                Log.Fail("failed to shadow material from : " + AssetReferences.SHADOW_MATERIAL_PATH);
             }
             RenderUtils.CheckGLErrors();
         }
@@ -46,9 +47,9 @@ public class RenderUtils {
 
     public static MaterialInterface getPostProcessMaterial() {
         if (postProcessMaterial == null) {
-            postProcessMaterial = new Material("PostProcessMaterial", EngineSettings.POST_PROCESS_MATERIAL, null, null);
+            postProcessMaterial = new Material("PostProcessMaterial", AssetReferences.POST_PROCESS_MATERIAL, null, null);
             if (postProcessMaterial == null) {
-                Log.Fail("failed to load post process material from : " + EngineSettings.POST_PROCESS_MATERIAL);
+                Log.Fail("failed to load post process material from : " + AssetReferences.POST_PROCESS_MATERIAL);
             }
             RenderUtils.CheckGLErrors();
         }
@@ -57,9 +58,9 @@ public class RenderUtils {
 
     public static MaterialInterface getDebugMaterial() {
         if (debugMaterial == null) {
-            debugMaterial = new Material("DebugMaterial", EngineSettings.DEBUG_MATERIAL_PATH, null, null);
+            debugMaterial = new Material("DebugMaterial", AssetReferences.DEBUG_MATERIAL_PATH, null, null);
             if (debugMaterial == null) {
-                Log.Fail("failed to load debug material from : " + EngineSettings.DEBUG_MATERIAL_PATH);
+                Log.Fail("failed to load debug material from : " + AssetReferences.DEBUG_MATERIAL_PATH);
             }
             RenderUtils.CheckGLErrors();
         }
@@ -69,9 +70,9 @@ public class RenderUtils {
 
     public static MaterialInterface getBillboardPickMaterial() {
         if (billboardPickMaterial == null) {
-            billboardPickMaterial = new Material("BillboardPickMaterial", EngineSettings.BILLBOARD_PICK_MATERIAL_PATH, null, null);
+            billboardPickMaterial = new Material("BillboardPickMaterial", AssetReferences.BILLBOARD_PICK_MATERIAL_PATH, null, null);
             if (billboardPickMaterial == null) {
-                Log.Fail("failed to load billboard pick material from : " + EngineSettings.BILLBOARD_PICK_MATERIAL_PATH);
+                Log.Fail("failed to load billboard pick material from : " + AssetReferences.BILLBOARD_PICK_MATERIAL_PATH);
             }
             RenderUtils.CheckGLErrors();
         }
@@ -80,9 +81,9 @@ public class RenderUtils {
 
     public static MaterialInterface[] getPickMaterialDrawList() {
         if (pickDrawList == null) {
-            pickDrawList = new Material[] { new Material("PickMaterial", EngineSettings.PICK_MATERIAL_PATH, null, null) };
+            pickDrawList = new Material[] { new Material("PickMaterial", AssetReferences.PICK_MATERIAL_PATH, null, null) };
             if (pickDrawList[0] == null) {
-                Log.Fail("failed to load pick material from : " + EngineSettings.DEBUG_MATERIAL_PATH);
+                Log.Fail("failed to load pick material from : " + AssetReferences.DEBUG_MATERIAL_PATH);
             }
             RenderUtils.CheckGLErrors();
         }
@@ -91,14 +92,16 @@ public class RenderUtils {
 
     public static MaterialInterface[] getOutlineMaterialDrawList() {
         if (outlineDrawList == null) {
-            outlineDrawList = new Material[] { new Material("OutlineMaterial", EngineSettings.OUTLINE_MATERIAL_PATH, null, null) };
+            outlineDrawList = new Material[] { new Material("OutlineMaterial", AssetReferences.OUTLINE_MATERIAL_PATH, null, null) };
             if (outlineDrawList[0] == null) {
-                Log.Fail("failed to load pick material from : " + EngineSettings.OUTLINE_MATERIAL_PATH);
+                Log.Fail("failed to load pick material from : " + AssetReferences.OUTLINE_MATERIAL_PATH);
             }
             RenderUtils.CheckGLErrors();
         }
         return outlineDrawList;
     }
+
+    public static imgui.type.ImBoolean DRAW_DEBUG_BOUNDS = new ImBoolean(false);
 
     public static void InitializeOpenGL() {
         createCapabilities();
@@ -137,10 +140,10 @@ public class RenderUtils {
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
-        glfwWindowHint(GLFW_SAMPLES, EngineSettings.MSAA_SAMPLES);
+        glfwWindowHint(GLFW_SAMPLES, EngineSettings.Get().msaaSamples);
         glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
-        glfwWindowHint(GLFW_DECORATED, EngineSettings.FULLSCREEN_MODE ? GLFW_FALSE : GLFW_TRUE);
-        glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, EngineSettings.TRANSPARENT_FRAMEBUFFER ? GLFW_TRUE : GLFW_FALSE);
+        glfwWindowHint(GLFW_DECORATED, EngineSettings.Get().fullscreen ? GLFW_FALSE : GLFW_TRUE);
+        glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, EngineSettings.Get().transparentFramebuffer ? GLFW_TRUE : GLFW_FALSE);
 
         GLFWVidMode.Buffer windowMode = glfwGetVideoModes(glfwGetPrimaryMonitor());
         int maxWidth = 0;
@@ -185,7 +188,7 @@ public class RenderUtils {
         }
 
         // Enable double buffering
-        glfwSwapInterval(EngineSettings.ENABLE_DOUBLE_BUFFERING ? 1 : 0);
+        glfwSwapInterval(EngineSettings.Get().doubleBuffering ? 1 : 0);
         glfwShowWindow(_windowContext);
 
         // Create input handler

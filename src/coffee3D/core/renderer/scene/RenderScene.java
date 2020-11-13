@@ -21,6 +21,8 @@ import org.joml.Vector3f;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
 import static org.lwjgl.opengl.GL13.*;
+import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
+import static org.lwjgl.opengl.GL30.glBindFramebuffer;
 
 public class RenderScene extends Scene {
 
@@ -125,8 +127,8 @@ public class RenderScene extends Scene {
 
         // COLOR RENDERING
         RenderUtils.RENDER_MODE = RenderMode.Color;
-        if (_sceneSettings.hasColorBuffer())  _colorBuffer.use(true, EngineSettings.TRANSPARENT_FRAMEBUFFER ? null : ((RenderSceneProperties) _sceneProperties)._backgroundColor);
-        else Framebuffer.BindBackBuffer(EngineSettings.TRANSPARENT_FRAMEBUFFER ? null : ((RenderSceneProperties) _sceneProperties)._backgroundColor);
+        if (_sceneSettings.hasColorBuffer())  _colorBuffer.use(true, EngineSettings.Get().transparentFramebuffer ? null : ((RenderSceneProperties) _sceneProperties)._backgroundColor);
+        else Framebuffer.BindBackBuffer(EngineSettings.Get().transparentFramebuffer ? null : ((RenderSceneProperties) _sceneProperties)._backgroundColor);
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_STENCIL_TEST);
         glEnable(GL_MULTISAMPLE);
@@ -136,11 +138,14 @@ public class RenderScene extends Scene {
         glPolygonMode(GL_FRONT_AND_BACK, Window.GetPrimaryWindow().getDrawMode());
         _drawList.render(this);
         glClear(GL_DEPTH_BUFFER_BIT);
-        gizmo.drawInternal(this);
+        //gizmo.drawInternal(this);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         // POST PROCESS RENDERING
-        if (_sceneSettings.enablePostProcess() && (_sceneSettings.isFullScreen() ? Framebuffer.BindBackBuffer(null) : _postProcessBuffer.use(true,null))) {
+        if (_sceneSettings.enablePostProcess()) {
+            if (_sceneSettings.hasPostProcessBuffer()) _postProcessBuffer.use(true,null);
+            else Framebuffer.BindBackBuffer(null);
+
             glDisable(GL_CULL_FACE);
             RenderUtils.getPostProcessMaterial().use(this);
             RenderUtils.getPostProcessMaterial().getResource().setIntParameter("colorTexture", 0);
@@ -168,7 +173,7 @@ public class RenderScene extends Scene {
             glFrontFace(GL_CW);
             _lastHit.update(this, _pickBuffer);
         }
-        else if (_sceneSettings.hasPickBuffer()) _pickBuffer.use(true, null);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
         return true;
     }
 

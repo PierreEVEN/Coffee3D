@@ -3,13 +3,11 @@ package coffee3D.editor.ui.browsers;
 import coffee3D.core.assets.Asset;
 import coffee3D.core.assets.AssetManager;
 import coffee3D.core.assets.types.Font;
-import coffee3D.core.io.log.Log;
 import coffee3D.core.io.settings.EngineSettings;
 import coffee3D.core.ui.subWindows.SubWindow;
 import coffee3D.editor.EditorModule;
 import coffee3D.editor.ui.assets.EditorAssetUtils;
 import coffee3D.editor.ui.importers.*;
-import imgui.ImColor;
 import imgui.ImGui;
 import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiTreeNodeFlags;
@@ -35,7 +33,7 @@ public class ContentBrowser extends SubWindow {
     public ContentBrowser(String windowName) {
         super(windowName);
 
-        _selectedFile = EngineSettings.GAME_ASSET_PATH;
+        _selectedFile = EngineSettings.Get().gameAssetsPath;
     }
 
 
@@ -56,7 +54,7 @@ public class ContentBrowser extends SubWindow {
             if (ImGui.menuItem("Material instance")) new MaterialInstanceImporter("create material instance");
             if (ImGui.menuItem("Texture2D")) new TextureImporter("Texture importer");
             if (ImGui.menuItem("Font")) new FontImporter("Font importer");
-            if (ImGui.menuItem("Audio")) new AudioImporter("Audio importer");
+            //if (ImGui.menuItem("Audio")) new AudioImporter("Audio importer");
             ImGui.endPopup();
         }
 
@@ -144,8 +142,8 @@ public class ContentBrowser extends SubWindow {
             _bSetColumnWidth = true;
         }
         if (ImGui.beginChild("folders")) {
-            drawHierarchy(EngineSettings.GAME_ASSET_PATH);
-            drawHierarchy(EngineSettings.ENGINE_ASSET_PATH);
+            drawHierarchy(EngineSettings.Get().gameAssetsPath);
+            drawHierarchy(EngineSettings.Get().engineAssetsPath);
         }
         ImGui.endChild();
     }

@@ -24,7 +24,7 @@ public class DefaultController extends IGameController {
         double deltaTime = Window.GetPrimaryWindow().getDeltaTime();
         float movementSpeed = _speed * (float)Window.GetPrimaryWindow().getDeltaTime();
         currentSpeed.mul(Math.max(0, 1 - (float) (deltaTime * 20)));
-        if (Window.GetPrimaryWindow().captureMouse()) {
+        if (Window.GetPrimaryWindow().captureMouse() && _enableCameraMovements) {
 
             if (GLFW.glfwGetKey(Window.GetPrimaryWindow().getGlfwWindowHandle(), GLFW.GLFW_KEY_W) == GLFW.GLFW_PRESS)
                 currentSpeed.x += movementSpeed;

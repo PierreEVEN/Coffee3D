@@ -1,6 +1,5 @@
 package coffee3D.core.renderer.scene;
 
-import coffee3D.core.io.log.Log;
 import coffee3D.core.renderer.RenderMode;
 import coffee3D.core.renderer.RenderUtils;
 import coffee3D.core.resources.types.Framebuffer;
@@ -13,8 +12,6 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
-import static org.lwjgl.opengl.GL30.glBindFramebuffer;
 
 public class HitResult {
     public final Vector3f position = new Vector3f();
@@ -43,7 +40,7 @@ public class HitResult {
 
 
 
-        drawList.build(scene.getComponents(), viewMatrix, scene.getProjection(pickBuffer.getWidth(), pickBuffer.getHeight(), scene.getCamera()));
+        drawList.build(scene.getComponents(), viewMatrix, Scene.getProjection(pickBuffer.getWidth(), pickBuffer.getHeight(), scene.getCamera()));
 
 
         RenderUtils.CheckGLErrors();
@@ -64,7 +61,6 @@ public class HitResult {
         position.set(cursorSceneDirection).mul(distance).add(camWorldPosition);
 
         RenderUtils.RENDER_MODE = RenderMode.Color;
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
 

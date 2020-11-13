@@ -7,8 +7,6 @@ set /a total=0
 
 for /R %%A in (*.java) do (
 
-	ECHO.%%A | FIND /I "imgui">Nul && ( Echo.skipping %%A ) || (
-
 	set /a compt=0
 
 	for /f "tokens=*" %%I in ('type "%%A"') do (set /a compt+=1)
@@ -16,7 +14,7 @@ for /R %%A in (*.java) do (
 	echo %%~dpnxA : !compt!
 
 	set /a total=!total!+!compt!
-	)
+
 
 )
 

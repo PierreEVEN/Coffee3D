@@ -8,6 +8,7 @@ import coffee3D.core.renderer.Window;
 import coffee3D.core.ui.hud.HudUtils;
 import coffee3D.editor.EditorModule;
 import coffee3D.editor.ui.browsers.ContentBrowser;
+import coffee3D.editor.ui.browsers.EngineSettingsViewer;
 import coffee3D.editor.ui.browsers.ResourcesViewer;
 import coffee3D.editor.ui.importers.*;
 import coffee3D.editor.ui.levelEditor.LevelEditorViewport;
@@ -25,8 +26,8 @@ public class EditorUI {
 
     public static void DrawMenuBar(RenderScene context) {
 
-        ImGui.setNextWindowPos(0, 35);
-        ImGui.setNextWindowSize(Window.GetPrimaryWindow().getPixelWidth(), Window.GetPrimaryWindow().getPixelHeight() - 35);
+        ImGui.setNextWindowPos(-4, 35);
+        ImGui.setNextWindowSize(Window.GetPrimaryWindow().getPixelWidth() + 8, Window.GetPrimaryWindow().getPixelHeight() - 33);
         if (ImGui.begin("Master Window", ImGuiWindowFlags.NoNav | ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoInputs | ImGuiWindowFlags.NoBringToFrontOnFocus | ImGuiWindowFlags.NoBackground)) {
             ImGui.dockSpace(ImGui.getID("Master dockSpace"), 0.f, 0.f, ImGuiDockNodeFlags.PassthruCentralNode);
         }
@@ -48,6 +49,8 @@ public class EditorUI {
                 if (ImGui.menuItem("Stat window")) new StatWindow(context, "Stat window");
                 ImGui.separator();
                 if (ImGui.menuItem("Style editor")) new StyleEditor("Style editor");
+                if (ImGui.menuItem("Engine settings")) new EngineSettingsViewer("Engine settings");
+
                 ImGui.endMenu();
             }
 

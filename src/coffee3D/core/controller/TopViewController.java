@@ -67,10 +67,10 @@ public class TopViewController extends IGameController {
         if (distLeft < 0 || distBottom < 0 ||distTop < 0 || distRight < 0) return;
 
         if (distRight < borderDetection) {
-            currentSpeed.y += movementSpeed * Math.min(1, (1 - distRight / borderDetection));
+            currentSpeed.y -= movementSpeed * Math.min(1, (1 - distRight / borderDetection));
         }
         if (distLeft < borderDetection) {
-            currentSpeed.y -= movementSpeed * Math.min(1, (1 - distLeft / borderDetection));
+            currentSpeed.y += movementSpeed * Math.min(1, (1 - distLeft / borderDetection));
         }
         if (distTop < borderDetection) {
             currentSpeed.x += movementSpeed * Math.min(1, (1 - distTop / borderDetection));
@@ -78,7 +78,6 @@ public class TopViewController extends IGameController {
         if (distBottom < borderDetection) {
             currentSpeed.x -= movementSpeed * Math.min(1, (1 - distBottom / borderDetection));
         }
-
     }
 
     private void keyboardMovements(float deltaTime, float movementSpeed) {
@@ -92,11 +91,11 @@ public class TopViewController extends IGameController {
                 GLFW.glfwGetKey(windowHandle, GLFW.GLFW_KEY_DOWN) == GLFW.GLFW_PRESS) {
             currentSpeed.x -= movementSpeed;
         }
-        if (GLFW.glfwGetKey(windowHandle, GLFW.GLFW_KEY_D) == GLFW.GLFW_PRESS ||
+        if (GLFW.glfwGetKey(windowHandle, GLFW.GLFW_KEY_A) == GLFW.GLFW_PRESS ||
                 GLFW.glfwGetKey(windowHandle, GLFW.GLFW_KEY_RIGHT) == GLFW.GLFW_PRESS) {
             currentSpeed.y += movementSpeed;
         }
-        if (GLFW.glfwGetKey(windowHandle, GLFW.GLFW_KEY_A) == GLFW.GLFW_PRESS ||
+        if (GLFW.glfwGetKey(windowHandle, GLFW.GLFW_KEY_D) == GLFW.GLFW_PRESS ||
                 GLFW.glfwGetKey(windowHandle, GLFW.GLFW_KEY_LEFT) == GLFW.GLFW_PRESS) {
             currentSpeed.y -= movementSpeed;
         }
@@ -118,10 +117,8 @@ public class TopViewController extends IGameController {
         right.z = 0;
         right.normalize();
         right.mul(currentSpeed.y * deltaTime);
-
         targetPosition.add(forward);
         targetPosition.add(right);
-
     }
 
     @Override

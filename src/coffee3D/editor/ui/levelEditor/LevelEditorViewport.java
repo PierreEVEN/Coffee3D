@@ -9,6 +9,7 @@ import coffee3D.core.io.inputs.GlfwInputHandler;
 import coffee3D.core.io.inputs.IInputListener;
 import coffee3D.core.io.log.Log;
 import coffee3D.core.io.settings.EngineSettings;
+import coffee3D.core.renderer.RenderUtils;
 import coffee3D.core.renderer.scene.Components.AudioComponent;
 import coffee3D.core.renderer.scene.Components.BillboardComponent;
 import coffee3D.core.renderer.scene.Components.StaticMeshComponent;
@@ -85,7 +86,7 @@ public class LevelEditorViewport extends SceneViewport {
                     if (ImGui.menuItem("Points")) Window.GetPrimaryWindow().setDrawMode(GL_POINT);
                     ImGui.endMenu();
                 }
-                ImGui.checkbox("SCENE show bounds", EngineSettings.DRAW_DEBUG_BOUNDS);
+                ImGui.checkbox("SCENE show bounds", RenderUtils.DRAW_DEBUG_BOUNDS);
                 ImGui.checkbox("UI draw debug boxes", HudUtils.bDrawDebugBoxes);
                 if (ImGui.menuItem(_sceneContext.getSettings().enableShadows() ? "disable shadows" : "enable shadows"))
                     _sceneContext.getSettings().setShadows(!_sceneContext.getSettings().enableShadows());

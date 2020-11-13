@@ -82,23 +82,23 @@ public class AssetManager {
     }
 
     public static ArrayList<File> ScanAssets(File path) {
-        final ArrayList<File> scannedAssets = new ArrayList<>();
-        if (!path.exists()) return scannedAssets;
-        for (File subFile : path.listFiles()) {
-            if (subFile.isDirectory()) {
-                scannedAssets.addAll(ScanAssets(subFile));
-            }
-            else {
-                Optional<String> extension = Optional.ofNullable(subFile.getName())
-                        .filter(f -> f.contains("."))
-                        .map(f -> f.substring(subFile.getName().lastIndexOf(".") + 1));
-                if (!extension.isPresent()) continue;
-                if (extension.get().equals("asset")) {
-                    scannedAssets.add(subFile);
+            final ArrayList<File> scannedAssets = new ArrayList<>();
+            if (!path.exists()) return scannedAssets;
+            for (File subFile : path.listFiles()) {
+                if (subFile.isDirectory()) {
+                    scannedAssets.addAll(ScanAssets(subFile));
+                }
+                else {
+                    Optional<String> extension = Optional.ofNullable(subFile.getName())
+                            .filter(f -> f.contains("."))
+                            .map(f -> f.substring(subFile.getName().lastIndexOf(".") + 1));
+                    if (!extension.isPresent()) continue;
+                    if (extension.get().equals("asset")) {
+                        scannedAssets.add(subFile);
+                    }
                 }
             }
-        }
-        return scannedAssets;
+            return scannedAssets;
     }
 
 
