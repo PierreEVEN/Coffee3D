@@ -17,7 +17,10 @@ import coffee3D.core.renderer.scene.RenderScene;
 import coffee3D.core.renderer.scene.SceneComponent;
 import coffee3D.core.renderer.Window;
 import coffee3D.core.ui.hud.HudUtils;
+import coffee3D.editor.components.GizmoComponent;
+import coffee3D.editor.components.GizmoMovementDirection;
 import coffee3D.editor.controller.EditorController;
+import coffee3D.editor.renderer.EditorScene;
 import coffee3D.editor.ui.levelEditor.tools.ComponentInspector;
 import coffee3D.editor.ui.levelEditor.tools.LevelProperties;
 import coffee3D.editor.ui.levelEditor.tools.SceneOutliner;
@@ -37,37 +40,20 @@ import java.io.ObjectOutputStream;
 
 import static org.lwjgl.opengl.GL11.*;
 
-enum MovementDirection {
-    None,
-    NoAxis,
-    X,
-    Y,
-    Z
-}
-
 
 public class LevelEditorViewport extends SceneViewport {
 
     private ComponentInspector _inspector;
-    private MovementDirection _currentMovementDirection;
-    private Vector3f _initialPosition;
 
     public LevelEditorViewport(RenderScene scene, String windowName) {
         super(scene, windowName);
         bHasMenuBar = true;
         new LevelProperties(getScene(), "Level properties");
         new SceneOutliner(this, "Scene outliner");
-        _currentMovementDirection = MovementDirection.None;
     }
 
     @Override
     protected void draw() {
-        if (getEditedComponent() != null) {
-            getScene().gizmo.setRelativeRotation(getEditedComponent().getRelativeRotation());
-            getScene().gizmo.setRelativePosition(getEditedComponent().getRelativePosition());
-        }
-
-
         ImGui.pushStyleVar(ImGuiStyleVar.ItemSpacing, 4, 15);
         if (ImGui.beginMenuBar()) {
             if (ImGui.beginMenu("edit")) {
@@ -182,23 +168,33 @@ public class LevelEditorViewport extends SceneViewport {
     }
 
     public void editComponent(SceneComponent comp) {
-        cancelMovement();
+        ((EditorScene)getScene()).getGizmo().setComponent(comp);
         if (_inspector == null) _inspector = new ComponentInspector("component inspector");
         _inspector.setComponent(comp);
     }
 
     public SceneComponent getEditedComponent() { return _inspector == null ? null : _inspector.getComponent(); }
 
-
+    public GizmoComponent getGizmo() {
+        return ((EditorScene)getScene()).getGizmo();
+    }
 
     @Override
     public void keyCallback(int keycode, int scancode, int action, int mods) {
+
+        boolean wasEditingComponent = false;
+        if (action == GLFW.GLFW_PRESS && keycode == GLFW.GLFW_KEY_ESCAPE) {
+            if (getEditedComponent() != null) {
+                editComponent(null);
+                wasEditingComponent = true;
+            }
+        }
+
         if (!isMouseInsideWindow()) return;
         if (action == GLFW.GLFW_PRESS) {
             switch (keycode) {
                 case GLFW.GLFW_KEY_ESCAPE : {
-                    if (getEditedComponent() != null) editComponent(null);
-                    else Window.GetPrimaryWindow().switchCursor();
+                    if (!wasEditingComponent) Window.GetPrimaryWindow().switchCursor();
                 } break;
                 case GLFW.GLFW_KEY_S : {
                     if (mods == GLFW.GLFW_MOD_CONTROL) {
@@ -206,16 +202,12 @@ public class LevelEditorViewport extends SceneViewport {
                     }
                 } break;
                 case GLFW.GLFW_KEY_G : {
-                    if (_currentMovementDirection == MovementDirection.NoAxis) {
-                        _currentMovementDirection = MovementDirection.None;
-                    }
-                    else {
-                        _currentMovementDirection = MovementDirection.NoAxis;
-                    }
+                    if (getGizmo().isInTranslation()) getGizmo().endTranslation();
+                    else getGizmo().beginTranslation(true);
                 } break;
-                case GLFW.GLFW_KEY_X : beginMovement(MovementDirection.X); break;
-                case GLFW.GLFW_KEY_Y : beginMovement(MovementDirection.Y); break;
-                case GLFW.GLFW_KEY_W : beginMovement(MovementDirection.Z); break;
+                case GLFW.GLFW_KEY_X : getGizmo().setTranslationAxis(GizmoMovementDirection.moveX); break;
+                case GLFW.GLFW_KEY_Y : getGizmo().setTranslationAxis(GizmoMovementDirection.moveY); break;
+                case GLFW.GLFW_KEY_W : getGizmo().setTranslationAxis(GizmoMovementDirection.moveZ); break;
                 case GLFW.GLFW_KEY_F : {
                     if (getEditedComponent() != null) {
                         _sceneContext.getCamera().setRelativePosition(new Vector3f(_sceneContext.getCamera().getForwardVector()).mul(getEditedComponent().getBound().radius * -3).add(getEditedComponent().getBound().position));
@@ -238,7 +230,7 @@ public class LevelEditorViewport extends SceneViewport {
                         if (pastSelected() != null) {
                             if (lastParent == null) getEditedComponent().attachToScene(_sceneContext);
                             else getEditedComponent().attachToComponent(lastParent);
-                            _currentMovementDirection = MovementDirection.NoAxis;
+                            getGizmo().beginTranslation(true);
                         }
                     }
                 } break;
@@ -253,74 +245,30 @@ public class LevelEditorViewport extends SceneViewport {
     @Override
     public void mouseButtonCallback(int button, int action, int mods) {
         if (button == GLFW.GLFW_MOUSE_BUTTON_2 && action == GLFW.GLFW_RELEASE && Window.GetPrimaryWindow().captureMouse()) Window.GetPrimaryWindow().showCursor(true);
+        if (button == GLFW.GLFW_MOUSE_BUTTON_1 && action == GLFW.GLFW_RELEASE) {
+            if (getGizmo().isInTranslation()) getGizmo().endTranslation();
+        }
         if (!isMouseInsideWindow()) return;
         if (button == GLFW.GLFW_MOUSE_BUTTON_2 && action == GLFW.GLFW_PRESS) {
-            if (_currentMovementDirection != MovementDirection.None) cancelMovement();
+            if (getGizmo().isInTranslation()) getGizmo().cancelTranslation();
             else Window.GetPrimaryWindow().showCursor(false);
         }
         if (button == GLFW.GLFW_MOUSE_BUTTON_1 && action == GLFW.GLFW_PRESS) {
-            if (_currentMovementDirection != MovementDirection.None) {
-                endMovement();
+            if (getGizmo().isInTranslation()) {
+                getGizmo().endTranslation();
             }
             else {
                 if (getEditedComponent() != null) {
                     getEditedComponent().setStencilValue(0);
                 }
-                editComponent(getScene().getHitResult().component);
+                if (getGizmo().displayTranslation()) getGizmo().beginTranslation(false);
+                else if (!Window.GetPrimaryWindow().captureMouse()) editComponent(getScene().getHitResult().component);
             }
         }
     }
 
     @Override
     public void scrollCallback(double xOffset, double yOffset) {}
-
-    @Override
-    public void cursorPosCallback(double x, double y) {
-        if (getEditedComponent() != null) {
-            float delta = (float) IEngineModule.Get().GetController().getCursorDeltaX();
-            if (GLFW.glfwGetKey(Window.GetPrimaryWindow().getGlfwWindowHandle(), GLFW.GLFW_KEY_LEFT_ALT) == GLFW.GLFW_PRESS)
-                delta /= 10;
-            switch (_currentMovementDirection) {
-                case X:
-                    getEditedComponent().getRelativePosition().x += delta;
-                    break;
-                case Y:
-                    getEditedComponent().getRelativePosition().y += delta;
-                    break;
-                case Z:
-                    getEditedComponent().getRelativePosition().z += delta;
-                    break;
-            }
-        }
-    }
-
-    private void beginMovement(MovementDirection direction) {
-        if (_currentMovementDirection == MovementDirection.None || _currentMovementDirection == null) return;
-        cancelMovement();
-        if (getEditedComponent() == null) return;
-        _initialPosition = new Vector3f(getEditedComponent().getRelativePosition());
-        _currentMovementDirection = direction;
-        Window.GetPrimaryWindow().showCursor(false);
-        ((EditorController)IEngineModule.Get().GetController()).enableCameraMovements(false);
-    }
-
-    private void endMovement() {
-        if (getEditedComponent() == null) return;
-        getEditedComponent().getRelativePosition();
-        _initialPosition = null;
-        _currentMovementDirection = MovementDirection.None;
-        Window.GetPrimaryWindow().showCursor(true);
-        ((EditorController)IEngineModule.Get().GetController()).enableCameraMovements(true);
-    }
-
-    private void cancelMovement() {
-        if (getEditedComponent() == null || _initialPosition == null) return;
-        getEditedComponent().setRelativePosition(_initialPosition);
-        _initialPosition = null;
-        _currentMovementDirection = MovementDirection.None;
-        Window.GetPrimaryWindow().showCursor(true);
-        ((EditorController)IEngineModule.Get().GetController()).enableCameraMovements(true);
-    }
 
     public void copySelected() {
         if (getEditedComponent() != null) Clipboard.Write(LevelEditorViewport.SerializeHierarchy(getEditedComponent()));
@@ -329,13 +277,14 @@ public class LevelEditorViewport extends SceneViewport {
     public SceneComponent pastSelected() {
         SceneComponent newComp = DeserializeHierarchy(Clipboard.Get());
         if (newComp != null) {
-            if (getEditedComponent() != null) {
-                newComp.attachToComponent(getEditedComponent());
+            if (getEditedComponent() != null && getEditedComponent().getParent() != null) {
+                newComp.attachToComponent(getEditedComponent().getParent());
             }
             else {
                 newComp.attachToScene(_sceneContext);
             }
             editComponent(newComp);
+            getGizmo().beginTranslation(true);
             return newComp;
         }
         return null;

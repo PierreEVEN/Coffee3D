@@ -9,6 +9,7 @@ import coffee3D.core.renderer.Window;
 import coffee3D.core.renderer.scene.RenderScene;
 import coffee3D.core.renderer.scene.RenderSceneProperties;
 import coffee3D.core.renderer.scene.RenderSceneSettings;
+import coffee3D.core.ui.tools.StatHelper;
 import org.lwjgl.glfw.GLFW;
 
 public class TestGameModule extends IEngineModule {
@@ -52,7 +53,7 @@ public class TestGameModule extends IEngineModule {
 
     @Override
     public void DrawHUD() {
-        //StatHelper.DrawStats(_rootScene);
+        StatHelper.DrawStats(_rootScene);
 
 
         /*

@@ -12,6 +12,7 @@ import coffee3D.core.renderer.scene.RenderSceneSettings;
 
 import coffee3D.editor.controller.EditorController;
 
+import coffee3D.editor.renderer.EditorScene;
 import coffee3D.editor.ui.browsers.ContentBrowser;
 import coffee3D.editor.ui.EditorUI;
 import coffee3D.editor.ui.levelEditor.LevelEditorViewport;
@@ -20,7 +21,7 @@ import coffee3D.editor.ui.tools.Console;
 
 public class EditorModule extends IEngineModule {
 
-    private RenderScene _rootScene;
+    private EditorScene _rootScene;
     private EditorController _controller;
 
     @Override
@@ -37,13 +38,13 @@ public class EditorModule extends IEngineModule {
         FieldWriter.RegisterPrimitiveWriters();
 
         /* Create default scene and default controller */
-        _rootScene = new RenderScene(RenderSceneSettings.DEFAULT_WINDOWED);
+        _rootScene = new EditorScene(RenderSceneSettings.DEFAULT_WINDOWED);
         _rootScene.load(AssetManager.FindAsset(EngineSettings.Get().defaultMapName));
         _controller = new EditorController(_rootScene);
         //AudioListener.Get().bindListener(_rootScene.getCamera());
 
         /* load default widgets */
-        new LevelEditorViewport((RenderScene) _rootScene, "viewport");
+        new LevelEditorViewport(_rootScene, "viewport");
         new ContentBrowser("Content browser");
         new Console("Console");
     }

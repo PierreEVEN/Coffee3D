@@ -4,7 +4,6 @@ import coffee3D.core.Engine;
 import coffee3D.core.assets.AssetManager;
 import coffee3D.core.IEngineModule;
 import coffee3D.core.assets.types.Font;
-import coffee3D.core.audio.AudioListener;
 import coffee3D.core.io.log.Log;
 import coffee3D.core.io.settings.EngineSettings;
 import coffee3D.core.io.settings.GameSettings;
@@ -242,9 +241,16 @@ public class Window {
     public int getDrawMode() { return _drawMode; }
 
     public void showCursor(boolean bShow) {
+        showCursor(bShow, false);
+
+    }
+    public void showCursor(boolean bShow, boolean bMoveCursor) {
         _bDisplayCursor = bShow;
         if (bShow) {
+            double pX = getCursorPosX() % _bfrSize.x;
+            double pY = getCursorPosY() % _bfrSize.y;
             glfwSetInputMode(_glfwWindowHandle, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            if (bMoveCursor) glfwSetCursorPos(getGlfwWindowHandle(), pX, pY);
         }
         else {
             glfwSetInputMode(_glfwWindowHandle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);

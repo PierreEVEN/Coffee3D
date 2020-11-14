@@ -4,9 +4,7 @@
 
 void main()
 {
-    float size = length(model * vec4(0) - cameraPos) / 15;
-
-    vec4 worldPos = model * vec4(aPos * size, 1.0f);
+    vec4 worldPos = model * vec4(aPos, 1.0f);
     gl_Position = projMatrix * viewMatrix * worldPos;
     texCoord = vec2(aPos.x, aPos.y);
     pos = (model * vec4(aPos, 1.0f)).xyz;

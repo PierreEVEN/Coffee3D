@@ -1,12 +1,15 @@
 package coffee3D.core.renderer.scene;
 
+import coffee3D.core.assets.AssetManager;
+import coffee3D.core.assets.types.Material;
+import coffee3D.core.assets.types.StaticMesh;
 import coffee3D.core.io.settings.EngineSettings;
 import coffee3D.core.maths.MathLibrary;
 import coffee3D.core.renderer.RenderMode;
 import coffee3D.core.renderer.RenderUtils;
 import coffee3D.core.renderer.scene.Components.Camera;
 import coffee3D.core.renderer.Window;
-import coffee3D.core.renderer.scene.Components.GizmoComponent;
+import coffee3D.core.renderer.scene.Components.StaticMeshComponent;
 import coffee3D.core.resources.factories.MeshFactory;
 import coffee3D.core.resources.types.Framebuffer;
 import coffee3D.core.resources.types.MeshResource;
@@ -41,9 +44,7 @@ public class RenderScene extends Scene {
     private static MeshResource _viewportQuadMesh;
     public final RenderSceneSettings _sceneSettings;
     private boolean freezeFrustum = false;
-
-    public transient GizmoComponent gizmo;
-
+    private final StaticMeshComponent skyBoxMesh;
 
     public void freezeFrustum(boolean bFreeze) { freezeFrustum = bFreeze; }
     public boolean isFrustumFrozen() { return freezeFrustum; }
@@ -76,10 +77,9 @@ public class RenderScene extends Scene {
             _viewportQuadMesh = MeshFactory.FromResources("screenQuadMesh", vertices, triangles);
         }
 
-
-        gizmo = new GizmoComponent(new Vector3f().zero(), new Quaternionf().identity(), new Vector3f(1,1,1));
-
-
+        StaticMesh sphereMesh = AssetManager.FindAsset("default_sphere");
+        if (sphereMesh != null) skyBoxMesh = new StaticMeshComponent(sphereMesh, new Vector3f().zero(), new Quaternionf().identity(), new Vector3f(-10));
+        else skyBoxMesh = null;
     }
 
     public RenderSceneSettings getSettings() {
@@ -136,9 +136,11 @@ public class RenderScene extends Scene {
         glCullFace(GL_FRONT);
         glFrontFace(GL_CW);
         glPolygonMode(GL_FRONT_AND_BACK, Window.GetPrimaryWindow().getDrawMode());
+        preDraw();
+        glClear(GL_DEPTH_BUFFER_BIT);
         _drawList.render(this);
         glClear(GL_DEPTH_BUFFER_BIT);
-        //gizmo.drawInternal(this);
+        postDraw();
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         // POST PROCESS RENDERING
@@ -176,6 +178,15 @@ public class RenderScene extends Scene {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         return true;
     }
+
+    public void preDraw() {
+        if (getSkyboxMaterial() != null && skyBoxMesh != null) {
+            skyBoxMesh.setMaterial(getSkyboxMaterial(), 0);
+            skyBoxMesh.drawInternal(this);
+        }
+    }
+
+    public void postDraw() {}
 
     public void resizeBuffers(int sizeX, int sizeY) {
         if (_colorBuffer != null) _colorBuffer.resizeFramebuffer(sizeX, sizeY);
@@ -229,6 +240,8 @@ public class RenderScene extends Scene {
     public void getCursorSceneDirection(Vector3f result) {
         MathLibrary.PixelToSceneDirection(this, getCursorPosX(), getCursorPosY(), result);
     }
+
+    public Material getSkyboxMaterial() { return AssetManager.FindAsset("skyboxMaterial"); }
 
     public void setResolution(int width, int height) {
         if (_colorBuffer != null) _colorBuffer.resizeFramebuffer(width, height);

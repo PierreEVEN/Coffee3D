@@ -32,5 +32,8 @@ public abstract class IGameController implements IInputListener {
     public double getCursorDeltaX() { return _cursorDeltaX; }
     public double getCursorDeltaY() { return _cursorDeltaY; }
 
+    public double getCursorPosX() { return _cursorPosX; }
+    public double getCursorPosY() { return _cursorPosY; }
+
     protected RenderScene getScene() { return _scene; }
 }

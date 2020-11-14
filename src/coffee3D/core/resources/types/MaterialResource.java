@@ -99,18 +99,21 @@ public class MaterialResource extends GraphicResource {
     public String getErrors() { return _compilationMessage; }
 
     public void setIntParameter(String parameterName, int value) {
+        use(null);
         int matHandle = glGetUniformLocation(_materialHandle, parameterName);
         if (matHandle < 0) return;
         glUniform1i(matHandle, value);
     }
 
     public void setFloatParameter(String parameterName, float value) {
+        use(null);
         int matHandle = glGetUniformLocation(_materialHandle, parameterName);
         if (matHandle < 0) return;
         glUniform1f(matHandle, value);
     }
 
     public void setModelMatrix(Matrix4f value) {
+        use(null);
         int matHandle = glGetUniformLocation(_materialHandle, "model");
         if (matHandle < 0) return;
         final FloatBuffer bfr = createFloatBuffer(16);
@@ -119,6 +122,7 @@ public class MaterialResource extends GraphicResource {
     }
 
     public void setMatrixParameter(String parameterName, Matrix4f value) {
+        use(null);
         int matHandle = glGetUniformLocation(_materialHandle, parameterName);
         if (matHandle < 0) return;
         final FloatBuffer bfr = createFloatBuffer(16);
@@ -127,6 +131,7 @@ public class MaterialResource extends GraphicResource {
     }
 
     public void setColorParameter(String parameterName, Color color) {
+        use(null);
         int matHandle = glGetUniformLocation(_materialHandle, parameterName);
         if (matHandle < 0) return;
         glUniform4f(matHandle,
@@ -138,11 +143,13 @@ public class MaterialResource extends GraphicResource {
     }
 
     public void setVec4Parameter(String parameterName, Vector4f value) {
+        use(null);
         int matHandle = glGetUniformLocation(_materialHandle, parameterName);
         if (matHandle < 0) return;
         glUniform4f(matHandle, value.x, value.y, value.z, value.w);
     }
     public void setVec4Parameter(String parameterName, Vector3f value, float w) {
+        use(null);
         int matHandle = glGetUniformLocation(_materialHandle, parameterName);
         if (matHandle < 0) return;
         glUniform4f(matHandle, value.x, value.y, value.z, w);
