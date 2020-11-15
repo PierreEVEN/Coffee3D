@@ -10,6 +10,8 @@ import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GL15;
+import org.lwjgl.opengl.GL30;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.IntBuffer;
@@ -19,6 +21,11 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 import static org.lwjgl.opengl.GL.createCapabilities;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
+import static org.lwjgl.opengl.GL13.glActiveTexture;
+import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15C.glBindBuffer;
+import static org.lwjgl.opengl.GL31C.GL_UNIFORM_BUFFER;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
 
@@ -105,6 +112,35 @@ public class RenderUtils {
 
     public static void InitializeOpenGL() {
         createCapabilities();
+    }
+
+    private static int LastActivatedTexture = -1;
+    public static void ActivateTexture(int index) {
+        if (LastActivatedTexture != index) {
+            LastActivatedTexture = index;
+            glActiveTexture(GL_TEXTURE0 + index);
+        }
+    }
+    private static int LastUniformBuffer = -1;
+    public static void BindUniformBuffer(int index) {
+        if (LastUniformBuffer != index) {
+            LastUniformBuffer = index;
+            glBindBuffer(GL_UNIFORM_BUFFER, index);
+        }
+    }
+    private static int LastEbo = -1;
+    public static void BindEbo(int ebo) {
+        if (LastEbo != ebo) {
+            LastEbo = ebo;
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+        }
+    }
+    private static int LastVao = -1;
+    public static void BindVao(int vao) {
+        if (LastVao != vao) {
+            LastVao = vao;
+            GL30.glBindVertexArray(vao);
+        }
     }
 
     public static void CheckGLErrors() {

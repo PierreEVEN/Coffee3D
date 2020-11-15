@@ -52,9 +52,45 @@ public final class HudUtils {
         ImageParams.ResetParamCount();
     }
 
+    public static boolean BorderContainer(NodeAnchor anchor, PixelOffset offset, ImageParams image) {
+        if (BeginContainer(anchor, offset)) {
 
-    private static boolean RoundedButton(NodeAnchor anchor, PixelOffset offset) {
+            HudNodePosition pos = HudNodePosition.Get(anchor, offset);
+            if (image._textureId >= 0) {
+                ImGui.getWindowDrawList().addImageRounded(image._textureId, pos.posX, pos.posY, pos.posX + pos.sizeX, pos.posY + pos.sizeY, 0, 1, 1, 0, image._color, image._rounding);
+            }
+            else {
+                ImGui.getWindowDrawList().addRectFilled(pos.posX, pos.posY, pos.posX + pos.sizeX, pos.posY + pos.sizeY, image._color);
+            }
+
+            return true;
+        }
         return false;
+    }
+
+    public static void VerticalBox(NodeAnchor anchor, PixelOffset offset, IDrawContent[] content) {
+        if (BeginContainer(anchor, offset)) {
+            for (int i = 0; i < content.length; ++i) {
+                if (BeginContainer(NodeAnchor.Get(0, (i / (float)content.length), 1, ((i + 1) / (float)content.length)), PixelOffset.DEFAULT)) {
+                    content[i].draw();
+                }
+                EndContainer();
+            }
+        }
+        EndContainer();
+    }
+
+
+    public static void HorizontalBox(NodeAnchor anchor, PixelOffset offset, IDrawContent[] content) {
+        if (BeginContainer(anchor, offset)) {
+            for (int i = 0; i < content.length; ++i) {
+                if (BeginContainer(NodeAnchor.Get((i / (float)content.length), 0, ((i + 1) / (float)content.length), 1), PixelOffset.DEFAULT)) {
+                    content[i].draw();
+                }
+                EndContainer();
+            }
+        }
+        EndContainer();
     }
 
     public static boolean ImageButton(NodeAnchor anchor, PixelOffset offset, ButtonBehavior behavior, ImageParams image, TextParams text) {

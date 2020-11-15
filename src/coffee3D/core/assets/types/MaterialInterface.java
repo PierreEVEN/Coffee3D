@@ -3,6 +3,7 @@ package coffee3D.core.assets.types;
 import coffee3D.core.assets.Asset;
 import coffee3D.core.assets.AssetReference;
 import coffee3D.core.io.log.Log;
+import coffee3D.core.renderer.RenderUtils;
 import coffee3D.core.renderer.scene.RenderScene;
 import coffee3D.core.renderer.scene.Scene;
 import coffee3D.core.resources.types.MaterialResource;
@@ -59,7 +60,7 @@ public abstract class MaterialInterface extends Asset {
     private void bindShadowMaps(Scene context) {
         if (((RenderScene)context).getShadowBuffer() == null) return;
         getResource().setIntParameter("shadowMap", 0);
-        glActiveTexture(GL_TEXTURE0);
+        RenderUtils.ActivateTexture(0);
         glBindTexture(GL_TEXTURE_2D, ((RenderScene)context).getShadowBuffer().getDepthTexture());
     }
 
@@ -72,7 +73,7 @@ public abstract class MaterialInterface extends Asset {
             if (usedTexture != null)
             {
                 getResource().setIntParameter("texture" + i, i + 1);
-                glActiveTexture(GL_TEXTURE1 + i);
+                RenderUtils.ActivateTexture(i + 1);
                 glBindTexture(GL_TEXTURE_2D, usedTexture.getTextureID());
             }
         }

@@ -11,8 +11,11 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.util.HashMap;
 
 import static org.lwjgl.BufferUtils.createFloatBuffer;
+import static org.lwjgl.BufferUtils.createIntBuffer;
 import static org.lwjgl.opengl.GL46.*;
 
 /**
@@ -25,6 +28,12 @@ public class MaterialResource extends GraphicResource {
     private String _compilationMessage = null;
     private String _vertexData;
     private String _fragmentData;
+    private final HashMap<String, Integer> _uniforms = new HashMap<>();
+
+    private static final IntBuffer _bufferSize = createIntBuffer(1); // size of the variable
+    private static final IntBuffer _bufferType = createIntBuffer(1); // type of the variable (float, vec3 or mat4, etc)
+    private static final IntBuffer _bufferCount = createIntBuffer(1);
+
 
     public MaterialResource(String resourceName, String vertexData, String fragmentData) {
         super(resourceName);
@@ -79,6 +88,13 @@ public class MaterialResource extends GraphicResource {
 
         if (getErrors() != null) ResourceManager.UnRegisterResource(this);
         RenderUtils.CheckGLErrors();
+
+        glGetProgramiv(_materialHandle, GL_ACTIVE_UNIFORMS, _bufferCount);
+        for (int i = 0; i < _bufferCount.get(0); i++)
+        {
+            String name = glGetActiveUniform(_materialHandle, i, 64, _bufferSize, _bufferType);
+            _uniforms.put(name, glGetUniformLocation(_materialHandle, name));
+        }
     }
 
     @Override
@@ -100,58 +116,57 @@ public class MaterialResource extends GraphicResource {
 
     public void setIntParameter(String parameterName, int value) {
         use(null);
-        int matHandle = glGetUniformLocation(_materialHandle, parameterName);
-        if (matHandle < 0) return;
-        glUniform1i(matHandle, value);
+        Integer location = _uniforms.get(parameterName);
+        if (location == null) return;
+        glUniform1i(location, value);
     }
 
     public void setFloatParameter(String parameterName, float value) {
         use(null);
-        int matHandle = glGetUniformLocation(_materialHandle, parameterName);
-        if (matHandle < 0) return;
-        glUniform1f(matHandle, value);
+        Integer location = _uniforms.get(parameterName);
+        if (location == null) return;
+        glUniform1f(location, value);
     }
 
     public void setModelMatrix(Matrix4f value) {
         use(null);
-        int matHandle = glGetUniformLocation(_materialHandle, "model");
-        if (matHandle < 0) return;
+        Integer location = _uniforms.get("model");
+        if (location == null) return;
         final FloatBuffer bfr = createFloatBuffer(16);
         value.get(bfr);
-        glUniformMatrix4fv(matHandle, false, bfr);
+        glUniformMatrix4fv(location, false, bfr);
     }
 
     public void setMatrixParameter(String parameterName, Matrix4f value) {
         use(null);
-        int matHandle = glGetUniformLocation(_materialHandle, parameterName);
-        if (matHandle < 0) return;
+        Integer location = _uniforms.get(parameterName);
+        if (location == null) return;
         final FloatBuffer bfr = createFloatBuffer(16);
         value.get(bfr);
-        glUniformMatrix4fv(matHandle, false, bfr);
+        glUniformMatrix4fv(location, false, bfr);
     }
 
     public void setColorParameter(String parameterName, Color color) {
         use(null);
-        int matHandle = glGetUniformLocation(_materialHandle, parameterName);
-        if (matHandle < 0) return;
-        glUniform4f(matHandle,
+        Integer location = _uniforms.get(parameterName);
+        if (location == null) return;
+        glUniform4f(location,
                 color.getVector().x * color.getPower(),
                 color.getVector().y * color.getPower(),
                 color.getVector().z * color.getPower(),
                 color.getVector().w * color.getPower());
-        RenderUtils.CheckGLErrors();
     }
 
     public void setVec4Parameter(String parameterName, Vector4f value) {
         use(null);
-        int matHandle = glGetUniformLocation(_materialHandle, parameterName);
-        if (matHandle < 0) return;
-        glUniform4f(matHandle, value.x, value.y, value.z, value.w);
+        Integer location = _uniforms.get(parameterName);
+        if (location == null) return;
+        glUniform4f(location, value.x, value.y, value.z, value.w);
     }
     public void setVec4Parameter(String parameterName, Vector3f value, float w) {
         use(null);
-        int matHandle = glGetUniformLocation(_materialHandle, parameterName);
-        if (matHandle < 0) return;
-        glUniform4f(matHandle, value.x, value.y, value.z, w);
+        Integer location = _uniforms.get(parameterName);
+        if (location == null) return;
+        glUniform4f(location, value.x, value.y, value.z, w);
     }
 }

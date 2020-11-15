@@ -1,6 +1,7 @@
 package coffee3D.core.resources.types;
 
 import coffee3D.core.io.log.Log;
+import coffee3D.core.renderer.RenderUtils;
 import coffee3D.core.renderer.scene.Components.Camera;
 import coffee3D.core.renderer.scene.RenderScene;
 import coffee3D.core.renderer.scene.RenderSceneProperties;
@@ -30,19 +31,15 @@ public class SceneUniformBuffer extends GraphicResource {
         if (_uboHandle == -1) {
             _uboHandle = glGenBuffers();
             int structByteSize = TypeHelper.GetStructByteSize(_bufferData.getClass());
-            glBindBuffer(GL_UNIFORM_BUFFER, _uboHandle);
+            RenderUtils.BindUniformBuffer(_uboHandle);
             glBufferData(GL_UNIFORM_BUFFER, structByteSize, GL_STATIC_DRAW);
-            glBindBuffer(GL_UNIFORM_BUFFER, 0);
             glBindBufferRange(GL_UNIFORM_BUFFER, 0, _uboHandle, 0, structByteSize);
-            glBindBuffer(GL_UNIFORM_BUFFER, 0);
+            RenderUtils.BindUniformBuffer(_uboHandle);
         }
     }
 
     @Override
-    public void unload() {
-        // a faire qu'une fois
-        //glDeleteBuffers(_uboHandle);
-    }
+    public void unload() {}
 
     @Override
     public void use(Scene context) {
@@ -55,9 +52,8 @@ public class SceneUniformBuffer extends GraphicResource {
 
     public void use(RenderScene scene, float width, float height, Camera camera, Matrix4f viewMatrix) {
         updateData(scene, width, height, camera, viewMatrix);
-        glBindBuffer(GL_UNIFORM_BUFFER, _uboHandle);
+        RenderUtils.BindUniformBuffer(_uboHandle);
         glBufferSubData(GL_UNIFORM_BUFFER, 0, TypeHelper.SerializeStructure(_bufferData, _rawBufferData));
-        glBindBuffer(GL_UNIFORM_BUFFER, 0);
     }
 
     private void updateData(RenderScene scene, float width, float height, Camera camera, Matrix4f viewMatrix) {

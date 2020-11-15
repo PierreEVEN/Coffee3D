@@ -2,6 +2,7 @@ package coffee3D.editor;
 
 import coffee3D.core.IEngineModule;
 import coffee3D.core.assets.AssetManager;
+import coffee3D.core.assets.types.Texture2D;
 import coffee3D.core.controller.IGameController;
 import coffee3D.core.controller.TopViewController;
 import coffee3D.core.io.settings.EngineSettings;
@@ -9,7 +10,10 @@ import coffee3D.core.renderer.Window;
 import coffee3D.core.renderer.scene.RenderScene;
 import coffee3D.core.renderer.scene.RenderSceneProperties;
 import coffee3D.core.renderer.scene.RenderSceneSettings;
+import coffee3D.core.ui.hud.*;
 import coffee3D.core.ui.tools.StatHelper;
+import imgui.ImColor;
+import imgui.ImGui;
 import org.lwjgl.glfw.GLFW;
 
 public class TestGameModule extends IEngineModule {
@@ -53,15 +57,9 @@ public class TestGameModule extends IEngineModule {
 
     @Override
     public void DrawHUD() {
+
         StatHelper.DrawStats(_rootScene);
 
-
-        /*
-
-        Texture2D tex = AssetManager.FindAsset("whiteTexture");
-
-
-        ImGui.image(AssetManager.<Texture2D>FindAsset("whiteTexture").getTextureID(), 50, 50);
 
         int gridTexture = AssetManager.<Texture2D>FindAsset("whiteTexture").getTextureID();
         int grassTexture = AssetManager.<Texture2D>FindAsset("whiteTexture").getTextureID();
@@ -76,21 +74,18 @@ public class TestGameModule extends IEngineModule {
                     TextParams.Get("Button 1", 5, ImColor.intToColor(255, 128, 128))
             );
 
-            HudUtils.ImageButton(
-                    NodeAnchor.BOTTOM_FILL,
-                    PixelOffset.Get(40, -400, -40, -100),
-                    ButtonBehavior.Get(2.5f),
-                    ImageParams.Get(gridTexture, 10.f),
-                    TextParams.Get("Button 2", 2, ImColor.intToColor(128, 255, 128))
-            );
-
-            HudUtils.ImageButton(
-                    NodeAnchor.Get(0.5f, 0, 1, 0.3f),
-                    PixelOffset.Get(40, 40, -40, -20),
-                    ButtonBehavior.Get(2.5f),
-                    ImageParams.Get(gridTexture, 60.f, ImColor.intToColor(255, 255, 128)),
-                    TextParams.Get("Button 3", 3.5f, ImColor.intToColor(128, 128, 255))
-            );
+            if (HudUtils.BorderContainer(
+                    NodeAnchor.Get(.5f, 0, .5f, 1),
+                    PixelOffset.Get(-400, 0, 400, 0),
+                    ImageParams.Get(-1, 60.f, ImColor.intToColor(255, 255, 128))
+            )) {
+                HudUtils.VerticalBox(NodeAnchor.FILL, PixelOffset.DEFAULT, new IDrawContent[]{
+                        () -> ImGui.button("test", ImGui.getContentRegionAvailX(), ImGui.getContentRegionAvailY()),
+                        () -> ImGui.button("test2", ImGui.getContentRegionAvailX(), ImGui.getContentRegionAvailY()),
+                        () -> ImGui.button("test3", ImGui.getContentRegionAvailX(), ImGui.getContentRegionAvailY())
+                });
+            }
+            HudUtils.EndContainer();
 
             HudUtils.ProgressBar(
                     NodeAnchor.FILL_LEFT,
@@ -103,8 +98,6 @@ public class TestGameModule extends IEngineModule {
         }
         HudUtils.EndContainer();
 
-
-         */
 
 
     }

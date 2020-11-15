@@ -151,14 +151,14 @@ public class RenderScene extends Scene {
             glDisable(GL_CULL_FACE);
             RenderUtils.getPostProcessMaterial().use(this);
             RenderUtils.getPostProcessMaterial().getResource().setIntParameter("colorTexture", 0);
-            glActiveTexture(GL_TEXTURE0);
+            RenderUtils.ActivateTexture(0);
             glBindTexture(GL_TEXTURE_2D, _colorBuffer.getColorTexture());
             RenderUtils.getPostProcessMaterial().getResource().setIntParameter("depthTexture", 1);
-            glActiveTexture(GL_TEXTURE1);
+            RenderUtils.ActivateTexture(1);
             glBindTexture(GL_TEXTURE_2D, _colorBuffer.getDepthTexture());
             if (_sceneSettings.hasStencilBuffer()) {
                 RenderUtils.getPostProcessMaterial().getResource().setIntParameter("stencilTexture", 2);
-                glActiveTexture(GL_TEXTURE2);
+                RenderUtils.ActivateTexture(2);
                 glBindTexture(GL_TEXTURE_2D, _stencilBuffer.getColorTexture());
             }
             _viewportQuadMesh.use(this);

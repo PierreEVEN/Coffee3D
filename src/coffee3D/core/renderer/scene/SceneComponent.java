@@ -118,7 +118,7 @@ public class SceneComponent implements Serializable {
             case Color:
                 GetBillboardMaterial().use(context);
                 GetBillboardMaterial().setVec4Parameter("position", getBound().position, size);
-                glActiveTexture(GL_TEXTURE0);
+                RenderUtils.ActivateTexture(0);
                 GetBillboardMaterial().setIntParameter("image", 0);
                 if (texture == null) glBindTexture(GL_TEXTURE_2D, getComponentIcon().getTextureHandle());
                 else glBindTexture(GL_TEXTURE_2D, texture.getTextureID());
