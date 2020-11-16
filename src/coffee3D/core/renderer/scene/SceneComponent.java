@@ -95,6 +95,15 @@ public class SceneComponent implements Serializable {
         }
     }
 
+    protected final void tickInternal(Scene context, double deltaTime) {
+        tick(context, deltaTime);
+        if (_children != null) {
+            for (SceneComponent comp : _children) {
+                comp.tickInternal(context, deltaTime);
+            }
+        }
+    }
+
     protected void preDraw(Scene context) {}
 
     /**
@@ -106,6 +115,8 @@ public class SceneComponent implements Serializable {
     }
 
     protected void postDraw(Scene context) {}
+
+    protected void tick(Scene context, double deltaTime) {}
 
     public TextureResource getComponentIcon() { return AssetReferences.GetIconSceneComponent().getResource(); }
 

@@ -1,6 +1,5 @@
 package coffee3D.core.navigation;
 
-import coffee3D.core.io.log.Log;
 import coffee3D.core.maths.MathLibrary;
 import coffee3D.core.renderer.RenderMode;
 import coffee3D.core.renderer.RenderUtils;
@@ -28,6 +27,19 @@ public class NavmeshComponent extends SceneComponent {
     private NavMeshGrid _navmesh;
     private transient SphereBound bounds;
 
+    private static final Vector3f _center = new Vector3f();
+    private static final Vector3f _worldPosA = new Vector3f();
+    private static final Vector3f _worldPosB = new Vector3f();
+    private static final Vector3f _worldPosC = new Vector3f();
+    private static final Vector3f _worldPosD = new Vector3f();
+    private static final Color navigableColor = new Color(0, 1, 0, 0.8f);
+    private static final Color notNavigableColor = new Color(1, 0, 0, 0.2f);
+    private static final Color selectionColor = new Color(1, 1, 0, 1f);
+    private static final Vector3f cameraPointIntersection = new Vector3f();
+    private static final Vector3f up = new Vector3f(0, 0, 1);
+    private static final Vector3f camDir = new Vector3f(0);
+    private static final Vector2i local = new Vector2i(0);
+
     public NavmeshComponent(Vector3f position, Quaternionf rotation, Vector3f scale) {
         super(position, rotation, scale);
         _sizeX = 100;
@@ -36,13 +48,16 @@ public class NavmeshComponent extends SceneComponent {
         newNavmesh();
     }
 
+    public NavigationPath findPathToLocation(Vector3f source, Vector3f target) {
+        return _navmesh.findPathToLocation(source, target);
+    }
+
     @Override
     protected void draw(Scene context) {}
 
     @Override
     public void postDraw(Scene context) {
         super.draw(context);
-
         if (_cellSize != _navmesh.getCellSize() ||
                 _sizeX != _navmesh.getGridSize().x ||
                 _sizeY != _navmesh.getGridSize().y
@@ -69,15 +84,6 @@ public class NavmeshComponent extends SceneComponent {
     private void newNavmesh() {
         _navmesh = new NavMeshGrid(getWorldPosition(), new Vector2i(_sizeX, _sizeY), _cellSize);
     }
-
-    private static final Vector3f _center = new Vector3f();
-    private static final Vector3f _worldPosA = new Vector3f();
-    private static final Vector3f _worldPosB = new Vector3f();
-    private static final Vector3f _worldPosC = new Vector3f();
-    private static final Vector3f _worldPosD = new Vector3f();
-    private static final Color navigableColor = new Color(0, 1, 0, 0.8f);
-    private static final Color notNavigableColor = new Color(1, 0, 0, 0.2f);
-    private static final Color selectionColor = new Color(1, 1, 0, 1f);
 
     private void visualize(RenderScene context) {
         if (RenderUtils.RENDER_MODE == RenderMode.Select) {
@@ -107,8 +113,6 @@ public class NavmeshComponent extends SceneComponent {
         _navmesh.worldToLocal(cameraPointIntersection, local);
         if (_navmesh.isLocationInNavmesh(local) && !Window.GetPrimaryWindow().captureMouse()) {
             _navmesh.localToWorld(local, cameraPointIntersection);
-
-            Log.Display("inter : " + cameraPointIntersection);
 
             RenderUtils.getDebugMaterial().getResource().setModelMatrix(TypeHelper.getMat4().identity());
             RenderUtils.getDebugMaterial().setColor(selectionColor);
@@ -150,13 +154,7 @@ public class NavmeshComponent extends SceneComponent {
         glDisable(GL_BLEND);
     }
 
-    private static final Vector3f cameraPointIntersection = new Vector3f();
-    private static final Vector3f up = new Vector3f(0, 0, 1);
-    private static final Vector3f camDir = new Vector3f(0);
-    private static final Vector2i local = new Vector2i(0);
-
     private void edit(RenderScene scene) {
-
         if (GLFW.glfwGetMouseButton(Window.GetPrimaryWindow().getGlfwWindowHandle(), GLFW.GLFW_MOUSE_BUTTON_1) == GLFW.GLFW_PRESS && !Window.GetPrimaryWindow().captureMouse()) {
             scene.getCursorSceneDirection(camDir);
             MathLibrary.LinePlaneIntersection(getWorldPosition(), up, camDir, scene.getCamera().getWorldPosition(), cameraPointIntersection);

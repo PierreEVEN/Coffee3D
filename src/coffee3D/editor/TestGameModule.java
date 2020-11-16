@@ -59,7 +59,7 @@ public class TestGameModule extends IEngineModule {
     public void DrawHUD() {
 
         StatHelper.DrawStats(_rootScene);
-
+        /*
 
         int gridTexture = AssetManager.<Texture2D>FindAsset("whiteTexture").getTextureID();
         int grassTexture = AssetManager.<Texture2D>FindAsset("whiteTexture").getTextureID();
@@ -98,6 +98,8 @@ public class TestGameModule extends IEngineModule {
         }
         HudUtils.EndContainer();
 
+
+         */
 
 
     }

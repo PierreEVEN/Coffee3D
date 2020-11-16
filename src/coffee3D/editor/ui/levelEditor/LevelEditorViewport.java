@@ -9,6 +9,7 @@ import coffee3D.core.io.inputs.GlfwInputHandler;
 import coffee3D.core.io.inputs.IInputListener;
 import coffee3D.core.io.log.Log;
 import coffee3D.core.io.settings.EngineSettings;
+import coffee3D.core.navigation.NavigableActor;
 import coffee3D.core.navigation.NavmeshComponent;
 import coffee3D.core.renderer.RenderUtils;
 import coffee3D.core.renderer.scene.Components.AudioComponent;
@@ -249,6 +250,10 @@ public class LevelEditorViewport extends SceneViewport {
                     }
                 } break;
                 case GLFW.GLFW_KEY_DELETE : deleteSelected(); break;
+                case GLFW.GLFW_KEY_T:
+                    NavigableActor act = new NavigableActor(getDropPosition(null), new Quaternionf().identity(), new Vector3f(1));
+                    act.attachToScene(getScene());
+                    break;
             }
         }
     }

@@ -93,6 +93,12 @@ public class RenderScene extends Scene {
     public SceneUniformBuffer getSceneUbo() { return _sceneUbo; }
 
     public boolean renderScene() {
+
+        double deltaTime = Window.GetPrimaryWindow().getDeltaTime();
+        for (SceneComponent component : getComponents()) {
+            component.tickInternal(this, deltaTime);
+        }
+
         if (_sceneSettings.hasFullScreenColorBuffer()) resizeBuffers(Window.GetPrimaryWindow().getPixelWidth(), Window.GetPrimaryWindow().getPixelHeight());
         if (getFbWidth() <= 0 || getFbHeight() <= 0) return false;
 

@@ -1,6 +1,5 @@
 package coffee3D;
 
-import coffee3D.core.io.settings.EngineSettings;
 import coffee3D.core.renderer.Window;
 import coffee3D.editor.TestGameModule;
 

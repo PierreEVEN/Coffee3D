@@ -1,5 +1,6 @@
 package coffee3D.core.renderer.scene;
 
+import coffee3D.core.io.log.Log;
 import coffee3D.core.renderer.RenderMode;
 import coffee3D.core.renderer.RenderUtils;
 import coffee3D.core.resources.types.Framebuffer;
@@ -46,11 +47,11 @@ public class HitResult {
         drawList.preRender(scene);
         glClear(GL_DEPTH_BUFFER_BIT);
         drawList.render(scene);
+        glReadPixels(0, 0, 1, 1,  GL_DEPTH_COMPONENT, GL_FLOAT, _hitDepth);
         glClear(GL_DEPTH_BUFFER_BIT);
         drawList.postRender(scene);
 
         glReadPixels(0, 0, 1, 1,  GL_RGB, GL_UNSIGNED_BYTE, _hitColor);
-        glReadPixels(0, 0, 1, 1,  GL_DEPTH_COMPONENT, GL_FLOAT, _hitDepth);
 
         int hitCompId = (_hitColor.get(0) & 0xff) + ((_hitColor.get(1) & 0xff) << 8) + ((_hitColor.get(2) & 0xff) << 16);
         if (hitCompId > 0 && scene.getComponents().size() >= hitCompId) component = scene.getComponents().get(hitCompId - 1);
