@@ -43,9 +43,11 @@ public class HitResult {
         drawList.build(scene.getComponents(), viewMatrix, Scene.getProjection(pickBuffer.getWidth(), pickBuffer.getHeight(), scene.getCamera()));
 
 
-        RenderUtils.CheckGLErrors();
+        drawList.preRender(scene);
+        glClear(GL_DEPTH_BUFFER_BIT);
         drawList.render(scene);
-        RenderUtils.CheckGLErrors();
+        glClear(GL_DEPTH_BUFFER_BIT);
+        drawList.postRender(scene);
 
         glReadPixels(0, 0, 1, 1,  GL_RGB, GL_UNSIGNED_BYTE, _hitColor);
         glReadPixels(0, 0, 1, 1,  GL_DEPTH_COMPONENT, GL_FLOAT, _hitDepth);

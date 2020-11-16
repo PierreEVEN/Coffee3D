@@ -70,7 +70,7 @@ public class GizmoComponent extends SceneComponent implements IInputListener {
     }
 
     @Override
-    public void draw(Scene context) {
+    public void postDraw(Scene context) {
         float mouseDeltaX = (float) IEngineModule.Get().GetController().getCursorPosX() - mousePosX;
         float mouseDeltaY = (float) IEngineModule.Get().GetController().getCursorPosY() - mousePosY;
         mousePosX = (float) IEngineModule.Get().GetController().getCursorPosX();

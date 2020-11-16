@@ -7,6 +7,8 @@ import org.joml.Vector3f;
 public class NavigableActor extends SceneComponent {
 
 
+    private static final long serialVersionUID = 2644030132802605634L;
+
     public NavigableActor(Vector3f position, Quaternionf rotation, Vector3f scale) {
         super(position, rotation, scale);
     }

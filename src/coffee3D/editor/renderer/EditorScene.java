@@ -8,16 +8,19 @@ public class EditorScene extends RenderScene {
 
     private final GizmoComponent _gizmo = new GizmoComponent();
 
-
     public EditorScene(RenderSceneSettings settings) {
         super(settings);
     }
 
     @Override
+    public void preDraw() {
+        super.preDraw();
+    }
+
+    @Override
     public void postDraw() {
         super.postDraw();
-
-        _gizmo.draw(this);
+        _gizmo.postDraw(this);
     }
 
     public GizmoComponent getGizmo() {

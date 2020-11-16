@@ -31,10 +31,13 @@ public class SceneComponent implements Serializable {
     private static final long serialVersionUID = 744620683032598971L;
 
     protected String _componentName;
-    protected transient int _stencilValue;
+    private transient int _stencilValue;
+    private transient boolean _isSelected;
 
     public int getStencilValue() { return _stencilValue; }
     public void setStencilValue(int stencilValue) { _stencilValue = stencilValue; }
+    public void setIsSelected(boolean isSelected) { setStencilValue(isSelected ? 1 : 0); _isSelected = isSelected; }
+    public boolean isSelected() { return _isSelected; }
 
     public String getComponentName() {
         return _componentName;
@@ -61,6 +64,14 @@ public class SceneComponent implements Serializable {
         _stencilValue = 0;
     }
 
+    protected final void preDrawInternal(Scene context) {
+        preDraw(context);
+        if (_children != null) {
+            for (SceneComponent comp : _children) {
+                comp.preDrawInternal(context);
+            }
+        }
+    }
 
     /**
      * draw a root component and its children to given scene
@@ -75,6 +86,17 @@ public class SceneComponent implements Serializable {
         }
     }
 
+    protected final void postDrawInternal(Scene context) {
+        postDraw(context);
+        if (_children != null) {
+            for (SceneComponent comp : _children) {
+                comp.postDrawInternal(context);
+            }
+        }
+    }
+
+    protected void preDraw(Scene context) {}
+
     /**
      * implement to draw stuff
      * @param context scene context
@@ -82,6 +104,8 @@ public class SceneComponent implements Serializable {
     protected void draw(Scene context) {
         drawBillboard(context, null, (float) Math.max(0.3, Math.min(2, ((RenderScene)context).getCamera().getWorldPosition().distance(getWorldPosition()) / 50)));
     }
+
+    protected void postDraw(Scene context) {}
 
     public TextureResource getComponentIcon() { return AssetReferences.GetIconSceneComponent().getResource(); }
 

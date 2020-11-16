@@ -1,36 +1,45 @@
 package coffee3D.core.navigation;
 
-import coffee3D.core.io.log.Log;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class NavMeshGrid {
+public class NavMeshGrid implements Serializable {
+
+    private static final long serialVersionUID = -4528707062414566942L;
+
     private final NavmeshPoint[] _navMesh;
     private final Vector3f _navmeshLocation;
     private final Vector2i _size;
     private final float _cellSize;
 
-
-    public NavMeshGrid(Vector3f navMeshLocation, NavmeshPoint[] navMesh, Vector2i navmeshSize, float cellSize) {
-        _navMesh = navMesh;
+    public NavMeshGrid(Vector3f navMeshLocation, Vector2i navmeshSize, float cellSize) {
+        _navMesh = new NavmeshPoint[navmeshSize.x * navmeshSize.y];
         _navmeshLocation = navMeshLocation;
         _size = navmeshSize;
         _cellSize = cellSize;
-        if (navMesh.length != navmeshSize.x * navmeshSize.y) Log.Fail("invalid navmesh values");
         for (int i = 0; i < _navMesh.length; ++i) {
-            _navMesh[i].location.set(i % _size.x, i / _size.y);
+            _navMesh[i] = new NavmeshPoint();
+            _navMesh[i].location.set(i % _size.x, i / _size.x);
+            _navMesh[i].isNavigable = false;
         }
     }
 
+    public Vector3f getNavmeshLocation() { return _navmeshLocation; }
+
+    public final NavmeshPoint[] getNavmesh() {
+        return _navMesh;
+    }
+
+    public float getCellSize() { return _cellSize; }
+    public Vector2i getGridSize() { return _size; }
 
     public NavigationPath findPathToLocation(Vector3f from, Vector3f to) {
         NavmeshPoint start = findClosestNavmeshPoint(from);
         NavmeshPoint end = findClosestNavmeshPoint(to);
         ArrayList<Vector3f> pathPoints = new ArrayList<>();
-
-
         return new NavigationPath(null);
     }
 
@@ -56,15 +65,15 @@ public class NavMeshGrid {
 
     public void worldToLocal(Vector3f world, Vector2i local) {
         local.set(
-                (int) ((world.x - _navmeshLocation.x) * _cellSize),
-                (int) ((world.y - _navmeshLocation.y) * _cellSize)
+                (int) ((world.x - _navmeshLocation.x) / _cellSize + _cellSize / 2),
+                (int) ((world.y - _navmeshLocation.y) / _cellSize + _cellSize / 2)
         );
     }
 
     public void localToWorld(Vector2i local, Vector3f world) {
         world.set(
-                (local.x / _cellSize) + _navmeshLocation.x,
-                (local.y / _cellSize) + _navmeshLocation.y,
+                (local.x * _cellSize) + _navmeshLocation.x,
+                (local.y * _cellSize) + _navmeshLocation.y,
                 _navmeshLocation.z
         );
     }

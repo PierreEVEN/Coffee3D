@@ -9,6 +9,7 @@ import coffee3D.core.io.inputs.GlfwInputHandler;
 import coffee3D.core.io.inputs.IInputListener;
 import coffee3D.core.io.log.Log;
 import coffee3D.core.io.settings.EngineSettings;
+import coffee3D.core.navigation.NavmeshComponent;
 import coffee3D.core.renderer.RenderUtils;
 import coffee3D.core.renderer.scene.Components.AudioComponent;
 import coffee3D.core.renderer.scene.Components.BillboardComponent;
@@ -63,6 +64,10 @@ public class LevelEditorViewport extends SceneViewport {
                 });
                 ImGui.endMenu();
             }
+            if (ImGui.beginMenu("add")) {
+                if (ImGui.menuItem("Navmesh")) addNavmesh();
+                ImGui.endMenu();
+            }
             if (ImGui.beginMenu("debug")) {
                 if (ImGui.menuItem(getScene().isFrustumFrozen() ? "unfreeze frustum culling" : "freeze frustum culling"))
                     getScene().freezeFrustum(!getScene().isFrustumFrozen());
@@ -105,29 +110,12 @@ public class LevelEditorViewport extends SceneViewport {
             {
                 String assetName = new String(data);
                 Asset droppedAsset = AssetManager.FindAsset(assetName);
-                Vector3f position;
-                if (getScene().getHitResult().component != null) {
-                    position = new Vector3f(getScene().getHitResult().position);
-                }
-                else {
-                    if (droppedAsset instanceof StaticMesh) {
-                        position = new Vector3f(
-                                getScene().getCamera().getForwardVector())
-                                .mul(2 * ((StaticMesh) droppedAsset).getBound().radius)
-                                .add(getScene().getCamera().getRelativePosition())
-                                .sub(((StaticMesh) droppedAsset).getBound().position);
-                    }
-                    else {
-                        position = new Vector3f(
-                                getScene().getCamera().getForwardVector()).mul(2).add(getScene().getCamera().getRelativePosition());
-                    }
-                }
 
                 if (droppedAsset instanceof StaticMesh) {
 
                     StaticMeshComponent sm = new StaticMeshComponent(
                             (StaticMesh)droppedAsset,
-                            position,
+                            getDropPosition(droppedAsset),
                             new Quaternionf().identity(),
                             new Vector3f(1,1,1));
                     sm.attachToScene(getScene());
@@ -138,7 +126,7 @@ public class LevelEditorViewport extends SceneViewport {
                 if (droppedAsset instanceof Texture2D) {
                     BillboardComponent bb = new BillboardComponent(
                             (Texture2D)droppedAsset,
-                            new Vector3f(getScene().getCamera().getForwardVector()).mul(2).add(getScene().getCamera().getRelativePosition()),
+                            getDropPosition(droppedAsset),
                             new Quaternionf().identity(),
                             new Vector3f(1,1,1));
                     bb.attachToScene(getScene());
@@ -149,7 +137,7 @@ public class LevelEditorViewport extends SceneViewport {
                 if (droppedAsset instanceof SoundWave) {
                     AudioComponent bb = new AudioComponent(
                             (SoundWave) droppedAsset,
-                            new Vector3f(getScene().getCamera().getForwardVector()).mul(2).add(getScene().getCamera().getRelativePosition()),
+                            getDropPosition(droppedAsset),
                             new Quaternionf().identity(),
                             new Vector3f(1,1,1));
                     bb.attachToScene(getScene());
@@ -165,6 +153,32 @@ public class LevelEditorViewport extends SceneViewport {
                 }
             }
         }
+    }
+
+
+    private Vector3f getDropPosition(Asset sourceAsset) {
+        if (getScene().getHitResult().component != null) {
+            return new Vector3f(getScene().getHitResult().position);
+        }
+        else {
+            if (sourceAsset instanceof StaticMesh) {
+                return new Vector3f(
+                        getScene().getCamera().getForwardVector())
+                        .mul(2 * ((StaticMesh) sourceAsset).getBound().radius)
+                        .add(getScene().getCamera().getRelativePosition())
+                        .sub(((StaticMesh) sourceAsset).getBound().position);
+            }
+            else {
+                return new Vector3f(
+                        getScene().getCamera().getForwardVector()).mul(2).add(getScene().getCamera().getRelativePosition());
+            }
+        }
+    }
+
+    private void addNavmesh() {
+        NavmeshComponent navmesh = new NavmeshComponent(new Vector3f(0), new Quaternionf().identity(), new Vector3f(1));
+        navmesh.attachToScene(getScene());
+        navmesh.setComponentName("navmesh");
     }
 
     public void editComponent(SceneComponent comp) {
@@ -259,7 +273,7 @@ public class LevelEditorViewport extends SceneViewport {
             }
             else {
                 if (getEditedComponent() != null) {
-                    getEditedComponent().setStencilValue(0);
+                    getEditedComponent().setIsSelected(false);
                 }
                 if (getGizmo().displayTranslation()) getGizmo().beginTranslation(false);
                 else if (!Window.GetPrimaryWindow().captureMouse()) editComponent(getScene().getHitResult().component);

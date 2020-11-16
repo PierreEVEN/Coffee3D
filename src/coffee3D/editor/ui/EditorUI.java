@@ -46,7 +46,6 @@ public class EditorUI {
                 if (ImGui.menuItem("Content browser")) new ContentBrowser("Content browser");
                 ImGui.separator();
                 if (ImGui.menuItem("Resource viewer")) new ResourcesViewer("resource viewer");
-                if (ImGui.menuItem("Stat window")) new StatWindow(context, "Stat window");
                 ImGui.separator();
                 if (ImGui.menuItem("Style editor")) new StyleEditor("Style editor");
                 if (ImGui.menuItem("Engine settings")) new EngineSettingsViewer("Engine settings");

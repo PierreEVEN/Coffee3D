@@ -43,7 +43,15 @@ public class DrawList {
         });
     }
 
+    public void preRender(RenderScene context) {
+        for (SceneComponent component : frustumDrawList) component.preDrawInternal(context);
+    }
+
     public void render(RenderScene context) {
         for (SceneComponent component : frustumDrawList) component.drawInternal(context);
+    }
+
+    public void postRender(RenderScene context) {
+        for (SceneComponent component : frustumDrawList) component.postDrawInternal(context);
     }
 }

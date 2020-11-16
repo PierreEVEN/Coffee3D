@@ -121,7 +121,11 @@ public class RenderScene extends Scene {
             glDisable(GL_CULL_FACE);
             glCullFace(GL_FRONT);
             glFrontFace(GL_CW);
+            _drawList.preRender(this);
+            glClear(GL_DEPTH_BUFFER_BIT);
             _drawList.render(this);
+            glClear(GL_DEPTH_BUFFER_BIT);
+            _drawList.postRender(this);
         }
         else if (_sceneSettings.hasStencilBuffer()) _stencilBuffer.use(this);
 
@@ -184,9 +188,12 @@ public class RenderScene extends Scene {
             skyBoxMesh.setMaterial(getSkyboxMaterial(), 0);
             skyBoxMesh.drawInternal(this);
         }
+        _drawList.preRender(this);
     }
 
-    public void postDraw() {}
+    public void postDraw() {
+        _drawList.postRender(this);
+    }
 
     public void resizeBuffers(int sizeX, int sizeY) {
         if (_colorBuffer != null) _colorBuffer.resizeFramebuffer(sizeX, sizeY);

@@ -15,7 +15,7 @@ public class ComponentInspector extends SubWindow {
     protected void draw() {
         drawComponentProperties();
         if (_editedComponent != null) {
-            _editedComponent.setStencilValue(1);
+            _editedComponent.setIsSelected(true);
         }
     }
 
@@ -23,13 +23,13 @@ public class ComponentInspector extends SubWindow {
     public void close() {
         super.close();
         if (_editedComponent != null) {
-            _editedComponent.setStencilValue(0);
+            _editedComponent.setIsSelected(false);
         }
     }
 
     public void setComponent(SceneComponent inComponent) {
         if (_editedComponent != null) {
-            _editedComponent.setStencilValue(0);
+            _editedComponent.setIsSelected(false);
         }
         _editedComponent = inComponent;
     }

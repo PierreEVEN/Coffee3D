@@ -78,4 +78,14 @@ public class MathLibrary {
 
         return distance;
     }
+
+    public static void LinePlaneIntersection(Vector3f planePoint, Vector3f planeNormal, Vector3f lineDirection, Vector3f lineOrigin, Vector3f hitPoint) {
+        dir1.set(lineDirection).normalize();
+        if (planeNormal.dot(dir1) == 0) {
+            hitPoint.set(0);
+            return;
+        }
+        float t = (planeNormal.dot(planePoint) - planeNormal.dot(lineOrigin)) / planeNormal.dot(dir1);
+        hitPoint.set(lineDirection).mul(t).add(lineOrigin);
+    }
 }
