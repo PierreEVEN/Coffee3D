@@ -74,6 +74,8 @@ public class RenderUtils {
         return debugMaterial;
     }
 
+    public static boolean WITH_EDITOR = false;
+
 
     public static MaterialInterface getBillboardPickMaterial() {
         if (billboardPickMaterial == null) {

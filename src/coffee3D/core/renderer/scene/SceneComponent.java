@@ -102,7 +102,7 @@ public class SceneComponent implements Serializable {
      * @param context scene context
      */
     protected void draw(Scene context) {
-        drawBillboard(context, null, (float) Math.max(0.3, Math.min(2, ((RenderScene)context).getCamera().getWorldPosition().distance(getWorldPosition()) / 50)));
+        if (RenderUtils.WITH_EDITOR) drawBillboard(context, null, (float) Math.max(0.3, Math.min(2, ((RenderScene)context).getCamera().getWorldPosition().distance(getWorldPosition()) / 50)));
     }
 
     protected void postDraw(Scene context) {}
