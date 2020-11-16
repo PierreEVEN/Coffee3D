@@ -10,50 +10,61 @@ import org.lwjgl.glfw.GLFW;
 
 public class TopViewController extends IGameController {
 
-    private static final Vector3f defaultOffset = new Vector3f(0,0,5);
-    private float distance = 10;
-    private float wantedDistance = 10;
-    private float yaw = 0;
-    private float wantedYaw = 0;
-    private float pitch = 40;
-    private Vector2f currentSpeed;
+    private static final Vector3f _defaultOffset = new Vector3f(0,0,5);
+    private final Vector2f _currentSpeed = new Vector2f(0);
+    private final Vector3f _targetPosition = new Vector3f(0);
+    private final Vector3f _cameraPosition = new Vector3f(0);
+    private float _distance = 10;
+    private float _wantedDistance = 10;
+    private float _yaw = 0;
+    private float _wantedYaw = 0;
+    private float _pitch = 40;
     private float _speed = 200f;
     private float _mouseSensitivity = .18f;
-    private final Vector3f targetPosition;
-    private final Vector3f cameraPosition;
-    private float borderDetection = 200f;
+    private float _borderDetection = 200f;
+
+    public void setDistance(float distance) {
+        _wantedDistance = distance;
+        if (_wantedDistance > 200) _wantedDistance = 200;
+        if (_wantedDistance < 5) _wantedDistance = 5;
+    }
+
+    public float getSpeed() { return _speed; }
+    public void setSpeed(float speed) { _speed = speed; }
+    public Vector3f getCameraPosition() { return _cameraPosition; }
+    public void setBorderDistance(float distance) { _borderDetection = distance; }
+    public float getBorderDistance() { return _borderDetection; }
+    public float getSensitivity() { return _mouseSensitivity; }
+    public void setSensitivity(float sensitivity) { _mouseSensitivity = sensitivity;}
+
 
     public TopViewController(RenderScene scene) {
         super(scene);
-        distance = 10;
-        currentSpeed = new Vector2f(0,0);
-        targetPosition = new Vector3f(0);
-        cameraPosition = new Vector3f(0);
     }
 
     @Override
     public void update() {
         float deltaTime = (float) Window.GetPrimaryWindow().getDeltaTime();
-        float movementSpeed = _speed * deltaTime * Math.max(.5f, distance / 20);
+        float movementSpeed = _speed * deltaTime * Math.max(.5f, _distance / 20);
 
-        currentSpeed.mul(Math.max(0, 1 - (deltaTime * 10)));
+        _currentSpeed.mul(Math.max(0, 1 - (deltaTime * 10)));
 
         keyboardMovements(deltaTime, movementSpeed);
         mouseMovements(movementSpeed * 1.5f);
 
-        yaw = Interpolation.FInterpTo(yaw, wantedYaw, 10);
-        pitch = Interpolation.FInterpTo(pitch, Math.max(20, Math.min(40, distance * .75f + 10)), 5);
-        distance = Interpolation.FInterpTo(distance, wantedDistance, 10);
+        _yaw = Interpolation.FInterpTo(_yaw, _wantedYaw, 10);
+        _pitch = Interpolation.FInterpTo(_pitch, Math.max(20, Math.min(40, _distance * .75f + 10)), 5);
+        _distance = Interpolation.FInterpTo(_distance, _wantedDistance, 10);
 
-        getScene().getCamera().setPitchInput(pitch);
-        getScene().getCamera().setYawInput(yaw);
+        getScene().getCamera().setPitchInput(_pitch);
+        getScene().getCamera().setYawInput(_yaw);
 
 
-        cameraPosition.set(getScene().getCamera().getForwardVector());
-        cameraPosition.mul(distance * -1);
-        cameraPosition.add(targetPosition).add(defaultOffset);
+        _cameraPosition.set(getScene().getCamera().getForwardVector());
+        _cameraPosition.mul(_distance * -1);
+        _cameraPosition.add(_targetPosition).add(_defaultOffset);
 
-        getScene().getCamera().setRelativePosition(cameraPosition);
+        getScene().getCamera().setRelativePosition(_cameraPosition);
 
     }
 
@@ -66,17 +77,17 @@ public class TopViewController extends IGameController {
 
         if (distLeft < 0 || distBottom < 0 ||distTop < 0 || distRight < 0) return;
 
-        if (distRight < borderDetection) {
-            currentSpeed.y -= movementSpeed * Math.min(1, (1 - distRight / borderDetection));
+        if (distRight < _borderDetection) {
+            _currentSpeed.y -= movementSpeed * Math.min(1, (1 - distRight / _borderDetection));
         }
-        if (distLeft < borderDetection) {
-            currentSpeed.y += movementSpeed * Math.min(1, (1 - distLeft / borderDetection));
+        if (distLeft < _borderDetection) {
+            _currentSpeed.y += movementSpeed * Math.min(1, (1 - distLeft / _borderDetection));
         }
-        if (distTop < borderDetection) {
-            currentSpeed.x += movementSpeed * Math.min(1, (1 - distTop / borderDetection));
+        if (distTop < _borderDetection) {
+            _currentSpeed.x += movementSpeed * Math.min(1, (1 - distTop / _borderDetection));
         }
-        if (distBottom < borderDetection) {
-            currentSpeed.x -= movementSpeed * Math.min(1, (1 - distBottom / borderDetection));
+        if (distBottom < _borderDetection) {
+            _currentSpeed.x -= movementSpeed * Math.min(1, (1 - distBottom / _borderDetection));
         }
     }
 
@@ -85,40 +96,40 @@ public class TopViewController extends IGameController {
 
         if (GLFW.glfwGetKey(windowHandle, GLFW.GLFW_KEY_W) == GLFW.GLFW_PRESS ||
                 GLFW.glfwGetKey(windowHandle, GLFW.GLFW_KEY_UP) == GLFW.GLFW_PRESS) {
-            currentSpeed.x += movementSpeed;
+            _currentSpeed.x += movementSpeed;
         }
         if (GLFW.glfwGetKey(windowHandle, GLFW.GLFW_KEY_S) == GLFW.GLFW_PRESS ||
                 GLFW.glfwGetKey(windowHandle, GLFW.GLFW_KEY_DOWN) == GLFW.GLFW_PRESS) {
-            currentSpeed.x -= movementSpeed;
+            _currentSpeed.x -= movementSpeed;
         }
         if (GLFW.glfwGetKey(windowHandle, GLFW.GLFW_KEY_A) == GLFW.GLFW_PRESS ||
                 GLFW.glfwGetKey(windowHandle, GLFW.GLFW_KEY_RIGHT) == GLFW.GLFW_PRESS) {
-            currentSpeed.y += movementSpeed;
+            _currentSpeed.y += movementSpeed;
         }
         if (GLFW.glfwGetKey(windowHandle, GLFW.GLFW_KEY_D) == GLFW.GLFW_PRESS ||
                 GLFW.glfwGetKey(windowHandle, GLFW.GLFW_KEY_LEFT) == GLFW.GLFW_PRESS) {
-            currentSpeed.y -= movementSpeed;
+            _currentSpeed.y -= movementSpeed;
         }
         if (GLFW.glfwGetKey(windowHandle, GLFW.GLFW_KEY_Q) == GLFW.GLFW_PRESS ||
                 GLFW.glfwGetKey(windowHandle, GLFW.GLFW_KEY_DELETE) == GLFW.GLFW_PRESS) {
-            wantedYaw += deltaTime * 200;
+            _wantedYaw += deltaTime * 200;
         }
         if (GLFW.glfwGetKey(windowHandle, GLFW.GLFW_KEY_E) == GLFW.GLFW_PRESS ||
                 GLFW.glfwGetKey(windowHandle, GLFW.GLFW_KEY_PAGE_DOWN) == GLFW.GLFW_PRESS) {
-            wantedYaw -= deltaTime * 200;
+            _wantedYaw -= deltaTime * 200;
         }
 
         Vector3f forward = TypeHelper.getVector3(getScene().getCamera().getForwardVector());
         forward.z = 0;
         forward.normalize();
-        forward.mul(currentSpeed.x * deltaTime);
+        forward.mul(_currentSpeed.x * deltaTime);
 
         Vector3f right = TypeHelper.getVector3(getScene().getCamera().getRightVector());
         right.z = 0;
         right.normalize();
-        right.mul(currentSpeed.y * deltaTime);
-        targetPosition.add(forward);
-        targetPosition.add(right);
+        right.mul(_currentSpeed.y * deltaTime);
+        _targetPosition.add(forward);
+        _targetPosition.add(right);
     }
 
     @Override
@@ -137,8 +148,6 @@ public class TopViewController extends IGameController {
 
     @Override
     public void scrollCallback(double xOffset, double yOffset) {
-        if (yOffset != 0) wantedDistance *= (-yOffset) / 4 + 1;
-        if (wantedDistance > 200) wantedDistance = 200;
-        if (wantedDistance < 5) wantedDistance = 5;
+        if (yOffset != 0) setDistance(_wantedDistance *= (-yOffset) / 4 + 1);
     }
 }

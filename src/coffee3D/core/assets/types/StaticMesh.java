@@ -6,7 +6,6 @@ import coffee3D.core.renderer.RenderUtils;
 import coffee3D.core.resources.factories.ImportZAxis;
 import coffee3D.core.resources.factories.MeshFactory;
 import coffee3D.core.io.log.Log;
-import coffee3D.core.io.settings.EngineSettings;
 import coffee3D.core.renderer.debug.DebugRenderer;
 import coffee3D.core.renderer.scene.Scene;
 import coffee3D.core.resources.types.MeshResource;
@@ -96,12 +95,7 @@ public class StaticMesh extends Asset {
 
         for (int i = 0; i < _materials.size(); ++i) {
             MaterialInterface foundMat = _materials.get(i).get();
-            if (foundMat != null) {
-                materialRefs[i] = foundMat;
-            }
-            else {
-                materialRefs[i] = null;
-            }
+            materialRefs[i] = foundMat;
         }
         return materialRefs;
     }
@@ -157,12 +151,12 @@ public class StaticMesh extends Asset {
 
     public void drawBound(Scene context) {
         if (_sections != null) {
-            for (int i = 0; i < _sections.length; ++i) {
-                Vector3f pos = TypeHelper.getVector3(_sections[i].getStaticBounds().position);
+            for (MeshResource section : _sections) {
+                Vector3f pos = TypeHelper.getVector3(section.getStaticBounds().position);
                 _modelMatrix.transformPosition(pos);
                 Vector3f scale = TypeHelper.getVector3();
                 _modelMatrix.getScale(scale);
-                DebugRenderer.DrawDebugSphere(context, pos, _sections[i].getStaticBounds().radius * Math.max(scale.x, Math.max(scale.y, scale.z)), 20, Color.GREEN);
+                DebugRenderer.DrawDebugSphere(context, pos, section.getStaticBounds().radius * Math.max(scale.x, Math.max(scale.y, scale.z)), 20, Color.GREEN);
             }
             Vector3f myPos = TypeHelper.getVector3(getBound().position);
             Vector3f myScale = TypeHelper.getVector3();

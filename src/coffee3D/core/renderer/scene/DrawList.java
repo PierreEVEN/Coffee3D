@@ -1,7 +1,6 @@
 package coffee3D.core.renderer.scene;
 
 import coffee3D.core.assets.types.StaticMesh;
-import coffee3D.core.io.log.Log;
 import coffee3D.core.renderer.scene.Components.StaticMeshComponent;
 import org.joml.FrustumIntersection;
 import org.joml.Matrix4f;

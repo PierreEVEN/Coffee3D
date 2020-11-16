@@ -2,7 +2,6 @@ package coffee3D.core.assets.types;
 
 import coffee3D.core.assets.Asset;
 import coffee3D.core.assets.AssetReference;
-import coffee3D.core.io.log.Log;
 import coffee3D.core.renderer.RenderUtils;
 import coffee3D.core.renderer.scene.RenderScene;
 import coffee3D.core.renderer.scene.Scene;
@@ -15,7 +14,6 @@ import java.io.File;
 
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glBindTexture;
-import static org.lwjgl.opengl.GL13.*;
 
 /**
  * usage :

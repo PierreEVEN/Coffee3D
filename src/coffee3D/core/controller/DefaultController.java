@@ -19,6 +19,10 @@ public class DefaultController extends IGameController {
         super(scene);
     }
 
+    public float getMouseSensitivity() { return _mouseSensitivity; }
+    public void setMouseSensitivity(float sensitivity) { _mouseSensitivity = sensitivity; }
+
+
     @Override
     public void update() {
         double deltaTime = Window.GetPrimaryWindow().getDeltaTime();
