@@ -136,14 +136,13 @@ public class MaterialResource extends GraphicResource {
         value.get(bfr);
         glUniformMatrix4fv(location, false, bfr);
     }
-
+    private static final FloatBuffer _matrixBuffer = createFloatBuffer(16);
     public void setMatrixParameter(String parameterName, Matrix4f value) {
         use(null);
         Integer location = _uniforms.get(parameterName);
         if (location == null) return;
-        final FloatBuffer bfr = createFloatBuffer(16);
-        value.get(bfr);
-        glUniformMatrix4fv(location, false, bfr);
+        value.get(_matrixBuffer);
+        glUniformMatrix4fv(location, false, _matrixBuffer);
     }
 
     public void setColorParameter(String parameterName, Color color) {

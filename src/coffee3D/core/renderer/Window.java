@@ -7,6 +7,7 @@ import coffee3D.core.assets.types.Font;
 import coffee3D.core.io.log.Log;
 import coffee3D.core.io.settings.EngineSettings;
 import coffee3D.core.io.settings.GameSettings;
+import coffee3D.core.renderer.scene.Components.ComponentManager;
 import coffee3D.core.resources.ResourceManager;
 import coffee3D.core.resources.factories.FontFactory;
 import coffee3D.core.types.TypeHelper;
@@ -21,6 +22,7 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWFramebufferSizeCallback;
 
+import java.awt.*;
 import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
 
@@ -62,6 +64,7 @@ public class Window {
         Log.Display("~ Loading Coffee3D v" + Engine.GetEngineVersion() + " ~");
 
         GameSettings.ScanSettings();
+        ComponentManager.RegisterBaseComponents();
 
         _engineModule = engineModule;
 
@@ -173,13 +176,15 @@ public class Window {
         RenderUtils.CheckGLErrors();
     }
 
+    private static final IntBuffer winWidth = BufferUtils.createIntBuffer(1);
+    private static final IntBuffer winHeight = BufferUtils.createIntBuffer(1);
+    private static final IntBuffer fbWidth = BufferUtils.createIntBuffer(1);
+    private static final IntBuffer fbHeight = BufferUtils.createIntBuffer(1);
+    private static final DoubleBuffer mousePosX = BufferUtils.createDoubleBuffer(1);
+    private static final DoubleBuffer mousePosY = BufferUtils.createDoubleBuffer(1);
+
     private void initUI() {
-        IntBuffer winWidth = BufferUtils.createIntBuffer(1);
-        IntBuffer winHeight = BufferUtils.createIntBuffer(1);
-        IntBuffer fbWidth = BufferUtils.createIntBuffer(1);
-        IntBuffer fbHeight = BufferUtils.createIntBuffer(1);
-        DoubleBuffer mousePosX = BufferUtils.createDoubleBuffer(1);
-        DoubleBuffer mousePosY = BufferUtils.createDoubleBuffer(1);
+
 
         glfwGetWindowSize(_glfwWindowHandle, winWidth, winHeight);
         glfwGetFramebufferSize(_glfwWindowHandle, fbWidth, fbHeight);

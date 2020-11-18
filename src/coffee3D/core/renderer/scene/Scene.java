@@ -3,6 +3,7 @@ package coffee3D.core.renderer.scene;
 import coffee3D.core.assets.AssetReference;
 import coffee3D.core.assets.types.World;
 import coffee3D.core.io.log.Log;
+import coffee3D.core.navigation.NavmeshComponent;
 import coffee3D.core.renderer.RenderMode;
 import coffee3D.core.renderer.RenderUtils;
 import coffee3D.core.renderer.scene.Components.Camera;
@@ -123,13 +124,14 @@ public class Scene {
 
     private void loadFromFile(String filePath) {
         try {
+            _components.clear();
             FileInputStream fis = new FileInputStream(filePath);
             ObjectInputStream ois = new ObjectInputStream(fis);
             ArrayList<SceneComponent> comps = (ArrayList<SceneComponent>) ois.readObject();
             _sceneProperties = (SceneProperty) ois.readObject();
-            _components.clear();
             if (comps != null) {
                 for (SceneComponent comp : comps) {
+                    if (comp instanceof NavmeshComponent) continue;
                     comp.attachToScene(this);
                 }
             }

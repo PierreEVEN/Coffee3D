@@ -34,6 +34,7 @@ import imgui.flag.ImGuiStyleVar;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
+import sun.reflect.Reflection;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -63,10 +64,6 @@ public class LevelEditorViewport extends SceneViewport {
                 if (ImGui.menuItem("load")) new AssetPicker("select level", _sceneContext.getSource(), () -> {
                     _sceneContext.load(_sceneContext.getSource().get());
                 });
-                ImGui.endMenu();
-            }
-            if (ImGui.beginMenu("add")) {
-                if (ImGui.menuItem("Navmesh")) addNavmesh();
                 ImGui.endMenu();
             }
             if (ImGui.beginMenu("debug")) {
@@ -176,12 +173,6 @@ public class LevelEditorViewport extends SceneViewport {
         }
     }
 
-    private void addNavmesh() {
-        NavmeshComponent navmesh = new NavmeshComponent(new Vector3f(0), new Quaternionf().identity(), new Vector3f(1));
-        navmesh.attachToScene(getScene());
-        navmesh.setComponentName("navmesh");
-    }
-
     public void editComponent(SceneComponent comp) {
         ((EditorScene)getScene()).getGizmo().setComponent(comp);
         if (_inspector == null) _inspector = new ComponentInspector("component inspector");
@@ -234,19 +225,8 @@ public class LevelEditorViewport extends SceneViewport {
                     }
                 } break;
                 case GLFW.GLFW_KEY_V : {
-                    if (mods == GLFW.GLFW_MOD_CONTROL) {
-                        pastSelected();
-                    }
-                } break;
-                case GLFW.GLFW_KEY_D : {
-                    if (mods == GLFW.GLFW_MOD_ALT) {
-                        copySelected();
-                        SceneComponent lastParent = getEditedComponent().getParent();
-                        if (pastSelected() != null) {
-                            if (lastParent == null) getEditedComponent().attachToScene(_sceneContext);
-                            else getEditedComponent().attachToComponent(lastParent);
-                            getGizmo().beginTranslation(true);
-                        }
+                    if ((mods & GLFW.GLFW_MOD_CONTROL) != 0) {
+                        pastSelected((mods & GLFW.GLFW_MOD_SHIFT) != 0);
                     }
                 } break;
                 case GLFW.GLFW_KEY_DELETE : deleteSelected(); break;
@@ -293,11 +273,14 @@ public class LevelEditorViewport extends SceneViewport {
         if (getEditedComponent() != null) Clipboard.Write(LevelEditorViewport.SerializeHierarchy(getEditedComponent()));
     }
 
-    public SceneComponent pastSelected() {
+    public SceneComponent pastSelected(boolean toChild) {
         SceneComponent newComp = DeserializeHierarchy(Clipboard.Get());
         if (newComp != null) {
-            if (getEditedComponent() != null && getEditedComponent().getParent() != null) {
+            if (getEditedComponent() != null && getEditedComponent().getParent() != null && !toChild) {
                 newComp.attachToComponent(getEditedComponent().getParent());
+            }
+            else if (toChild && getEditedComponent() != null) {
+                newComp.attachToComponent(getEditedComponent());
             }
             else {
                 newComp.attachToScene(_sceneContext);

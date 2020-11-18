@@ -7,11 +7,12 @@ import org.joml.Matrix4f;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 public class DrawList {
 
     private final FrustumIntersection _frustum = new FrustumIntersection();
-    private final LinkedList<SceneComponent> frustumDrawList = new LinkedList<>();
+    private final List<SceneComponent> frustumDrawList = new ArrayList<>();
     private final Matrix4f projectionMatrix = new Matrix4f();
 
     public void build(ArrayList<SceneComponent> components, Matrix4f viewMatrix, Matrix4f viewportMatrix) {

@@ -57,7 +57,7 @@ public class AssetReference <T> implements Serializable {
     public String getName() { return _assetName; }
 
     public void set(T asset) {
-        if (asset != null && (!_assetClass.isAssignableFrom(asset.getClass()))) return;
+        if ((asset != null && (!_assetClass.isAssignableFrom(asset.getClass()))) || _asset == asset) return;
         _asset = asset;
         _assetName = asset == null ? null : ((Asset)asset).getName();
         bindEvent();

@@ -2,6 +2,8 @@ package coffee3D.editor.ui.levelEditor.tools;
 
 import coffee3D.core.io.inputs.GlfwInputHandler;
 import coffee3D.core.io.inputs.IInputListener;
+import coffee3D.core.renderer.scene.Components.ComponentManager;
+import coffee3D.core.renderer.scene.RenderScene;
 import coffee3D.core.renderer.scene.Scene;
 import coffee3D.core.renderer.scene.SceneComponent;
 import coffee3D.core.ui.subWindows.SubWindow;
@@ -11,6 +13,7 @@ import imgui.flag.ImGuiDragDropFlags;
 import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiTreeNodeFlags;
 import imgui.type.ImString;
+import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
@@ -84,7 +87,16 @@ public class SceneOutliner extends SubWindow {
         ImGui.pushStyleVar(ImGuiStyleVar.FramePadding, 10, 3);
         ImGui.text("search");
         ImGui.sameLine();
+        ImGui.setNextItemWidth(ImGui.getContentRegionAvailWidth() - 150);
         ImGui.inputText("##searchBox", searchString);
+        ImGui.sameLine();
+        if (ImGui.button("add component", ImGui.getContentRegionAvailX(), 25)) {
+            ImGui.openPopup("POPUP_ADD_COMPONENT");
+        }
+        if (ImGui.beginPopup("POPUP_ADD_COMPONENT")) {
+            drawAddComponentPopup();
+            ImGui.endPopup();
+        }
         ImGui.popStyleVar();
         ImGui.separator();
         if (ImGui.beginChild("SceneOutlinerList")) {
@@ -93,6 +105,18 @@ public class SceneOutliner extends SubWindow {
             }
         }
         ImGui.endChild();
+    }
+
+    private void drawAddComponentPopup() {
+        for (Class<?> cl : ComponentManager.GetComponents()) {
+            if (ImGui.menuItem(cl.getSimpleName())) {
+                ComponentManager.CreateComponent(cl, (RenderScene) _parentScene,
+                        new Vector3f(
+                                ((RenderScene)_parentScene).getCamera().getForwardVector())
+                                .mul(2)
+                                .add(((RenderScene)_parentScene).getCamera().getWorldPosition()));
+            }
+        }
     }
 
     @Override
@@ -116,7 +140,7 @@ public class SceneOutliner extends SubWindow {
                 } break;
                 case GLFW.GLFW_KEY_V : {
                     if (mods == GLFW.GLFW_MOD_CONTROL) {
-                        _parentViewport.pastSelected();
+                        _parentViewport.pastSelected((mods & GLFW.GLFW_MOD_SHIFT) != 0);
                     }
                 } break;
                 case GLFW.GLFW_KEY_DELETE : {

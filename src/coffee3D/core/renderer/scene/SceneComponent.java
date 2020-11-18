@@ -1,16 +1,12 @@
 package coffee3D.core.renderer.scene;
 
-import coffee3D.core.assets.types.MaterialInterface;
 import coffee3D.core.assets.types.Texture2D;
-import coffee3D.core.io.settings.EngineSettings;
 import coffee3D.core.renderer.AssetReferences;
-import coffee3D.core.renderer.RenderMode;
 import coffee3D.core.renderer.RenderUtils;
 import coffee3D.core.resources.factories.MaterialFactory;
 import coffee3D.core.resources.factories.MeshFactory;
 import coffee3D.core.resources.types.MaterialResource;
 import coffee3D.core.resources.types.MeshResource;
-import coffee3D.core.resources.types.Texture2DResource;
 import coffee3D.core.resources.types.TextureResource;
 import coffee3D.core.types.SphereBound;
 import coffee3D.core.types.Vertex;
@@ -25,14 +21,14 @@ import java.util.List;
 
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glBindTexture;
-import static org.lwjgl.opengl.GL13.*;
 
 public class SceneComponent implements Serializable {
     private static final long serialVersionUID = 744620683032598971L;
 
-    protected String _componentName;
     private transient int _stencilValue;
     private transient boolean _isSelected;
+
+    protected String _componentName;
 
     public int getStencilValue() { return _stencilValue; }
     public void setStencilValue(int stencilValue) { _stencilValue = stencilValue; }
@@ -56,9 +52,9 @@ public class SceneComponent implements Serializable {
      * @param scale    relative scale
      */
     public SceneComponent(Vector3f position, Quaternionf rotation, Vector3f scale) {
-        _position = position;
-        _rotation = rotation;
-        _scale = scale;
+        _position.set(position);
+        _rotation.set(rotation);
+        _scale.set(scale);
 
         _componentName = getClass().getSimpleName();
         _stencilValue = 0;
@@ -179,32 +175,31 @@ public class SceneComponent implements Serializable {
     /**
      * relative position
      */
-    protected Vector3f _position;
+    protected final Vector3f _position = new Vector3f();
 
     /**
      * relative rotation
      */
-    protected Quaternionf _rotation;
+    protected final Quaternionf _rotation = new Quaternionf();
 
     /**
      * relative scale
      */
-    protected Vector3f _scale;
+    protected final Vector3f _scale = new Vector3f();
 
-    private transient Vector3f _forwardVector = new Vector3f();
-    private transient Vector3f _rightVector = new Vector3f();
-    private transient Vector3f _upVector = new Vector3f();
-    private transient Vector3f _eulerAngles = new Vector3f();
-    private transient Vector3f _worldPosition = new Vector3f();
-    private transient Matrix4f relativeTransformationMatrix = new Matrix4f();
-    private transient Matrix4f worldTransformationMatrix = new Matrix4f();
+    private final static Vector3f _forwardVector = new Vector3f();
+    private final static Vector3f _rightVector = new Vector3f();
+    private final static Vector3f _upVector = new Vector3f();
+    private final static Vector3f _eulerAngles = new Vector3f();
+    private final static Vector3f _worldPosition = new Vector3f();
+    private final static Matrix4f _relativeTransformationMatrix = new Matrix4f();
+    private final static Matrix4f _worldTransformationMatrix = new Matrix4f();
 
     /**
      * get component position relative to it's parent
      * @return local position
      */
     public Vector3f getWorldPosition() {
-        if (_worldPosition == null) _worldPosition = new Vector3f();
         return _parent == null ?
                 getRelativePosition() :
                 getWorldTransformationMatrix().transformPosition(_worldPosition);
@@ -233,8 +228,7 @@ public class SceneComponent implements Serializable {
      * @return relative transform
      */
     public Matrix4f getRelativeTransformationMatrix() {
-        if (relativeTransformationMatrix == null) relativeTransformationMatrix = new Matrix4f();
-        return relativeTransformationMatrix
+        return _relativeTransformationMatrix
                 .identity()
                 .translate(getRelativePosition())
                 .rotate(getRelativeRotation())
@@ -247,8 +241,7 @@ public class SceneComponent implements Serializable {
      */
     public Matrix4f getWorldTransformationMatrix() {
         if (_parent != null) {
-            if (worldTransformationMatrix == null) worldTransformationMatrix = new Matrix4f();
-            return worldTransformationMatrix.set(_parent.getWorldTransformationMatrix()).mul(getRelativeTransformationMatrix());
+            return _worldTransformationMatrix.set(_parent.getWorldTransformationMatrix()).mul(getRelativeTransformationMatrix());
         }
         else {
             return getRelativeTransformationMatrix();
@@ -278,7 +271,6 @@ public class SceneComponent implements Serializable {
      * @return local roll axis
      */
     public float getRoll() {
-        if (_eulerAngles == null) _eulerAngles = new Vector3f();
         getRelativeRotation().getEulerAnglesXYZ(_eulerAngles);
         return _eulerAngles.x;
     }
@@ -288,7 +280,6 @@ public class SceneComponent implements Serializable {
      * @return local pitch axis
      */
     public float getPitch() {
-        if (_eulerAngles == null) _eulerAngles = new Vector3f();
         getRelativeRotation().getEulerAnglesXYZ(_eulerAngles);
         return _eulerAngles.z;
     }
@@ -298,7 +289,6 @@ public class SceneComponent implements Serializable {
      * @return local yaw axis
      */
     public float getYaw() {
-        if (_eulerAngles == null) _eulerAngles = new Vector3f();
         getRelativeRotation().getEulerAnglesXYZ(_eulerAngles);
         return _eulerAngles.y;
     }
@@ -308,7 +298,6 @@ public class SceneComponent implements Serializable {
      * @return forward vector
      */
     public Vector3f getForwardVector() {
-        if (_forwardVector == null) _forwardVector = new Vector3f();
         _rotation.transform(_forwardVector.set(1, 0,0));
         return _forwardVector;
     }
@@ -318,7 +307,6 @@ public class SceneComponent implements Serializable {
      * @return right vector
      */
     public Vector3f getRightVector() {
-        if (_rightVector == null) _rightVector = new Vector3f();
         _rotation.transform(_rightVector.set(0, 1,0));
         return _rightVector;
     }
@@ -328,7 +316,6 @@ public class SceneComponent implements Serializable {
      * @return up vector
      */
     public Vector3f getUpVector() {
-        if (_upVector == null) _upVector = new Vector3f();
         _rotation.transform(_upVector.set(0, 0,1));
         return _upVector;
     }

@@ -66,7 +66,7 @@ public class StructureReader {
     }
 
     private static void WriteField(Field field, Object obj) {
-        if (Modifier.isStatic(field.getModifiers()) || Modifier.isFinal(field.getModifiers()) || Modifier.isPrivate(field.getModifiers())) return;
+        if (Modifier.isStatic(field.getModifiers()) || Modifier.isPrivate(field.getModifiers())) return;
         field.setAccessible(true);
         debugIndex++;
 
