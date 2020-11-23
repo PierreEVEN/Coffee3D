@@ -2,18 +2,16 @@ package coffee3D.editor;
 
 import coffee3D.core.assets.Asset;
 import coffee3D.core.assets.AssetManager;
-import coffee3D.core.audio.AudioListener;
 import coffee3D.core.controller.IGameController;
 import coffee3D.core.IEngineModule;
 import coffee3D.core.io.settings.EngineSettings;
 import coffee3D.core.renderer.RenderUtils;
-import coffee3D.core.renderer.scene.RenderScene;
 import coffee3D.core.renderer.scene.RenderSceneSettings;
 
 import coffee3D.editor.controller.EditorController;
 
 import coffee3D.editor.renderer.EditorScene;
-import coffee3D.editor.ui.browsers.ContentBrowser;
+import coffee3D.editor.ui.browsers.SceneContentBrowser;
 import coffee3D.editor.ui.EditorUI;
 import coffee3D.editor.ui.levelEditor.LevelEditorViewport;
 import coffee3D.editor.ui.propertyHelper.FieldWriter;
@@ -45,7 +43,7 @@ public class EditorModule extends IEngineModule {
 
         /* load default widgets */
         new LevelEditorViewport(_rootScene, "viewport");
-        new ContentBrowser("Content browser");
+        new SceneContentBrowser("Content browser");
         new Console("Console");
     }
 

@@ -4,6 +4,7 @@ import imgui.ImGui;
 import imgui.ImVec2;
 import imgui.flag.ImGuiWindowFlags;
 import imgui.type.ImBoolean;
+import imgui.type.ImInt;
 
 final class HudNodePosition {
     private HudNodePosition() {}
@@ -89,6 +90,14 @@ public final class HudUtils {
                 }
                 EndContainer();
             }
+        }
+        EndContainer();
+    }
+
+    public static void WidgetSwitcher(NodeAnchor anchor, PixelOffset offset, IDrawContent[] content, ImInt currentElement) {
+        if (currentElement == null || currentElement.get() < 0 || currentElement.get() >= content.length) return;
+        if (BeginContainer(anchor, offset)) {
+            content[currentElement.get()].draw();
         }
         EndContainer();
     }

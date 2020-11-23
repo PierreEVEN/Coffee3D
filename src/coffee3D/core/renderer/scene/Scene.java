@@ -12,9 +12,11 @@ import coffee3D.editor.ui.importers.WorldCreator;
 import org.joml.Matrix4f;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
+
 import static org.lwjgl.opengl.GL11.GL_SELECT;
 
-public class Scene {
+public abstract class Scene implements IScene {
     private ArrayList<SceneComponent> _components;
 
     protected SceneProperty _sceneProperties;
@@ -29,7 +31,8 @@ public class Scene {
 
     public SceneProperty getProperties() { return _sceneProperties; }
 
-    public ArrayList<SceneComponent> getComponents() {
+    @Override
+    public List<SceneComponent> getComponents() {
         return _components;
     }
 
@@ -39,7 +42,8 @@ public class Scene {
      *
      * @param rootComponent attached component
      */
-    protected void attachComponent(SceneComponent rootComponent) {
+    @Override
+    public void attachComponent(SceneComponent rootComponent) {
         if (rootComponent != null && !_components.contains(rootComponent)) {
             _components.add(rootComponent);
         }
@@ -51,7 +55,8 @@ public class Scene {
      *
      * @param rootComponent detached component
      */
-    protected void detachComponent(SceneComponent rootComponent) {
+    @Override
+    public void detachComponent(SceneComponent rootComponent) {
         if (rootComponent != null && _components.contains(rootComponent)) {
             _components.remove(rootComponent);
         }
@@ -131,7 +136,6 @@ public class Scene {
             _sceneProperties = (SceneProperty) ois.readObject();
             if (comps != null) {
                 for (SceneComponent comp : comps) {
-                    if (comp instanceof NavmeshComponent) continue;
                     comp.attachToScene(this);
                 }
             }
@@ -140,5 +144,10 @@ public class Scene {
         } catch (Exception e) {
             Log.Warning("failed to deserialize scene : " + e.getMessage());
         }
+    }
+
+    @Override
+    public Matrix4f getSceneTransform() {
+        return null;
     }
 }

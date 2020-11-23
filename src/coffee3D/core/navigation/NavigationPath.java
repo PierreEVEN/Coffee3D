@@ -29,8 +29,9 @@ public class NavigationPath {
 
     public boolean move(Vector3f position, float speed, float smoothness) {
         if (currentIndex >= _pathPoints.length) return true;
-        if (_pathPoints[currentIndex].distance(position) == 0) {
+        if (_pathPoints[currentIndex].distance(position) < 0.05) {
             currentIndex++;
+            if (currentIndex >= _pathPoints.length) return true;
         }
 
 
@@ -46,7 +47,6 @@ public class NavigationPath {
             _direction.mul((float) (speed * delta));
         }
         position.add(_direction);
-        //Interpolation.VInterpTo(position, _direction, smoothness);
         return false;
     }
 }

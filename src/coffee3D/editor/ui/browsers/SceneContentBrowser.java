@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public class ContentBrowser extends SubWindow {
+public class SceneContentBrowser extends SubWindow {
     private boolean _bSetColumnWidth = false;
     private ImBoolean _bShowAllContent = new ImBoolean(false);
     private File _selectedFile;
@@ -30,7 +30,7 @@ public class ContentBrowser extends SubWindow {
     private final ImBoolean _filterBool = new ImBoolean();
 
 
-    public ContentBrowser(String windowName) {
+    public SceneContentBrowser(String windowName) {
         super(windowName);
 
         _selectedFile = EngineSettings.Get().gameAssetsPath;
@@ -54,6 +54,7 @@ public class ContentBrowser extends SubWindow {
             if (ImGui.menuItem("Material instance")) new MaterialInstanceImporter("create material instance");
             if (ImGui.menuItem("Texture2D")) new TextureImporter("Texture importer");
             if (ImGui.menuItem("Font")) new FontImporter("Font importer");
+            if (ImGui.menuItem("Skeleton")) new AnimationImporter("SkeletalMesh");
             //if (ImGui.menuItem("Audio")) new AudioImporter("Audio importer");
             ImGui.endPopup();
         }

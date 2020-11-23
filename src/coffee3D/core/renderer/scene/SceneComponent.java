@@ -363,7 +363,7 @@ public class SceneComponent implements Serializable {
     /**
      * parent scene
      */
-    private transient Scene _parentScene;
+    private transient IScene _parentScene;
 
     public List<SceneComponent> getChildren() { return _children; }
 
@@ -372,7 +372,7 @@ public class SceneComponent implements Serializable {
      * (also detach this component from it's previous parent)
      * @param parentScene parent scene
      */
-    public void attachToScene(Scene parentScene) {
+    public void attachToScene(IScene parentScene) {
         if (parentScene == null) return;
         detach();
         _parentScene = parentScene;

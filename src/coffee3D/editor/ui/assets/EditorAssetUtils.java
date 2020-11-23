@@ -1,11 +1,13 @@
 package coffee3D.editor.ui.assets;
 
+import coffee3D.core.animation.SkeletalMesh;
 import coffee3D.core.assets.Asset;
 import coffee3D.core.assets.types.Font;
 import coffee3D.core.assets.types.Material;
 import coffee3D.core.io.log.Log;
 import coffee3D.core.resources.types.TextureResource;
 import coffee3D.core.types.TypeHelper;
+import coffee3D.editor.ui.animationEditor.AnimationViewport;
 import coffee3D.editor.ui.tools.AssetWindow;
 import imgui.ImColor;
 import imgui.ImGui;
@@ -45,7 +47,12 @@ public class EditorAssetUtils {
             if (asset instanceof Font) asset.use(null);
             ImGui.dummy(0, 4);
             if (ImGui.button(("#" + asset.getName() + (asset.isDirty() ? "*" : "")), 64, 64)) {
-                new AssetWindow(asset, asset.getName());
+                if (asset instanceof SkeletalMesh) {
+                    new AnimationViewport((SkeletalMesh) asset, "animationEditor");
+                }
+                else {
+                    new AssetWindow(asset, asset.getName());
+                }
             }
             if (asset instanceof Font) ((Font)asset).pop();
         } else {

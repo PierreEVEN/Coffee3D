@@ -17,6 +17,7 @@ public abstract class AssetImporter extends SubWindow {
     private ImString _targetFileName;
     private File _selectedTarget;
     public String[] _extensionFilter = null;
+    protected boolean bHasSource = true;
 
     public AssetImporter(String windowName) {
         super(windowName);
@@ -30,7 +31,7 @@ public abstract class AssetImporter extends SubWindow {
     public String getTargetFilePath() { return _selectedTarget.getPath() + "/" + _targetFileName.get() + ".asset"; }
 
     public boolean canImport() {
-        if (_selectedSource == null) return false;
+        if (_selectedSource == null && bHasSource) return false;
         if (_targetFileName == null) return false;
         if (_selectedTarget == null) return false;
         if (!isNameValid()) return false;
@@ -45,18 +46,19 @@ public abstract class AssetImporter extends SubWindow {
 
     @Override
     protected void draw() {
-        ImGui.text("source file : ");
-        ImGui.sameLine();
-        if (ImGui.button(_selectedSource == null ? "pick file" : _selectedSource.getPath())) {
-            new FileBrowser("Select asset file", _extensionFilter, _selectedSource, (file) -> {
-                _selectedSource = file;
-                if (_targetFileName.get().equals("") && _selectedSource != null) {
-                    _targetFileName.set(_selectedSource.getName().replaceFirst("[.][^.]+$", ""));
-                }
-                onSourceChanged();
-            });
+        if (bHasSource) {
+            ImGui.text("source file : ");
+            ImGui.sameLine();
+            if (ImGui.button(_selectedSource == null ? "pick file" : _selectedSource.getPath())) {
+                new FileBrowser("Select asset file", _extensionFilter, _selectedSource, (file) -> {
+                    _selectedSource = file;
+                    if (_targetFileName.get().equals("") && _selectedSource != null) {
+                        _targetFileName.set(_selectedSource.getName().replaceFirst("[.][^.]+$", ""));
+                    }
+                    onSourceChanged();
+                });
+            }
         }
-
         ImGui.text("target path : ");
         ImGui.sameLine();
         if (ImGui.button(_selectedTarget.getPath())) {

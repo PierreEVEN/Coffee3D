@@ -15,7 +15,14 @@ public class Interpolation {
         else return Math.max(to, from - deltaSpeed);
     }
 
-    public static void VInterpTo(Vector3f from, Vector3f to, float speed) {
+    private static final Vector3f direction = new Vector3f();
 
+    public static void VInterpToConstant(Vector3f from, Vector3f to, float speed) {
+        if (to.equals(from)) {
+            return;
+        }
+        direction.set(to).sub(from).normalize();
+        direction.mul(speed);
+        from.add(direction);
     }
 }

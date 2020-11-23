@@ -15,12 +15,12 @@ public class DrawList {
     private final List<SceneComponent> frustumDrawList = new ArrayList<>();
     private final Matrix4f projectionMatrix = new Matrix4f();
 
-    public void build(ArrayList<SceneComponent> components, Matrix4f viewMatrix, Matrix4f viewportMatrix) {
+    public void build(List<SceneComponent> components, Matrix4f viewMatrix, Matrix4f viewportMatrix) {
         fill(components, viewMatrix, viewportMatrix);
         sortDrawList();
     }
 
-    private void fill(ArrayList<SceneComponent> components, Matrix4f viewMatrix, Matrix4f projection) {
+    private void fill(List<SceneComponent> components, Matrix4f viewMatrix, Matrix4f projection) {
         frustumDrawList.clear();
         _frustum.set(projectionMatrix.set(projection).mul(viewMatrix));
         for (int i = 0; i < components.size(); ++i) {

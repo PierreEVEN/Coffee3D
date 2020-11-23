@@ -1,26 +1,17 @@
 package coffee3D.editor.ui;
 
-import coffee3D.core.audio.AudioListener;
-import coffee3D.core.io.log.Log;
-import coffee3D.core.io.settings.EngineSettings;
 import coffee3D.core.renderer.scene.RenderScene;
 import coffee3D.core.renderer.Window;
-import coffee3D.core.ui.hud.HudUtils;
-import coffee3D.editor.EditorModule;
-import coffee3D.editor.ui.browsers.ContentBrowser;
+import coffee3D.editor.ui.browsers.SceneContentBrowser;
 import coffee3D.editor.ui.browsers.EngineSettingsViewer;
 import coffee3D.editor.ui.browsers.ResourcesViewer;
-import coffee3D.editor.ui.importers.*;
 import coffee3D.editor.ui.levelEditor.LevelEditorViewport;
-import coffee3D.editor.ui.tools.StatWindow;
 import coffee3D.editor.ui.tools.StyleEditor;
 import imgui.ImGui;
 import imgui.ImVec2;
 import imgui.flag.ImGuiDockNodeFlags;
 import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiWindowFlags;
-
-import static org.lwjgl.opengl.GL11.*;
 
 public class EditorUI {
 
@@ -43,7 +34,7 @@ public class EditorUI {
             }
             if (ImGui.beginMenu("Window")) {
                 if (ImGui.menuItem("Viewport")) new LevelEditorViewport((RenderScene) context, "Scene viewport");
-                if (ImGui.menuItem("Content browser")) new ContentBrowser("Content browser");
+                if (ImGui.menuItem("Content browser")) new SceneContentBrowser("Content browser");
                 ImGui.separator();
                 if (ImGui.menuItem("Resource viewer")) new ResourcesViewer("resource viewer");
                 ImGui.separator();

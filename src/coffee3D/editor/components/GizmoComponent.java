@@ -230,17 +230,20 @@ public class GizmoComponent extends SceneComponent implements IInputListener {
 
         switch (getGizmoMovementMode()) {
             case moveX: {
-                    float offset = _movementVector.dot(_attachedComponent.getForwardVector());
-                    _attachedComponent.addLocalOffset(_localMovement.set(dist * (1 / offset), 0, 0));
-                } break;
+                float offset = _movementVector.dot(_attachedComponent.getForwardVector());
+                _attachedComponent.addLocalOffset(_localMovement.set(dist * (1 / offset), 0, 0));
+                break;
+            }
             case moveY: {
                 float offset = _movementVector.dot(_attachedComponent.getRightVector());
                 _attachedComponent.addLocalOffset(_localMovement.set(0, dist * (1 / offset), 0));
-            } break;
+                break;
+            }
             case moveZ: {
                 float offset = _movementVector.dot(_attachedComponent.getUpVector());
                 _attachedComponent.addLocalOffset(_localMovement.set(0, 0, dist * (1 / offset)));
-            } break;
+                break;
+            }
         }
     }
 

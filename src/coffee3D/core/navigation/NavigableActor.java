@@ -46,8 +46,11 @@ public class NavigableActor extends SceneComponent {
 
         super.tick(context, deltaTime);
         nextPosition.set(getRelativePosition());
-        if (_path.move(nextPosition, 4, 10))  {
-            _navmesh = null;
+        if (_path != null)
+        {
+            if (_path.move(nextPosition, 4, 1))  {
+                _navmesh = null;
+            }
         }
         setRelativePosition(nextPosition);
     }
