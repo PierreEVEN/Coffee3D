@@ -1,5 +1,6 @@
 package coffee3D.core.types;
 
+import imgui.ImGui;
 import org.joml.Vector4f;
 
 import java.io.Serializable;
@@ -23,6 +24,11 @@ public class Color implements Serializable {
 
     public Vector4f getVector() { return _color; }
     public float getPower() { return _power; }
+
+    public int asInt() {
+        return ImGui.getColorU32(_color.x, _color.y, _color.z, _color.w);
+    }
+
 
     public final static Color RED = new Color(1,0,0,1);
     public final static Color GREEN = new Color(0,1,0,1);

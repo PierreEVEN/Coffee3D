@@ -54,19 +54,16 @@ public final class HudUtils {
     }
 
     public static boolean BorderContainer(NodeAnchor anchor, PixelOffset offset, ImageParams image) {
-        if (BeginContainer(anchor, offset)) {
 
-            HudNodePosition pos = HudNodePosition.Get(anchor, offset);
-            if (image._textureId >= 0) {
-                ImGui.getWindowDrawList().addImageRounded(image._textureId, pos.posX, pos.posY, pos.posX + pos.sizeX, pos.posY + pos.sizeY, 0, 1, 1, 0, image._color, image._rounding);
-            }
-            else {
-                ImGui.getWindowDrawList().addRectFilled(pos.posX, pos.posY, pos.posX + pos.sizeX, pos.posY + pos.sizeY, image._color);
-            }
-
-            return true;
+        HudNodePosition pos = HudNodePosition.Get(anchor, offset);
+        if (image._textureId >= 0) {
+            ImGui.getWindowDrawList().addImageRounded(image._textureId, pos.posX, pos.posY, pos.posX + pos.sizeX, pos.posY + pos.sizeY, 0, 1, 1, 0, image._color, image._rounding);
+        } else {
+            ImGui.getWindowDrawList().addRectFilled(pos.posX, pos.posY, pos.posX + pos.sizeX, pos.posY + pos.sizeY, image._color);
         }
-        return false;
+
+
+        return BeginContainer(anchor, offset);
     }
 
     public static void VerticalBox(NodeAnchor anchor, PixelOffset offset, IDrawContent[] content) {
