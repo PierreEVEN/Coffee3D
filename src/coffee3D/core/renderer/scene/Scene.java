@@ -3,9 +3,6 @@ package coffee3D.core.renderer.scene;
 import coffee3D.core.assets.AssetReference;
 import coffee3D.core.assets.types.World;
 import coffee3D.core.io.log.Log;
-import coffee3D.core.navigation.NavmeshComponent;
-import coffee3D.core.renderer.RenderMode;
-import coffee3D.core.renderer.RenderUtils;
 import coffee3D.core.renderer.scene.Components.Camera;
 import coffee3D.core.types.TypeHelper;
 import coffee3D.editor.ui.importers.WorldCreator;
@@ -13,8 +10,6 @@ import org.joml.Matrix4f;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.lwjgl.opengl.GL11.GL_SELECT;
 
 public abstract class Scene implements IScene {
     private ArrayList<SceneComponent> _components;

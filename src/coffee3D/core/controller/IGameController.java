@@ -14,9 +14,20 @@ public abstract class IGameController implements IInputListener {
     private double _cursorDeltaX = 0;
     private double _cursorDeltaY = 0;
 
+    private boolean _isEnabled;
+
+    public boolean isEnabled() {
+        return _isEnabled;
+    }
+    public void enable(boolean enable) {
+        _isEnabled = enable;
+    }
+
+
     public IGameController(RenderScene scene) {
         GlfwInputHandler.AddListener(this);
         _scene = scene;
+        _isEnabled = true;
     }
 
     public abstract void update();

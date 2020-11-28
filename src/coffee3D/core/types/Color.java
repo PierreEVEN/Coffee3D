@@ -29,6 +29,11 @@ public class Color implements Serializable {
         return ImGui.getColorU32(_color.x, _color.y, _color.z, _color.w);
     }
 
+    public final static Color _instance = new Color(0,0,0,1);
+    public final static int GetInt(float r, float g, float b, float a) {
+        _instance.getVector().set(r, g, b, a);
+        return _instance.asInt();
+    }
 
     public final static Color RED = new Color(1,0,0,1);
     public final static Color GREEN = new Color(0,1,0,1);

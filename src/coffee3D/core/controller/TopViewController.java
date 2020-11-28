@@ -23,6 +23,8 @@ public class TopViewController extends IGameController {
     private float _mouseSensitivity = .18f;
     private float _borderDetection = 200f;
 
+
+
     public void setDistance(float distance) {
         _wantedDistance = distance;
         if (_wantedDistance > 200) _wantedDistance = 200;
@@ -41,6 +43,14 @@ public class TopViewController extends IGameController {
     public TopViewController(RenderScene scene) {
         super(scene);
     }
+
+    public Vector3f getDefaultOffset() { return _defaultOffset; }
+    public Vector3f getPosition() { return _targetPosition; }
+    public float getPitch() { return _pitch; }
+    public float getYaw() { return _yaw; }
+    public void setPitch(float pitch) { _pitch = pitch; }
+    public void setYaw(float yaw) { _yaw = yaw; }
+
 
     @Override
     public void update() {
@@ -68,8 +78,9 @@ public class TopViewController extends IGameController {
 
     }
 
-    private void mouseMovements(float movementSpeed) {
+    public void mouseMovements(float movementSpeed) {
 
+        if (!isEnabled()) return;
         float distLeft = getScene().getCursorPosX();
         float distTop = getScene().getCursorPosY();
         float distRight = getScene().getFbWidth() - distLeft;
@@ -92,6 +103,8 @@ public class TopViewController extends IGameController {
     }
 
     private void keyboardMovements(float deltaTime, float movementSpeed) {
+
+        if (!isEnabled()) return;
         long windowHandle = Window.GetPrimaryWindow().getGlfwWindowHandle();
 
         if (GLFW.glfwGetKey(windowHandle, GLFW.GLFW_KEY_W) == GLFW.GLFW_PRESS ||
@@ -103,11 +116,11 @@ public class TopViewController extends IGameController {
             _currentSpeed.x -= movementSpeed;
         }
         if (GLFW.glfwGetKey(windowHandle, GLFW.GLFW_KEY_A) == GLFW.GLFW_PRESS ||
-                GLFW.glfwGetKey(windowHandle, GLFW.GLFW_KEY_RIGHT) == GLFW.GLFW_PRESS) {
+                GLFW.glfwGetKey(windowHandle, GLFW.GLFW_KEY_LEFT) == GLFW.GLFW_PRESS) {
             _currentSpeed.y += movementSpeed;
         }
         if (GLFW.glfwGetKey(windowHandle, GLFW.GLFW_KEY_D) == GLFW.GLFW_PRESS ||
-                GLFW.glfwGetKey(windowHandle, GLFW.GLFW_KEY_LEFT) == GLFW.GLFW_PRESS) {
+                GLFW.glfwGetKey(windowHandle, GLFW.GLFW_KEY_RIGHT) == GLFW.GLFW_PRESS) {
             _currentSpeed.y -= movementSpeed;
         }
         if (GLFW.glfwGetKey(windowHandle, GLFW.GLFW_KEY_Q) == GLFW.GLFW_PRESS ||
@@ -148,6 +161,7 @@ public class TopViewController extends IGameController {
 
     @Override
     public void scrollCallback(double xOffset, double yOffset) {
+        if (!isEnabled()) return;
         if (yOffset != 0) setDistance(_wantedDistance *= (-yOffset) / 4 + 1);
     }
 }

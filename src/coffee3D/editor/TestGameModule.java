@@ -10,6 +10,7 @@ import coffee3D.core.renderer.Window;
 import coffee3D.core.renderer.scene.RenderScene;
 import coffee3D.core.renderer.scene.RenderSceneProperties;
 import coffee3D.core.renderer.scene.RenderSceneSettings;
+import coffee3D.core.types.Color;
 import coffee3D.core.ui.hud.*;
 import coffee3D.core.ui.tools.StatHelper;
 import imgui.ImColor;
@@ -59,7 +60,7 @@ public class TestGameModule extends IEngineModule {
     public void DrawHUD() {
 
         StatHelper.DrawStats(_rootScene);
-        /*
+
 
         int gridTexture = AssetManager.<Texture2D>FindAsset("whiteTexture").getTextureID();
         int grassTexture = AssetManager.<Texture2D>FindAsset("whiteTexture").getTextureID();
@@ -70,7 +71,7 @@ public class TestGameModule extends IEngineModule {
                     NodeAnchor.TOP_LEFT,
                     PixelOffset.Get(100, 20, 500, 400),
                     ButtonBehavior.Get(2.5f),
-                    ImageParams.Get(gridTexture, 30.f),
+                    ImageParams.Get(-1, 20, Color.RED.asInt()),
                     TextParams.Get("Button 1", 5, ImColor.intToColor(255, 128, 128))
             );
 
@@ -99,7 +100,7 @@ public class TestGameModule extends IEngineModule {
         HudUtils.EndContainer();
 
 
-         */
+
 
 
     }

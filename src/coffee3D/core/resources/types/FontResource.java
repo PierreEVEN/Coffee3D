@@ -44,6 +44,8 @@ public class FontResource extends GraphicResource {
         _font = null;
     }
 
+    public ImFont getFont() { return _font; }
+
     @Override
     public void load() {
         ImGuiIO io = ImGui.getIO();

@@ -129,14 +129,57 @@ public final class HudUtils {
             text._font.setScale(text._size);
             ImGui.pushFont(text._font);
             ImGui.calcTextSize(textSize, text._text);
-            ImGui.getWindowDrawList().addText((2 * pos.posX + pos.sizeX) / 2.f - textSize.x / 2, (2 * pos.posY + pos.sizeY) / 2.f - textSize.y / 2, text._color, text._text);
-            text._font.setScale(1);
+
+            float posX;
+            float posY = (2 * pos.posY + pos.sizeY) / 2.f - textSize.y / 2;
+
+            switch (text._alignment) {
+                case CENTERED:
+                    posX = (2 * pos.posX + pos.sizeX) / 2.f - textSize.x / 2;
+                    break;
+                case RIGHT:
+                    posX = pos.posX + pos.sizeX - textSize.x;
+                    break;
+                default:
+                    posX = pos.posX;
+                    break;
+            }
+
+            ImGui.getWindowDrawList().addText(posX, posY, text._color, text._text);
             ImGui.popFont();
 
         }
         HudUtils.EndContainer();
 
         return bHasBeenPressed;
+    }
+
+    public static void Text(NodeAnchor anchor, PixelOffset offset, TextParams text) {
+
+        HudNodePosition pos = HudNodePosition.Get(anchor, offset);
+
+        text._font.setScale(text._size);
+        ImGui.pushFont(text._font);
+        ImGui.calcTextSize(textSize, text._text);
+
+        float posX;
+        float posY = (2 * pos.posY + pos.sizeY) / 2.f - textSize.y / 2;
+
+        switch (text._alignment) {
+            case CENTERED:
+                posX = (2 * pos.posX + pos.sizeX) / 2.f - textSize.x / 2;
+                break;
+            case RIGHT:
+                posX = pos.posX + pos.sizeX - textSize.x;
+                break;
+            default:
+                posX = pos.posX;
+                break;
+        }
+
+        ImGui.getWindowDrawList().addText(posX, posY, text._color, text._text);
+        ImGui.popFont();
+
     }
 
     public static void ProgressBar(NodeAnchor anchor, PixelOffset offset, ImageParams backgroundImage, ImageParams foregroundImage, float progress, boolean bVertical) {

@@ -7,6 +7,7 @@ import coffee3D.core.resources.ResourceManager;
 import coffee3D.core.resources.factories.FontFactory;
 import coffee3D.core.resources.types.FontResource;
 import coffee3D.core.types.Color;
+import imgui.ImFont;
 
 import java.io.File;
 
@@ -66,6 +67,8 @@ public class Font extends Asset {
     public void setDefault() {
         _font.setDefault();
     }
+
+    public ImFont getFont() { return _font.getFont(); }
 
     @Override
     public String[] getAssetExtensions() {
