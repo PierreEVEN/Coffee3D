@@ -16,7 +16,7 @@ public class ComponentManager {
 
     private static final List<Class<?>> components = new ArrayList<>();
 
-    private static void RegisterComponent(Class<?> componentClass) {
+    public static void RegisterComponent(Class<?> componentClass) {
         components.add(componentClass);
     }
 

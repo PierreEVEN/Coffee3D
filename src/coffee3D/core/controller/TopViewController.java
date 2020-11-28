@@ -46,10 +46,12 @@ public class TopViewController extends IGameController {
 
     public Vector3f getDefaultOffset() { return _defaultOffset; }
     public Vector3f getPosition() { return _targetPosition; }
-    public float getPitch() { return _pitch; }
-    public float getYaw() { return _yaw; }
-    public void setPitch(float pitch) { _pitch = pitch; }
-    public void setYaw(float yaw) { _yaw = yaw; }
+    public float getYaw() { return _wantedYaw; }
+    public void setYaw(float yaw) { _wantedYaw = yaw; }
+
+    public float getPitch() {
+        return Math.max(20, Math.min(40, _distance * .75f + 10));
+    }
 
 
     @Override
@@ -63,7 +65,7 @@ public class TopViewController extends IGameController {
         mouseMovements(movementSpeed * 1.5f);
 
         _yaw = Interpolation.FInterpTo(_yaw, _wantedYaw, 10);
-        _pitch = Interpolation.FInterpTo(_pitch, Math.max(20, Math.min(40, _distance * .75f + 10)), 5);
+        _pitch = Interpolation.FInterpTo(_pitch, getPitch(), 5);
         _distance = Interpolation.FInterpTo(_distance, _wantedDistance, 10);
 
         getScene().getCamera().setPitchInput(_pitch);

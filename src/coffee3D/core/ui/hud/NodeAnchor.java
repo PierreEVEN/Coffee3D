@@ -34,8 +34,8 @@ public final class NodeAnchor {
     public static final NodeAnchor RIGHT_CENTER = new NodeAnchor(1,.5f,1,.5f);
     public static final NodeAnchor FILL_X = new NodeAnchor(0,.5f,1,.5f);
 
-    public static final NodeAnchor BOTTOM_LEFT = new NodeAnchor(1,0,1,0);
-    public static final NodeAnchor BOTTOM_CENTER = new NodeAnchor(1,.5f,1,.5f);
+    public static final NodeAnchor BOTTOM_LEFT = new NodeAnchor(0,1,0,1);
+    public static final NodeAnchor BOTTOM_CENTER = new NodeAnchor(.5f,1,.5f,1);
     public static final NodeAnchor BOTTOM_RIGHT = new NodeAnchor(1,1,1,1);
     public static final NodeAnchor BOTTOM_FILL = new NodeAnchor(0,1,1,1);
 
