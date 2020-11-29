@@ -23,6 +23,6 @@ public class RenderSceneProperties extends SceneProperty {
         Vector3f sunVector = TypeHelper.getVector3();
         sunOrientation.positiveY(sunVector);
 
-        return sunVector.mul((float) (sunPower * -1 * (Math.max(0, sunVector.dot(zAxis) + .5))));
+        return sunVector.mul((float) (sunPower * -1 * (Math.max(0.001f, sunVector.dot(zAxis) + .5))));
     }
 }

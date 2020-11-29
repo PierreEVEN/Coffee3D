@@ -11,8 +11,8 @@ vec4 blurTexture(sampler2D text, vec2 coordinates) {
 
     // GAUSSIAN BLUR SETTINGS {{{
     float Directions = 16.0; // BLUR DIRECTIONS (Default 16.0 - More is better but slower)
-    float Quality = 10.0; // BLUR QUALITY (Default 4.0 - More is better but slower)
-    float Size = 0.02; // BLUR SIZE (Radius)
+    float Quality = 4.0; // BLUR QUALITY (Default 4.0 - More is better but slower)
+    float Size = 0.05; // BLUR SIZE (Radius)
     // GAUSSIAN BLUR SETTINGS }}}
 
     vec2 Radius = Size/iResolution.xy;

@@ -45,6 +45,7 @@ public class RenderScene extends Scene {
     public final RenderSceneSettings _sceneSettings;
     private boolean freezeFrustum = false;
     private final StaticMeshComponent skyBoxMesh;
+    private float _shadowRange;
 
     public void freezeFrustum(boolean bFreeze) { freezeFrustum = bFreeze; }
     public boolean isFrustumFrozen() { return freezeFrustum; }
@@ -53,11 +54,12 @@ public class RenderScene extends Scene {
         super();
         _sceneSettings = settings;
         _sceneProperties = new RenderSceneProperties();
+        _shadowRange = 200;
 
         // Buffers
         _colorBuffer = _sceneSettings.hasColorBuffer() ? new Framebuffer("colorBuffer_" + TypeHelper.MakeGlobalUid(), 0, 0, true, true) : null;
         _postProcessBuffer = _sceneSettings.hasPostProcessBuffer() ? new Framebuffer("postProcessBuffer_" + TypeHelper.MakeGlobalUid(), 0,0, true, false) : null;
-        _shadowBuffer = _sceneSettings.hasShadowBuffer() ? new Framebuffer("shadowBuffer_" + TypeHelper.MakeGlobalUid(), 4096, 4096, false, true) : null;
+        _shadowBuffer = _sceneSettings.hasShadowBuffer() ? new Framebuffer("shadowBuffer_" + TypeHelper.MakeGlobalUid(), EngineSettings.Get().shadowResolution, EngineSettings.Get().shadowResolution * 2, false, true) : null;
         _pickBuffer = _sceneSettings.hasPickBuffer() ? new Framebuffer("pickBuffer_" + TypeHelper.MakeGlobalUid(), 1, 1, true, true) : null;
         _stencilBuffer = _sceneSettings.hasStencilBuffer() ? new Framebuffer("stencilBuffer_" + TypeHelper.MakeGlobalUid(), 0, 0, true, true) : null;
         if (_sceneUbo == null) {
@@ -207,17 +209,35 @@ public class RenderScene extends Scene {
         if (_postProcessBuffer != null) _postProcessBuffer.resizeFramebuffer(sizeX, sizeY);
     }
 
-    public void updateLightMatrix() {
-        float near_plane = 1f, far_plane = 100;
-        float shadowRadius = far_plane / 2;
 
-        Matrix4f lightProjection = TypeHelper.getMat4().ortho(-shadowRadius, shadowRadius, -shadowRadius, shadowRadius, near_plane, far_plane);
+    public float getShadowRange() {
+        return _shadowRange;
+    }
+
+    public void setShadowRange(float range) {
+        _shadowRange = range;
+    }
+
+    public int getShadowResolution() {
+        return _shadowBuffer.getHeight();
+    }
+
+    public void setShadowResolution(int resolution) {
+        EngineSettings.Get().shadowResolution = resolution;
+        _shadowBuffer.resizeFramebuffer(resolution, resolution * 2);
+    }
+
+    public void updateLightMatrix() {
+        float near_plane = 20;
+        float shadowRadius = _shadowRange / 2;
+
+        Matrix4f lightProjection = TypeHelper.getMat4().ortho(-shadowRadius * .5f, shadowRadius * .5f, -shadowRadius, shadowRadius, near_plane, _shadowRange);
 
         Vector3f lightDirection = ((RenderSceneProperties)_sceneProperties).getSunVector();
 
         Matrix4f lightView = TypeHelper.getMat4().lookAt(
-                TypeHelper.getVector3(lightDirection).mul(far_plane / 2),
-                TypeHelper.getVector3(0, 0, 0),
+                TypeHelper.getVector3(lightDirection).mul(_shadowRange / 2).add(getCamera().getWorldPosition()),
+                TypeHelper.getVector3(0, 0, 0).add(getCamera().getWorldPosition()),
                 TypeHelper.getVector3(0, 0, 1));
 
         _shadowMatrix.set(lightProjection.mul(lightView));

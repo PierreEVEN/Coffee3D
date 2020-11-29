@@ -18,6 +18,7 @@ public class EngineSettings extends GameSettings {
 
     public boolean fullscreen = false;
     public int msaaSamples = 4;
+    public int shadowResolution = 1024;
     public boolean doubleBuffering = false;
     public boolean transparentFramebuffer = false;
 
