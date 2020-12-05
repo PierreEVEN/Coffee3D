@@ -5,6 +5,7 @@ import coffee3D.core.assets.AssetManager;
 import coffee3D.core.assets.types.Texture2D;
 import coffee3D.core.controller.IGameController;
 import coffee3D.core.controller.TopViewController;
+import coffee3D.core.io.log.Log;
 import coffee3D.core.io.settings.EngineSettings;
 import coffee3D.core.renderer.Window;
 import coffee3D.core.renderer.scene.RenderScene;
@@ -59,22 +60,33 @@ public class TestGameModule extends IEngineModule {
     @Override
     public void DrawHUD() {
 
-        StatHelper.DrawStats(_rootScene);
-/*
+        //StatHelper.DrawStats(_rootScene);
 
+/*
         int gridTexture = AssetManager.<Texture2D>FindAsset("whiteTexture").getTextureID();
         int grassTexture = AssetManager.<Texture2D>FindAsset("whiteTexture").getTextureID();
 
+
+ */
         if (HudUtils.BeginContainer(NodeAnchor.Get(.05f, .1f, .95f, .95f), PixelOffset.DEFAULT)) {
 
-            HudUtils.ImageButton(
+            if (HudUtils.ClickableArea(
                     NodeAnchor.TOP_LEFT,
                     PixelOffset.Get(100, 20, 500, 400),
                     ButtonBehavior.Get(2.5f),
-                    ImageParams.Get(-1, 20, Color.RED.asInt()),
-                    TextParams.Get("Button 1", 5, ImColor.intToColor(255, 128, 128))
-            );
+                    () -> {
 
+                        ImGui.text("test");
+                        //ImGui.button("COUCOUUUUU", ImGui.getContentRegionAvailX(), ImGui.getContentRegionAvailY());
+
+                    }
+
+            )) {
+                Log.Display("yes");
+            }
+
+            HudUtils.bDrawDebugBoxes.set(true);
+            /*
             if (HudUtils.BorderContainer(
                     NodeAnchor.Get(.5f, 0, .5f, 1),
                     PixelOffset.Get(-400, 0, 400, 0),
@@ -96,12 +108,14 @@ public class TestGameModule extends IEngineModule {
                     ((float)Math.sin(GLFW.glfwGetTime()) + 1) / 2,
                     true
             );
+
+             */
         }
         HudUtils.EndContainer();
 
 
 
- */
+
 
 
 

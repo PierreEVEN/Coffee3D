@@ -72,5 +72,5 @@ public class RenderSceneSettings {
 
     public boolean hasPickBuffer() { return true; }
 
-    public boolean hasColorBuffer() { return !_isFullScreen || (enablePostProcess()); }
+    public boolean hasColorBuffer() { return !_isFullScreen || (enablePostProcess()) || !_isStatic; }
 }

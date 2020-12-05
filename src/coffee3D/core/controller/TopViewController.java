@@ -1,5 +1,6 @@
 package coffee3D.core.controller;
 
+import coffee3D.core.io.settings.EngineSettings;
 import coffee3D.core.maths.Interpolation;
 import coffee3D.core.renderer.Window;
 import coffee3D.core.renderer.scene.RenderScene;
@@ -148,7 +149,17 @@ public class TopViewController extends IGameController {
     }
 
     @Override
-    public void keyCallback(int keycode, int scancode, int action, int mods) {}
+    public void keyCallback(int keycode, int scancode, int action, int mods) {
+        if (keycode == GLFW.GLFW_KEY_T) {
+            EngineSettings.Get().enablePostProcessing = false;
+            EngineSettings.Get().saveSetting();
+        }
+        if (keycode == GLFW.GLFW_KEY_Y) {
+            EngineSettings.Get().enablePostProcessing = true;
+            EngineSettings.Get().saveSetting();
+        }
+
+    }
 
     @Override
     public void charCallback(int chr) {}

@@ -139,7 +139,7 @@ public class RenderScene extends Scene {
 
         // COLOR RENDERING
         RenderUtils.RENDER_MODE = RenderMode.Color;
-        if (_sceneSettings.hasColorBuffer())  _colorBuffer.use(true, EngineSettings.Get().transparentFramebuffer ? null : ((RenderSceneProperties) _sceneProperties)._backgroundColor);
+        if (_sceneSettings.enablePostProcess()) _colorBuffer.use(true, EngineSettings.Get().transparentFramebuffer ? null : ((RenderSceneProperties) _sceneProperties)._backgroundColor);
         else Framebuffer.BindBackBuffer(EngineSettings.Get().transparentFramebuffer ? null : ((RenderSceneProperties) _sceneProperties)._backgroundColor);
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_STENCIL_TEST);

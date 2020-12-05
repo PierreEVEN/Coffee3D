@@ -36,6 +36,11 @@ public final class HudUtils {
 
 
     public static boolean BeginContainer(NodeAnchor anchor, PixelOffset offset) {
+        return BeginContainer(anchor, offset, true);
+    }
+
+
+    public static boolean BeginContainer(NodeAnchor anchor, PixelOffset offset, boolean clickable) {
         HudNodePosition pos = HudNodePosition.Get(anchor, offset);
         ImGui.setNextWindowPos(pos.posX, pos.posY);
         ImGui.setNextWindowSize(pos.sizeX, pos.sizeY);
@@ -44,7 +49,7 @@ public final class HudUtils {
                 pos.sizeX,
                 pos.sizeY,
                 bDrawDebugBoxes.get(),
-                ImGuiWindowFlags.NoDecoration
+                ImGuiWindowFlags.NoDecoration | (clickable ? ImGuiWindowFlags.None : ImGuiWindowFlags.NoInputs)
         );
     }
 
@@ -148,6 +153,38 @@ public final class HudUtils {
             ImGui.getWindowDrawList().addText(posX, posY, text._color, text._text);
             ImGui.popFont();
 
+        }
+        HudUtils.EndContainer();
+
+        return bHasBeenPressed;
+    }
+
+    public static boolean ClickableArea(NodeAnchor anchor, PixelOffset offset, ButtonBehavior behavior, IDrawContent content) {
+        boolean bHasBeenPressed = false;
+        if (HudUtils.BeginContainer(anchor, offset)) {
+
+            bHasBeenPressed = ImGui.invisibleButton("button" + _containerCount++, ImGui.getContentRegionAvailX(), ImGui.getContentRegionAvailY());
+
+            float posX = behavior._sensitivity;
+            float posY = behavior._sensitivity;
+            float posX2 = -behavior._sensitivity;
+            float posY2 = -behavior._sensitivity;
+
+            if (!ImGui.isItemHovered()) {
+                posX -= behavior._sensitivity;
+                posY -= behavior._sensitivity;
+                posX2 += behavior._sensitivity;
+                posY2 += behavior._sensitivity;
+            }
+            if (ImGui.isItemActive()) {
+                posX += behavior._sensitivity;
+                posY += behavior._sensitivity;
+            }
+            if (HudUtils.BeginContainer(NodeAnchor.FILL, PixelOffset.Get(posX,posY, posX2,posY2), false)) {
+
+                content.draw();
+            }
+            HudUtils.EndContainer();
         }
         HudUtils.EndContainer();
 
