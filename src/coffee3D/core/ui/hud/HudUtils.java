@@ -1,5 +1,6 @@
 package coffee3D.core.ui.hud;
 
+import coffee3D.core.io.log.Log;
 import imgui.ImGui;
 import imgui.ImVec2;
 import imgui.flag.ImGuiWindowFlags;
@@ -39,23 +40,26 @@ public final class HudUtils {
         return BeginContainer(anchor, offset, true);
     }
 
+    private static int unClickableLevel = 0;
 
     public static boolean BeginContainer(NodeAnchor anchor, PixelOffset offset, boolean clickable) {
         HudNodePosition pos = HudNodePosition.Get(anchor, offset);
         ImGui.setNextWindowPos(pos.posX, pos.posY);
         ImGui.setNextWindowSize(pos.sizeX, pos.sizeY);
+        if (unClickableLevel > 0 || !clickable) unClickableLevel++;
         return ImGui.beginChild(
                 "DynamicContainer" + _containerCount++,
                 pos.sizeX,
                 pos.sizeY,
                 bDrawDebugBoxes.get(),
-                ImGuiWindowFlags.NoDecoration | (clickable ? ImGuiWindowFlags.None : ImGuiWindowFlags.NoInputs)
+                ImGuiWindowFlags.NoDecoration | (unClickableLevel > 0 ? ImGuiWindowFlags.NoInputs : ImGuiWindowFlags.None)
         );
     }
 
     public static void EndContainer() {
         ImGui.endChild();
         ImageParams.ResetParamCount();
+        if (unClickableLevel > 0) unClickableLevel--;
     }
 
     public static boolean BorderContainer(NodeAnchor anchor, PixelOffset offset, ImageParams image) {
@@ -66,7 +70,6 @@ public final class HudUtils {
         } else {
             ImGui.getWindowDrawList().addRectFilled(pos.posX, pos.posY, pos.posX + pos.sizeX, pos.posY + pos.sizeY, image._color);
         }
-
 
         return BeginContainer(anchor, offset);
     }
@@ -164,6 +167,7 @@ public final class HudUtils {
         if (HudUtils.BeginContainer(anchor, offset)) {
 
             bHasBeenPressed = ImGui.invisibleButton("button" + _containerCount++, ImGui.getContentRegionAvailX(), ImGui.getContentRegionAvailY());
+
 
             float posX = behavior._sensitivity;
             float posY = behavior._sensitivity;
