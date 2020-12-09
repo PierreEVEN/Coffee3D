@@ -1,11 +1,18 @@
 package coffee3D.core.ui.hud;
 
 import coffee3D.core.io.log.Log;
+import coffee3D.core.types.Color;
+import coffee3D.core.types.TypeHelper;
+import imgui.ImFont;
 import imgui.ImGui;
 import imgui.ImVec2;
+import imgui.flag.ImGuiCol;
+import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiWindowFlags;
 import imgui.type.ImBoolean;
 import imgui.type.ImInt;
+
+import java.nio.FloatBuffer;
 
 final class HudNodePosition {
     private HudNodePosition() {}
@@ -160,6 +167,29 @@ public final class HudUtils {
         HudUtils.EndContainer();
 
         return bHasBeenPressed;
+    }
+
+    public static void SliderFloat(NodeAnchor anchor, PixelOffset offset, Color color, Color bgColor, float[] value, float min, float max, float height, float size, float rounding) {
+
+        ImFont font = ImGui.getFont();
+        font.setScale(height);
+        ImGui.pushFont(font);
+
+        if (HudUtils.BeginContainer(anchor, offset)) {
+            ImGui.setNextItemWidth(ImGui.getContentRegionAvailX());
+            ImGui.pushStyleColor(ImGuiCol.SliderGrab, color.asInt());
+            ImGui.pushStyleColor(ImGuiCol.FrameBg, bgColor.asInt());
+            ImGui.pushStyleColor(ImGuiCol.FrameBgHovered, Color.GetInt(bgColor.getVector().x * 1.2f, bgColor.getVector().y * 1.2f, bgColor.getVector().z * 1.2f, bgColor.getVector().w * 1.2f));
+            ImGui.pushStyleColor(ImGuiCol.FrameBgActive, Color.GetInt(bgColor.getVector().x * .8f, bgColor.getVector().y * .8f, bgColor.getVector().z * .8f, bgColor.getVector().w * .8f));
+            ImGui.pushStyleVar(ImGuiStyleVar.GrabMinSize, size);
+            ImGui.pushStyleVar(ImGuiStyleVar.GrabRounding, rounding);
+            ImGui.pushStyleVar(ImGuiStyleVar.FrameRounding, rounding);
+            ImGui.sliderFloat("##slider" + TypeHelper.GetFrameUid(), value, min, max, "");
+            ImGui.popStyleVar(3);
+            ImGui.popStyleColor(4);
+        }
+        ImGui.popFont();
+        HudUtils.EndContainer();
     }
 
     public static boolean ClickableArea(NodeAnchor anchor, PixelOffset offset, ButtonBehavior behavior, IDrawContent content) {

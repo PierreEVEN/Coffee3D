@@ -149,17 +149,7 @@ public class TopViewController extends IGameController {
     }
 
     @Override
-    public void keyCallback(int keycode, int scancode, int action, int mods) {
-        if (keycode == GLFW.GLFW_KEY_T) {
-            EngineSettings.Get().enablePostProcessing = false;
-            EngineSettings.Get().saveSetting();
-        }
-        if (keycode == GLFW.GLFW_KEY_Y) {
-            EngineSettings.Get().enablePostProcessing = true;
-            EngineSettings.Get().saveSetting();
-        }
-
-    }
+    public void keyCallback(int keycode, int scancode, int action, int mods) {}
 
     @Override
     public void charCallback(int chr) {}

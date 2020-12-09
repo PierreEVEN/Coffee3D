@@ -15,6 +15,13 @@ public final class PixelOffset {
         bottom = 0;
     }
 
+    public PixelOffset(float l, float t, float r, float b) {
+        left = l;
+        top = t;
+        right = r;
+        bottom = b;
+    }
+
     public static PixelOffset Get(float l, float t, float r, float b) {
         if (_instance == null) _instance = new PixelOffset();
         _instance.left = l;

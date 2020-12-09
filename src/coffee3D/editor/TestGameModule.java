@@ -56,6 +56,7 @@ public class TestGameModule extends IEngineModule {
     public void DrawUI() {}
 
 
+    float[] sliderValue = new float[1];
 
     @Override
     public void DrawHUD() {
@@ -83,38 +84,13 @@ public class TestGameModule extends IEngineModule {
 
                         ImGui.text("test");
                         ImGui.button("COUCOUUUUU", ImGui.getContentRegionAvailX() - 50, ImGui.getContentRegionAvailY() - 50);
-
                     }
-
             )) {
                 Log.Display("yes");
             }
 
+            HudUtils.SliderFloat(NodeAnchor.TOP_CENTER, PixelOffset.Get(-200, 50, 200, 150), Color.RED, Color.BLUE, sliderValue, -50, 50, 4, 40, 50);
             HudUtils.bDrawDebugBoxes.set(true);
-            /*
-            if (HudUtils.BorderContainer(
-                    NodeAnchor.Get(.5f, 0, .5f, 1),
-                    PixelOffset.Get(-400, 0, 400, 0),
-                    ImageParams.Get(-1, 60.f, ImColor.intToColor(255, 255, 128))
-            )) {
-                HudUtils.VerticalBox(NodeAnchor.FILL, PixelOffset.DEFAULT, new IDrawContent[]{
-                        () -> ImGui.button("test", ImGui.getContentRegionAvailX(), ImGui.getContentRegionAvailY()),
-                        () -> ImGui.button("test2", ImGui.getContentRegionAvailX(), ImGui.getContentRegionAvailY()),
-                        () -> ImGui.button("test3", ImGui.getContentRegionAvailX(), ImGui.getContentRegionAvailY())
-                });
-            }
-            HudUtils.EndContainer();
-
-            HudUtils.ProgressBar(
-                    NodeAnchor.FILL_LEFT,
-                    PixelOffset.Get(5, 10, 100, -10),
-                    ImageParams.Get(grassTexture, 20, ImColor.intToColor(255,0,0)),
-                    ImageParams.Get(gridTexture, 20, ImColor.intToColor(0, 255, 0)),
-                    ((float)Math.sin(GLFW.glfwGetTime()) + 1) / 2,
-                    true
-            );
-
-             */
         }
         HudUtils.EndContainer();
 
