@@ -17,8 +17,14 @@ Finally, i achieved to a polished product in less than 2 month (which is pretty 
 - Bloom
 - Basic shadows
 - Basic AI with A\* pathfinding
+- Billboards
 
 ## Videos
+
+[Basic shadow mapping](https://youtu.be/ef-brQbH5FE)
+[Billboard](https://youtu.be/srNc9CzwyKQ)
+[Editor demonstration](https://youtu.be/8R6M83ooCxI)
+[Pathfinding](https://youtu.be/JiN4Cm1TBZ0)
 
 ## Screenshots
 *Connect 4 : example of game made with Coffee3D*
