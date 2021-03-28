@@ -1,7 +1,7 @@
 
 # Coffee3D
 
-This is a 3d game engine i made for my tutored project of 2nd year. Basically i planned to craete a 2D game engine, but it growed up so quickly i decided to increase my ambitions.
+This is a 3d game engine i made for my tutored project of 2nd year. Basically i planned to create a 2D game engine, but it growed up so quickly i decided to increase my ambitions.
 Finally, i achieved to a polished product in less than 2 month (which is pretty fast i have to admit).
 
 **Required dependencies :**
