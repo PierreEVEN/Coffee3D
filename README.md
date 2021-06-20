@@ -33,7 +33,7 @@ Finally, i achieved to a polished product in less than 2 month (which is pretty 
 ![Editor](https://user-images.githubusercontent.com/24438631/111083391-a25cec80-850d-11eb-915d-396abed79d8d.png)
 *Asset preview*
 ![asset_preview](https://user-images.githubusercontent.com/24438631/111083392-a2f58300-850d-11eb-942a-61ed79c7bba6.png)
-*Editable navmesh for A* pathfinding*
+*Editable navmesh for A\* pathfinding*
 ![astar](https://user-images.githubusercontent.com/24438631/111083393-a38e1980-850d-11eb-9c8a-e87aed85a054.png)
 *Post process outline*
 ![outlines](https://user-images.githubusercontent.com/24438631/111083394-a38e1980-850d-11eb-9c32-261c7a9ac672.png)
